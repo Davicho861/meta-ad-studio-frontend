@@ -1,0 +1,99 @@
+openapi: 3.0.0
+info:
+  title: Meta Studio Flow API
+  version: 1.0.0
+paths:
+  /auth/login:
+    post:
+      summary: Login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Successful login
+        '400':
+          description: Invalid credentials
+  /projects:
+    get:
+      summary: Get all projects
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    name:
+                      type: string
+                    description:
+                      type: string
+    post:
+      summary: Create a new project
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+      responses:
+        '200':
+          description: Successful operation
+  /issues:
+    get:
+      summary: Get all issues
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    title:
+                      type: string
+                    description:
+                      type: string
+                    status:
+                      type: string
+  /api/multiverse/photos:
+    get:
+      summary: Get multiverse photo data
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    url:
+                      type: string
+                    caption:
+                      type: string

@@ -1,0 +1,152 @@
+# .github/workflows/main.yml
+
+name: CI/CD Pipeline for Meta Studio Ad Studio App
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  setup_and_install:
+    name: Setup & Install Dependencies
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18' # O la versión especificada en package.json
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+  quality_check:
+    name: Quality Check (Lint & Security)
+    runs-on: ubuntu-latest
+    needs: setup_and_install
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Linter
+        run: npm run lint
+
+      - name: Run Security Audit
+        run: npm audit --audit-level=high
+
+  unit_test:
+    name: Unit & Integration Tests
+    runs-on: ubuntu-latest
+    needs: quality_check
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Unit Tests
+        run: npm test -- --coverage
+
+      # Opcional: Subir el informe de cobertura a un servicio como Codecov
+      # - name: Upload coverage to Codecov
+      #   uses: codecov/codecov-action@v3
+      #   with:
+      #     token: ${{ secrets.CODECOV_TOKEN }} # Se necesita configurar el secret en GitHub
+
+  e2e_test:
+    name: End-to-End Tests
+    runs-on: ubuntu-latest
+    needs: unit_test
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Cypress E2E Tests
+        # El 'start-server-and-test' podría ser útil aquí
+        # O se puede usar una acción de Cypress que lo maneje
+        uses: cypress-io/github-action@v5
+        with:
+          start: npm run dev
+          wait-on: 'http://localhost:5173' # O el puerto que use Vite
+          command: npm run cy:run
+
+  build:
+    name: Build for Production
+    runs-on: ubuntu-latest
+    needs: e2e_test
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build application
+        run: npm run build
+
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: dist-folder
+          path: dist
+
+  deploy:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    environment:
+      name: production
+      url: 'https://your-production-url.com' # Cambiar a la URL real
+    steps:
+      - name: Download build artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: dist-folder
+          path: dist
+
+      - name: Placeholder for Deployment
+        run: |
+          echo "Deployment job started..."
+          echo "Aquí se ejecutarían los scripts de despliegue (ej. Terraform, Docker Push, etc.)."
+          ls -R dist
+          echo "Deployment finished."

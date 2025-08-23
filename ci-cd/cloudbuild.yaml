@@ -1,0 +1,54 @@
+steps:
+- name: 'gcr.io/cloud-builders/docker'
+  id: 'Build Backend Image'
+  args: ['build', '-t', '${_GCP_REGION}-docker.pkg.dev/${PROJECT_ID}/${_ARTIFACT_REGISTRY_REPO_NAME}/backend:latest', './server']
+
+- name: 'gcr.io/cloud-builders/docker'
+  id: 'Push Backend Image'
+  args: ['push', '${_GCP_REGION}-docker.pkg.dev/${PROJECT_ID}/${_ARTIFACT_REGISTRY_REPO_NAME}/backend:latest']
+
+- name: 'gcr.io/cloud-builders/docker'
+  id: 'Build Frontend Image'
+  args: ['build', '-t', '${_GCP_REGION}-docker.pkg.dev/${PROJECT_ID}/${_ARTIFACT_REGISTRY_REPO_NAME}/frontend:latest', './meta-verse-visualizer-main']
+
+- name: 'gcr.io/cloud-builders/docker'
+  id: 'Push Frontend Image'
+  args: ['push', '${_GCP_REGION}-docker.pkg.dev/${PROJECT_ID}/${_ARTIFACT_REGISTRY_REPO_NAME}/frontend:latest']
+
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  id: 'Deploy Backend to Cloud Run'
+  entrypoint: gcloud
+  args:
+  - 'run'
+  - 'deploy'
+  - 'meta-studio-backend'
+  - '--image'
+  - '${_GCP_REGION}-docker.pkg.dev/${PROJECT_ID}/${_ARTIFACT_REGISTRY_REPO_NAME}/backend:latest'
+  - '--region'
+  - '${_GCP_REGION}'
+  - '--platform'
+  - 'managed'
+  - '--allow-unauthenticated'
+
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  id: 'Deploy Frontend to Cloud Run'
+  entrypoint: gcloud
+  args:
+  - 'run'
+  - 'deploy'
+  - 'meta-studio-frontend'
+  - '--image'
+  - '${_GCP_REGION}-docker.pkg.dev/${PROJECT_ID}/${_ARTIFACT_REGISTRY_REPO_NAME}/frontend:latest'
+  - '--region'
+  - '${_GCP_REGION}'
+  - '--platform'
+  - 'managed'
+  - '--allow-unauthenticated'
+
+images:
+- '${_GCP_REGION}-docker.pkg.dev/${PROJECT_ID}/${_ARTIFACT_REGISTRY_REPO_NAME}/backend:latest'
+- '${_GCP_REGION}-docker.pkg.dev/${PROJECT_ID}/${_ARTIFACT_REGISTRY_REPO_NAME}/frontend:latest'
+
+substitutions:
+  _GCP_REGION: us-central1
+  _ARTIFACT_REGISTRY_REPO_NAME: meta-studio-repo

@@ -1,0 +1,27 @@
+config:
+  target: 'http://localhost:3001' # Adjust if your server runs on a different port
+  phases:
+    - duration: 60
+      arrivalRate: 50
+  defaults:
+    headers:
+      Content-Type: 'application/json'
+scenarios:
+  - name: 'Get Videos (Authenticated)'
+    flow:
+      - get:
+          url: '/api/v1/videos'
+          headers:
+            Authorization: 'Bearer valid_token'
+  - name: 'Get Brand Profile (Authenticated)'
+    flow:
+      - get:
+          url: '/api/v1/brand-profile'
+          headers:
+            Authorization: 'Bearer valid_token'
+  - name: 'Get Insights (Authenticated & Cached)'
+    flow:
+      - get:
+          url: '/api/v1/insights'
+          headers:
+            Authorization: 'Bearer valid_token'
