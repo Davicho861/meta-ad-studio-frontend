@@ -1,47 +1,49 @@
 import { createBrowserRouter } from "react-router-dom";
+import React, { Suspense } from "react";
 import Layout from "./components/layout/Layout";
-import Overview from "./pages/Overview";
-import Planning from "./pages/Planning";
-import Development from "./pages/Development";
-import Implementation from "./pages/Implementation";
-import Deployment from "./pages/Deployment";
-import Insights from "./pages/Insights";
-import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
-import SdlcDashboard from "./pages/SdlcDashboard";
+
+const Overview = React.lazy(() => import("./pages/Overview"));
+const Planning = React.lazy(() => import("./pages/Planning"));
+const Development = React.lazy(() => import("./pages/Development"));
+const Implementation = React.lazy(() => import("./pages/Implementation"));
+const Deployment = React.lazy(() => import("./pages/Deployment"));
+const Insights = React.lazy(() => import("./pages/Insights"));
+const Settings = React.lazy(() => import("./pages/Settings"));
+const SdlcDashboard = React.lazy(() => import("./pages/SdlcDashboard"));
 
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: <Layout><Overview /></Layout>,
+    element: <Layout><Suspense fallback={<div>Loading...</div>}><Overview /></Suspense></Layout>,
     errorElement: <NotFound />,
   },
   {
     path: "/planning",
-    element: <Layout><Planning /></Layout>,
+    element: <Layout><Suspense fallback={<div>Loading...</div>}><Planning /></Suspense></Layout>,
   },
   {
     path: "/development",
-    element: <Layout><Development /></Layout>,
+    element: <Layout><Suspense fallback={<div>Loading...</div>}><Development /></Suspense></Layout>,
   },
   {
     path: "/implementation",
-    element: <Layout><Implementation /></Layout>,
+    element: <Layout><Suspense fallback={<div>Loading...</div>}><Implementation /></Suspense></Layout>,
   },
   {
     path: "/deployment",
-    element: <Layout><Deployment /></Layout>,
+    element: <Layout><Suspense fallback={<div>Loading...</div>}><Deployment /></Suspense></Layout>,
   },
   {
     path: "/insights",
-    element: <Layout><Insights /></Layout>,
+    element: <Layout><Suspense fallback={<div>Loading...</div>}><Insights /></Suspense></Layout>,
   },
   {
     path: "/settings",
-    element: <Layout><Settings /></Layout>,
+    element: <Layout><Suspense fallback={<div>Loading...</div>}><Settings /></Suspense></Layout>,
   },
   {
     path: "/sdlc",
-    element: <Layout><SdlcDashboard /></Layout>,
+    element: <Layout><Suspense fallback={<div>Loading...</div>}><SdlcDashboard /></Suspense></Layout>,
   },
 ]);
