@@ -2,7 +2,7 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 
-export const autoEvolutionAgent = async (performanceMetrics: any, previousPrompt: string, reasoning_effort: string = 'high') => {
+export const autoEvolutionAgent = async (performanceMetrics: Record<string, unknown>, previousPrompt: string, reasoning_effort: string = 'high') => {
   const model = genAI.getGenerativeModel({ model: 'gemini-2.5-pro' });
 
   const prompt = `As a senior AI engineer, your task is to analyze the provided performance metrics and suggest adjustments to the previous prompt to improve future AI model performance. This simulates a Reinforcement Learning from Human Feedback (RLHF) loop.

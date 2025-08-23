@@ -9,8 +9,12 @@ router.get('/cloudbuild/history', authMiddleware, async (req: Request, res: Resp
     const client = await getCloudBuildClient();
     const [builds] = await client.listBuilds({ projectId: process.env.GCP_PROJECT_ID });
     res.json(builds);
-  } catch (error: any) {
-    res.status(500).json({ error: `Failed to fetch Cloud Build history: ${error.message}` });
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      res.status(500).json({ error: `Failed to fetch Cloud Build history: ${error.message}` });
+    } else {
+      res.status(500).json({ error: 'Failed to fetch Cloud Build history: An unknown error occurred' });
+    }
   }
 });
 

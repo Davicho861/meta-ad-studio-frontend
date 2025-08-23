@@ -10,7 +10,7 @@
     "audit": "npm audit",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test": "jest --config config/jest/jest.config.client.cjs",
+    "test": "jest --config config/jest/jest.config.client.cjs && jest --config config/jest/jest.config.server.cjs",
     "cy:run": "wait-on http://localhost:5176 && npx cypress run --config-file tests/cypress.config.cjs --headless --browser chrome --config video=false",
     "cy:run:docker": "docker-compose -f infra/docker/docker-compose.yml up -d --build && npx cypress run --config-file tests/cypress.config.cjs && docker-compose -f infra/docker/docker-compose.yml down",
     "prisma:seed": "ts-node server/prisma/seed.ts"

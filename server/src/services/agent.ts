@@ -20,36 +20,36 @@ const callAIAgent = async (prompt: string, reasoning_effort: string) => {
   }
 };
 
-export const runAgent = async (taskType: string, taskDetails: any, reasoning_effort: string = 'medium') => {
+export const runAgent = async (taskType: string, taskDetails: Record<string, unknown>, reasoning_effort: string = 'medium') => {
   try {
-    let result: any;
+    let result: unknown;
     switch (taskType) {
       case 'plan':
         result = await planningAgent.prioritizeTasks();
         break;
       case 'develop':
-        result = await developmentAgent(taskDetails.featureDescription, taskDetails.openapiContent, reasoning_effort);
+        result = await developmentAgent(taskDetails.featureDescription as string, taskDetails.openapiContent as string, reasoning_effort);
         break;
       case 'test':
-        result = await testingAgent(taskDetails.testType, reasoning_effort);
+        result = await testingAgent(taskDetails.testType as string, reasoning_effort);
         break;
       case 'deploy':
-        result = await deploymentAgent(taskDetails.action, reasoning_effort);
+        result = await deploymentAgent(taskDetails.action as string, reasoning_effort);
         break;
       case 'iac':
-        result = await iacAgent(taskDetails.action, taskDetails.details);
+        result = await iacAgent(taskDetails.action as string, taskDetails.details as Record<string, unknown>);
         break;
       case 'ops':
-        result = await opsAgent(taskDetails.action, taskDetails.details);
+        result = await opsAgent(taskDetails.action as string, taskDetails.details as Record<string, unknown>);
         break;
       case 'debug':
-        result = await debugAgent(taskDetails.errorLogs);
+        result = await debugAgent(taskDetails.errorLogs as string);
         break;
       case 'predict':
-        result = await errorPredictionAgent(taskDetails.logs);
+        result = await errorPredictionAgent(taskDetails.logs as string);
         break;
       default:
-        const prompt = `Execute the following task: ${JSON.stringify(taskDetails)}`;
+        const prompt = `Execute the following task: ${JSON.stringify(taskDetails as Record<string, unknown>)}`;
         result = await callAIAgent(prompt, reasoning_effort);
         break;
     }

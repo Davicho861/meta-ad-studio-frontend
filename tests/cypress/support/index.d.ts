@@ -1,9 +1,9 @@
 /// <reference types="cypress" />
 
 declare namespace Cypress {
-  interface Chainable<Subject = any> {
-    mockApi(url: string, response: any): Chainable<null>;
-    login(): Chainable<any>;
+  interface Chainable<Subject = unknown> {
+    mockApi(url: string, response: unknown): Chainable<null>;
+    login(): Chainable<void>;
     waitUntil(
       condition: () => Chainable<boolean>,
       options?: {
@@ -11,6 +11,6 @@ declare namespace Cypress {
         interval?: number;
         errorMsg?: string;
       }
-    ): Chainable<any>;
+    ): Chainable<void>;
   }
 }

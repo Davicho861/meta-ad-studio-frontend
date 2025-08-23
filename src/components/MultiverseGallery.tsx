@@ -22,8 +22,8 @@ const MultiverseGallery: React.FC = () => {
         }
         const data: Video[] = await response.json();
         setVideos(data);
-      } catch (err: any) {
-        setError(err.message);
+      } catch (err: unknown) {
+        setError((err as Error).message);
         console.error("Failed to fetch videos:", err);
       } finally {
         setLoading(false);

@@ -96,7 +96,7 @@ export function IssueModal({ issue, isOpen, onClose, onSave }: IssueModalProps) 
     onClose();
   };
 
-  const updateField = (field: keyof Issue, value: any) => {
+  const updateField = (field: keyof Issue, value: string | number | string[] | { name: string; avatar: string }) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
@@ -167,7 +167,7 @@ export function IssueModal({ issue, isOpen, onClose, onSave }: IssueModalProps) 
               <CardContent className="p-4 space-y-4">
                 <div>
                   <label className="text-sm font-medium mb-2 block">Issue Type</label>
-                  <Select value={formData.type} onValueChange={(value: any) => updateField("type", value)}>
+                  <Select value={formData.type} onValueChange={(value: "Story" | "Bug" | "Task" | "Epic") => updateField("type", value)}>
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
@@ -186,7 +186,7 @@ export function IssueModal({ issue, isOpen, onClose, onSave }: IssueModalProps) 
 
                 <div>
                   <label className="text-sm font-medium mb-2 block">Priority</label>
-                  <Select value={formData.priority} onValueChange={(value: any) => updateField("priority", value)}>
+                  <Select value={formData.priority} onValueChange={(value: "Highest" | "High" | "Medium" | "Low") => updateField("priority", value)}>
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>

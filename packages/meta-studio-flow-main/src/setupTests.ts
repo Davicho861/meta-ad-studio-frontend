@@ -1,8 +1,2 @@
-require('dotenv').config();
-
-global.import = {
-  meta: {
-    env: process.env,
-  },
-};
+import 'dotenv/config';
 import '@testing-library/jest-dom';

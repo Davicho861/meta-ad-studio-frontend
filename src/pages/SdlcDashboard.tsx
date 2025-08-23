@@ -152,7 +152,7 @@ const SdlcDashboard = () => {
         <h2 className="text-lg font-medium mb-4">Agentes de IA</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {sdlcData.aiAgents.map((agent) => (
-            <AIAgentCard key={agent.name} name={agent.name} type={agent.status} status={agent.status.toLowerCase() as any} currentTask={agent.task} progress={agent.progress} />
+            <AIAgentCard key={agent.name} name={agent.name} type={agent.status} status={agent.status.toLowerCase() as "active" | "idle" | "paused"} currentTask={agent.task} progress={agent.progress} />
           ))}
         </div>
       </div>

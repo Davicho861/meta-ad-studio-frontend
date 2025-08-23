@@ -1,4 +1,4 @@
-Cypress.Commands.add('mockApi', (url: string, response: any) => {
+Cypress.Commands.add('mockApi', (url: string, response: unknown) => {
   cy.intercept(url, response).as('mockedApi');
 });
 

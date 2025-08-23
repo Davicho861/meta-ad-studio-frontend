@@ -27,7 +27,7 @@ const ProgressRing = ({
       return;
     }
     
-    let start = 0;
+    const start = 0;
     const animationDuration = 1500; // ms
     const startTime = Date.now();
     

@@ -25,7 +25,7 @@ const App = () => {
     try {
       const response = await api.get('/auth/me');
       setUsername(response.data.username);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Failed to fetch user:', error);
       setUsername("Guest");
     }

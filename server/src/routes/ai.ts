@@ -15,7 +15,7 @@ router.post('/generate', async (req, res) => {
 
   try {
     const model = genAI.getGenerativeModel({ model: 'gemini-2.5-pro' });
-    let content: any = `[Nivel razonamiento: ${reasoning_effort}] ${prompt}`;
+    let content: string | (string | { inlineData: { mimeType: string; data: string; } })[] = `[Nivel razonamiento: ${reasoning_effort}] ${prompt}`;
     if (multimodal_input) {
       content = [{ text: content }];
       multimodal_input.forEach((url: string) => {
@@ -23,7 +23,7 @@ router.post('/generate', async (req, res) => {
       });
     }
     if (iac_input) {
-      content += `; Analiza IaC: ${iac_input.map((diagram: any) => diagram).join(',')}`;
+      content += `; Analiza IaC: ${iac_input.map((diagram: string) => diagram).join(',')}`;
     }
     const result = await model.generateContent(content);
     const responseText = result.response.text();

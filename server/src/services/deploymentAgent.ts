@@ -53,12 +53,12 @@ Rollback Logs:
       .replace('[ROLLBACK_LOGS]', logs);
 
     return await callAIAgent(finalPrompt, reasoning_effort);
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error(`Error during deployment action ${action} or analysis:`, error);
     const errorPrompt = `Analyze the following error output from a failed deployment action (${action}). Identify the root cause and suggest steps to resolve it.
 
 Error Output:
-${error.stdout || error.message}
+${(error as { stdout?: string, message: string }).stdout || (error as Error).message}
 
 [Nivel de razonamiento: ${reasoning_effort}]`;
 

@@ -40,12 +40,12 @@ Test Logs:
 ${testLogs}`;
 
     return await callAIAgent(prompt, reasoning_effort);
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error(`Error executing ${testType} tests or analyzing results:`, error);
     const prompt = `Analyze the following error output from a failed ${testType} test run. Identify the root cause of the failure and propose code corrections to fix the bugs.
 
 Error Output:
-${error.stdout || error.message}`;
+${(error as { stdout?: string, message: string }).stdout || (error as Error).message}`;
 
     try {
       const analysis = await callAIAgent(prompt, reasoning_effort);

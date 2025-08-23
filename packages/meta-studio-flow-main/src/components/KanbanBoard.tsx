@@ -1,4 +1,4 @@
-import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
+import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from '@dnd-kit/core';
 import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { useIssues } from '../hooks/useIssues';
@@ -27,12 +27,12 @@ export function KanbanBoard({ sprintId, projectId, assigneeId, dueThisWeek }: Ka
     { id: 'Done', title: 'Done' },
   ];
 
-  const handleDragEnd = (event: any) => {
+  const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (!over) return;
 
-    const issueId = active.id;
-    const newStatus = over.id.split('-')[0]; // Extract status from column id
+    const issueId = active.id as string;
+    const newStatus = over.id.toString().split('-')[0]; // Extract status from column id
     updateIssueStatus({ issueId, status: newStatus });
   };
 

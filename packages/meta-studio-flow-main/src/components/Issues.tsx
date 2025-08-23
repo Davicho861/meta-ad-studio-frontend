@@ -2,6 +2,12 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 
+interface Issue {
+  id: string;
+  title: string;
+  status: string;
+}
+
 const fetchIssues = async (filter: string, searchTerm: string) => {
   const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/issues`, { params: { filter, search: searchTerm } });
   return res.data;
@@ -10,10 +16,12 @@ const fetchIssues = async (filter: string, searchTerm: string) => {
 const Issues = () => {
   const [filter, setFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
-  const { data: issues } = useQuery({
-    queryKey: ['issues', filter, searchTerm],
-    queryFn: () => fetchIssues(filter, searchTerm),
-  });
+  const { data: issues } = useQuery<Issue[]>(
+    {
+      queryKey: ['issues', filter, searchTerm],
+      queryFn: () => fetchIssues(filter, searchTerm),
+    }
+  );
 
   return (
     <div>
@@ -39,7 +47,7 @@ const Issues = () => {
           </tr>
         </thead>
         <tbody>
-          {issues?.map((issue: any) => (
+          {issues?.map((issue) => (
             <tr key={issue.id}>
               <td>{issue.id}</td>
               <td>{issue.title}</td>

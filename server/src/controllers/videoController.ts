@@ -55,8 +55,8 @@ export const generateVideo = async (req: Request, res: Response) => {
       status: newVideo.status,
     });
 
-  } catch (error: any) {
-    logger.error({ error: error.message, stack: error.stack }, 'Error generating video:');
+  } catch (error: unknown) {
+    logger.error({ error: (error as Error).message, stack: (error as Error).stack }, 'Error generating video:');
     Sentry.captureException(error); // Capture exception with Sentry
     res.status(500).json({ message: 'Internal Server Error' });
   }
@@ -125,8 +125,8 @@ export const generateAdWithGemini = async (req: AuthenticatedRequest, res: Respo
 
     res.status(200).json({ videoUrl: newVideo.videoUrl });
 
-  } catch (error: any) {
-    logger.error({ error: error.message, stack: error.stack }, 'Error generating ad with Gemini:');
+  } catch (error: unknown) {
+    logger.error({ error: (error as Error).message, stack: (error as Error).stack }, 'Error generating ad with Gemini:');
     Sentry.captureException(error);
     res.status(500).json({ message: 'Internal Server Error' });
   }
@@ -147,8 +147,8 @@ export const getCreations = async (req: AuthenticatedRequest, res: Response) => 
     }
 
     res.status(200).json(user.videos);
-  } catch (error: any) {
-    logger.error({ error: error.message, stack: error.stack }, 'Error getting creations:');
+  } catch (error: unknown) {
+    logger.error({ error: (error as Error).message, stack: (error as Error).stack }, 'Error getting creations:');
     Sentry.captureException(error);
     res.status(500).json({ message: 'Internal Server Error' });
   }
@@ -173,7 +173,7 @@ export const handleWebhook = async (req: Request, res: Response) => {
       return res.status(404).json({ message: 'No matching video found for the provided Replicate ID.' });
     }
 
-    let updateData: any = { status };
+    const updateData: { status: string; videoUrl?: string; error?: string } = { status };
 
     if (status === 'succeeded' && output && output.length > 0) {
       updateData.videoUrl = output[0]; // Assuming output[0] is the video URL
@@ -193,8 +193,8 @@ export const handleWebhook = async (req: Request, res: Response) => {
 
     res.status(200).json({ message: 'Webhook processed successfully' });
 
-  } catch (error: any) {
-    logger.error({ error: error.message, stack: error.stack, body: req.body }, 'Error processing webhook:');
+  } catch (error: unknown) {
+    logger.error({ error: (error as Error).message, stack: (error as Error).stack, body: req.body }, 'Error processing webhook:');
     Sentry.captureException(error); // Capture exception with Sentry
     res.status(500).json({ message: 'Internal Server Error' });
   }

@@ -15,7 +15,7 @@ const callAIAgent = async (prompt: string, reasoning_effort: string = 'high') =>
 };
 
 class PlanningAgent {
-  async prioritizeTasks(): Promise<any> {
+  async prioritizeTasks(): Promise<unknown> {
     try {
       const backlogContent = await fs.readFile(path.join(__dirname, '../../../../BACKLOG.md'), 'utf-8');
       const transformationPlanContent = await fs.readFile(path.join(__dirname, '../../../../TRANSFORMATION_PLAN.md'), 'utf-8');

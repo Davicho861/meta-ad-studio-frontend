@@ -34,7 +34,6 @@ describe('Projects Module', () => {
 
     // Assert that the project was created successfully
     cy.wait('@createProject').then((interception) => {
-      expect(interception.response).to.not.be.undefined;
       expect(interception.response?.statusCode).to.equal(201);
     });
     cy.contains('Test Project').should('be.visible'); // Check if the project name is displayed

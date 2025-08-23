@@ -17,7 +17,7 @@ const router = Router();
 router.get('/', authMiddleware, async (req: Request, res: Response) => {
   try {
     const { filter, search } = req.query;
-    const where: any = {};
+    const where: Record<string, unknown> = {};
 
     if (search) {
       where.OR = [
