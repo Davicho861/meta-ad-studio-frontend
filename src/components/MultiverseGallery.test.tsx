@@ -1,6 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import MultiverseGallery from './MultiverseGallery';
 
@@ -34,14 +33,12 @@ describe('MultiverseGallery Component', () => {
 
     render(<MultiverseGallery />);
 
-    // Use userEvent to wait for the component to update
-    await userEvent.unhover(screen.getByText('Loading gallery...'));
+    await waitFor(() => {
+      expect(screen.getByText('Multiverse Video Gallery')).toBeInTheDocument();
+    });
 
-
-    // findBy queries wait for the element to appear
-    expect(await screen.findByText('Multiverse Video Gallery')).toBeInTheDocument();
-    expect(await screen.findByText('Video 1')).toBeInTheDocument();
-    expect(await screen.findByText('Video 2')).toBeInTheDocument();
+    expect(screen.getByText('Video 1')).toBeInTheDocument();
+    expect(screen.getByText('Video 2')).toBeInTheDocument();
 
     // Check for the video elements using data-testid
     const videoElements = screen.getAllByTestId('video-element');
@@ -56,10 +53,9 @@ describe('MultiverseGallery Component', () => {
 
     render(<MultiverseGallery />);
 
-    // Use userEvent to wait for the component to update
-    await userEvent.unhover(screen.getByText('Loading gallery...'));
-
-    expect(await screen.findByText(`Error loading gallery: ${errorMessage}`)).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText(`Error loading gallery: ${errorMessage}`)).toBeInTheDocument();
+    });
   });
 
   it('renders "No videos found" message when the gallery is empty', async () => {
@@ -70,9 +66,8 @@ describe('MultiverseGallery Component', () => {
 
     render(<MultiverseGallery />);
 
-    // Use userEvent to wait for the component to update
-    await userEvent.unhover(screen.getByText('Loading gallery...'));
-
-    expect(await screen.findByText('No videos found in the gallery.')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText('No videos found in the gallery.')).toBeInTheDocument();
+    });
   });
 });
