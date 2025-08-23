@@ -48,7 +48,7 @@ const MultiverseGallery: React.FC = () => {
         <div className="video-grid">
           {videos.map((video) => (
             <div key={video.id} className="video-item">
-              <video src={video.url} autoPlay loop muted playsInline data-testid="video-element" title={video.caption} />
+              <video src={video.url} autoPlay loop muted playsInline data-testid="video-element" title={video.caption} loading="lazy" />
               <p>{video.caption}</p>
             </div>
           ))}
