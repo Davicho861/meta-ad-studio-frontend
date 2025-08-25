@@ -77,11 +77,11 @@ phase_one_pre_checks() {
     } &
     {
         log_mission_step "Running Prisma Generate"
-        prisma generate --schema=packages/api-server/server/prisma/schema.prisma
+        (cd packages/api-server/server && bunx prisma generate --schema=./prisma/schema.prisma)
     } &
     {
         log_mission_step "Installing and Testing Web App"
-        (cd packages/web-app && bun install && bun test)
+        (bun install && bun test)
     } &
     {
         log_mission_step "Installing and Testing API Server"
