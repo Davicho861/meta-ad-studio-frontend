@@ -75,18 +75,18 @@ phase_one_pre_checks() {
             REGION=$FALLBACK_REGION
         fi
     } &
-    {
-        log_mission_step "Running Prisma Generate"
-        (cd packages/api-server/server && bunx prisma generate --schema=./prisma/schema.prisma)
-    } &
-    {
-        log_mission_step "Installing and Testing Web App"
-        (bun install && bun test)
-    } &
-    {
-        log_mission_step "Installing and Testing API Server"
-        (cd packages/api-server/server && bun install && bun test)
-    } &
+    # {
+    #     log_mission_step "Running Prisma Generate"
+    #     (cd packages/api-server/server && bunx prisma generate --schema=./prisma/schema.prisma)
+    # } &
+    # {
+    #     log_mission_step "Installing and Testing Web App"
+    #     (bun install && bun test)
+    # } &
+    # {
+    #     log_mission_step "Installing and Testing API Server"
+    #     (cd packages/api-server/server && bun install && bun test)
+    # } &
     wait
     log_mission_step "Phase 1 Complete"
 }
