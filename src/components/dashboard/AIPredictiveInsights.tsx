@@ -1,3 +1,4 @@
+import React from "react";
 
 import { useState } from 'react';
 import { Brain, LineChart, TrendingUp, Zap } from "lucide-react";

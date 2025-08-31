@@ -1,0 +1,32 @@
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: meta-studio-ad-studio-app-spa-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: meta-studio-ad-studio-app-spa
+  minReplicas: 1
+  maxReplicas: 50
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 80
+  - type: Pods
+    pods:
+      metric:
+        name: http_requests_per_second
+      target:
+        type: AverageValue
+        averageValue: 10
+  - type: Pods
+    pods:
+      metric:
+        name: vertex_ai_predicted_load # Placeholder for Vertex AI prediction metric
+      target:
+        type: Value
+        value: 100 # Placeholder value, assuming a load indicator

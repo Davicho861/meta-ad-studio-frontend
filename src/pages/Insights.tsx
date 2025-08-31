@@ -1,3 +1,4 @@
+import React from "react";
 
 import { BarChart3, LineChart, PieChart, TrendingUp, Filter } from "lucide-react";
 

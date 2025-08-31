@@ -1,11 +1,11 @@
 import { Router } from 'express';
 import { getBrandProfile, upsertBrandProfile } from '../controllers/brandProfileController';
-import { protect } from '../middleware/auth';
+import { authMiddleware } from '../middleware/auth';
 
 const router = Router();
 
 router.route('/')
-  .get(protect, getBrandProfile)
-  .post(protect, upsertBrandProfile);
+  .get(authMiddleware, getBrandProfile)
+  .post(authMiddleware, upsertBrandProfile);
 
 export default router;

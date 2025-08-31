@@ -1,0 +1,43 @@
+# Google Cloud Build configuration for multi-cloud CI/CD
+
+steps:
+  # Build the Docker image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/your-project/ad-studio-app:$COMMIT_SHA', '.']
+
+  # Push the Docker image to GCR
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/your-project/ad-studio-app:$COMMIT_SHA']
+
+  # Deploy to GKE (US)
+  - name: 'gcr.io/cloud-builders/gke-deploy'
+    args:
+      - 'run'
+      - '--image=gcr.io/your-project/ad-studio-app:$COMMIT_SHA'
+      - '--location=us-central1-c'
+      - '--cluster=gke-us-central'
+      - '--namespace=production'
+      - '--deployment=ad-studio-app'
+
+  # Deploy to EKS (Asia)
+  - name: 'gcr.io/cloud-builders/kubectl'
+    args:
+      - 'set'
+      - 'image'
+      - 'deployment/ad-studio-app'
+      - 'ad-studio-app=gcr.io/your-project/ad-studio-app:$COMMIT_SHA'
+    env:
+      - 'KUBECONFIG=/root/.kube/config-eks'
+
+  # Deploy to AKS (EU)
+  - name: 'gcr.io/cloud-builders/kubectl'
+    args:
+      - 'set'
+      - 'image'
+      - 'deployment/ad-studio-app'
+      - 'ad-studio-app=gcr.io/your-project/ad-studio-app:$COMMIT_SHA'
+    env:
+      - 'KUBECONFIG=/root/.kube/config-aks'
+
+images:
+  - 'gcr.io/your-project/ad-studio-app:$COMMIT_SHA'

@@ -1,0 +1,45 @@
+# Edge Computing Configuration for VR/AR Module
+# This configuration ensures low-latency delivery of VR/AR assets and real-time data processing.
+
+apiVersion: edge.networking.k8s.io/v1
+kind: EdgeDeployment
+metadata:
+  name: vr-ar-assets-deployment
+spec:
+  selector:
+    matchLabels:
+      app: meta-studio-vr-ar
+  template:
+    metadata:
+      labels:
+        app: meta-studio-vr-ar
+    spec:
+      containers:
+      - name: vr-ar-assets-container
+        image: gcr.io/your-project/vr-ar-assets:latest
+        ports:
+        - containerPort: 8080
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "500m"
+          limits:
+            memory: "512Mi"
+            cpu: "1"
+      # Node affinity to deploy on edge nodes with specific GPUs for rendering
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: cloud.google.com/gke-accelerator
+                operator: In
+                values:
+                - nvidia-tesla-t4
+      # Caching configuration for VR/AR assets at the edge
+      caching:
+        ttl: 3600 # Cache assets for 1 hour
+        prefetch: true
+        prefetchUrls:
+          - /unity-build/my-unity-app.data
+          - /unity-build/my-unity-app.wasm

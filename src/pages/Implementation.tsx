@@ -1,3 +1,4 @@
+import React from "react";
 
 import { CheckCircle, BarChart3, UserCheck, AlertCircle, PlusCircle } from "lucide-react";
 import AIAgentCard from "../components/dashboard/AIAgentCard";

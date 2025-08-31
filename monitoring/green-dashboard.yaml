@@ -1,0 +1,36 @@
+# Custom Grafana Dashboard for Real-Time Sustainability Tracking
+# This dashboard visualizes carbon footprint metrics and provides AI-powered forecasts.
+
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: green-sustainability-dashboard
+spec:
+  # Grafana instance selector
+  instanceSelector:
+    matchLabels:
+      app: grafana
+  
+  # Dashboard configuration
+  config:
+    title: "Sustainability & Carbon Footprint"
+    panels:
+    - title: "Real-Time Carbon Emissions (tCO2e)"
+      type: "graph"
+      targets:
+      - expr: "sum(carbon_emissions_kg_co2e) / 1000"
+        legendFormat: "Total Emissions"
+    - title: "Carbon Emissions by Cloud Provider"
+      type: "piechart"
+      targets:
+      - expr: "sum by (provider) (carbon_emissions_kg_co2e)"
+    - title: "AI-Powered Carbon Forecast (Next 30 Days)"
+      type: "graph"
+      targets:
+      - expr: "forecast(carbon_emissions_kg_co2e[7d], 30d)" # Mock forecast function
+        legendFormat: "Forecasted Emissions"
+    - title: "Idle Resource Tracker"
+      type: "stat"
+      targets:
+      - expr: "count(idle_resources)"
+        legendFormat: "Idle Resources"

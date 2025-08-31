@@ -1,0 +1,65 @@
+# =================================================================================
+# Keda Helm Chart Values
+# =================================================================================
+
+# ---------------------------------------------------------------------------------
+# Operator Configuration
+#
+# Configures the Keda operator, which manages the lifecycle of ScaledObjects.
+# ---------------------------------------------------------------------------------
+operator:
+  logLevel: "info"
+  logEncoder: "json"
+
+# ---------------------------------------------------------------------------------
+# Metrics Server Configuration
+#
+# Keda's metrics server exposes custom metrics to the Horizontal Pod Autoscaler (HPA).
+# This section configures its behavior.
+# ---------------------------------------------------------------------------------
+metricsServer:
+  logLevel: "info"
+  useInternalMetrics: false # Set to true to expose Keda's internal metrics
+
+  # -- Prometheus metrics scraping configuration
+  prometheus:
+    # -- Enable scraping of KEDA metrics by Prometheus
+    metricServer:
+      enabled: true
+      port: 9022
+      path: /metrics
+      # -- The KEDA Operator will expose its metrics on this port
+    operator:
+      enabled: true
+      port: 8080
+
+# ---------------------------------------------------------------------------------
+# Service Account Configuration
+#
+# Defines the service accounts used by Keda components.
+# ---------------------------------------------------------------------------------
+serviceAccount:
+  create: true
+  operator:
+    create: true
+  metricsApiServer:
+    create: true
+
+# ---------------------------------------------------------------------------------
+# Pod Security Context
+#
+# Enforces security best practices for Keda's pods.
+# ---------------------------------------------------------------------------------
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  runAsGroup: 1000
+  fsGroup: 1000
+
+# ---------------------------------------------------------------------------------
+# Additional Labels
+#
+# Custom labels to apply to all resources created by the Helm chart.
+# ---------------------------------------------------------------------------------
+additionalLabels:
+  app.kubernetes.io/part-of: "aiops-stack"

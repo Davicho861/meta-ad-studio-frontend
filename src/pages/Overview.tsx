@@ -1,11 +1,13 @@
+import React from "react";
 import { Activity, AlertCircle, CheckCircle, Code, Clock, Brain, Users, Lightbulb, ExternalLink, ArrowUpRight, Download, TrendingUp } from "lucide-react";
 import { useState, useEffect } from "react";
-import ProgressRing from "../components/dashboard/ProgressRing";
-import PhaseProgress from "../components/dashboard/PhaseProgress";
-import AIAgentCard from "../components/dashboard/AIAgentCard";
-import StatCard from "../components/dashboard/StatCard";
-import AIPredictiveInsights from "../components/dashboard/AIPredictiveInsights";
-import { useToast } from "@/hooks/use-toast";
+import ProgressRing from "../components/dashboard/ProgressRing.js";
+import PhaseProgress from "../components/dashboard/PhaseProgress.js";
+import AIAgentCard from "../components/dashboard/AIAgentCard.js";
+import StatCard from "../components/dashboard/StatCard.js";
+import AIPredictiveInsights from "../components/dashboard/AIPredictiveInsights.js";
+import MultiverseGallery from "../components/MultiverseGallery.js";
+import { useToast } from "../hooks/use-toast.js";
 
 const phases = [
   { name: "Planeación", progress: 100, status: "completed" as const },
@@ -53,17 +55,17 @@ const Overview = () => {
   const [viewedRecommendations, setViewedRecommendations] = useState<Set<string>>(new Set());
 
   // Simulate data fetch on component mount
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      toast({
-        title: "Dashboard actualizado",
-        description: "Todos los datos están sincronizados con el último estado del proyecto",
-        duration: 3000,
-      });
-    }, 1500);
+  // useEffect(() => {
+  //   const timer = setTimeout(() => {
+  //     toast({
+  //       title: "Dashboard actualizado",
+  //       description: "Todos los datos están sincronizados con el último estado del proyecto",
+  //       duration: 3000,
+  //     });
+  //   }, 1500);
     
-    return () => clearTimeout(timer);
-  }, [toast]);
+  //   return () => clearTimeout(timer);
+  // }, [toast]);
 
   const handlePhaseClick = (phaseName: string) => {
     setHighlightedPhase(phaseName);
@@ -205,6 +207,7 @@ const Overview = () => {
             <button 
               className="apple-icon-button"
               onClick={handleActivityClick}
+              data-testid="activity-button"
             >
               <Activity size={18} className="text-gray-600" />
             </button>
@@ -282,11 +285,20 @@ const Overview = () => {
 
       {/* AI Predictive Insights Section */}
       <div className="apple-card p-6 mt-6">
-        <AIPredictiveInsights />
+        <AIPredictiveInsights insights={[
+          { text: 'El análisis de sentimiento de los comentarios de los usuarios es 95% positivo.', confidence: 0.95 },
+          { text: 'El riesgo de retraso en la fase de implementación es bajo.', confidence: 0.88 },
+          { text: 'Se prevé un aumento del 20% en la participación de los usuarios tras el lanzamiento.', confidence: null },
+        ]} />
+      </div>
+
+      {/* Multiverse Gallery Section */}
+      <div className="apple-card p-6 mt-6">
+        <MultiverseGallery />
       </div>
 
       {/* Predictions & Recommendations Section */}
-      <div className="apple-card p-6 mt-6">
+      <div className="apple-card p-6 mt.6">
         <h2 className="text-lg font-medium mb-4 flex items-center">
           <TrendingUp size={20} className="mr-2 text-apple-blue" />
           Métricas e Impacto de IA

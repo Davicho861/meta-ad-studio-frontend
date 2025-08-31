@@ -1,68 +1,68 @@
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
+import MultiverseGallery from './MultiverseGallery.js';
 import '@testing-library/jest-dom';
-import MultiverseGallery from './MultiverseGallery';
+import { server } from '../mocks/server.js';
+import { http, HttpResponse } from 'msw';
 
-// Mock the fetch API
-global.fetch = jest.fn();
+// Establish API mocking before all tests.
+beforeAll(() => server.listen());
+
+// Reset any request handlers that we may add during the tests,
+// so they don't affect other tests.
+afterEach(() => server.resetHandlers());
+
+// Clean up after the tests are finished.
+afterAll(() => server.close());
 
 describe('MultiverseGallery Component', () => {
-  beforeEach(() => {
-    // Reset mocks before each test
-    (global.fetch as jest.Mock).mockClear();
-  });
-
-  it('renders loading state initially', () => {
-    (global.fetch as jest.Mock).mockResolvedValueOnce({
-      ok: true,
-      json: async () => [],
-    });
+  it('renders loading state initially and then the content', async () => {
     render(<MultiverseGallery />);
+    
     expect(screen.getByText('Loading gallery...')).toBeInTheDocument();
+
+    await waitFor(() => {
+      expect(screen.queryByText('Loading gallery...')).not.toBeInTheDocument();
+    });
+
+    expect(screen.getByText('First Glimpse of the Zetaverse')).toBeInTheDocument();
   });
 
   it('renders videos when fetch is successful', async () => {
-    const mockVideos = [
-      { id: '1', url: '/vid/video1.mp4', caption: 'Video 1' },
-      { id: '2', url: '/vid/video2.mp4', caption: 'Video 2' },
-    ];
-    (global.fetch as jest.Mock).mockResolvedValueOnce({
-      ok: true,
-      json: async () => mockVideos,
-    });
-
     render(<MultiverseGallery />);
 
     await waitFor(() => {
-      expect(screen.getByText('Multiverse Video Gallery')).toBeInTheDocument();
+      expect(screen.getByText('First Glimpse of the Zetaverse')).toBeInTheDocument();
     });
 
-    expect(screen.getByText('Video 1')).toBeInTheDocument();
-    expect(screen.getByText('Video 2')).toBeInTheDocument();
+    expect(screen.getByText('Cybernetic Dreams')).toBeInTheDocument();
+    expect(screen.getByText('Ad-World Prime')).toBeInTheDocument();
+    expect(screen.getByText('Neon-Lit Nexus')).toBeInTheDocument();
 
-    // Check for the video elements using data-testid
     const videoElements = screen.getAllByTestId('video-element');
-    expect(videoElements).toHaveLength(2);
-    expect(videoElements[0]).toHaveAttribute('src', '/vid/video1.mp4');
-    expect(videoElements[1]).toHaveAttribute('src', '/vid/video2.mp4');
+    expect(videoElements).toHaveLength(4);
   });
 
   it('renders error message when fetch fails', async () => {
-    const errorMessage = 'Failed to fetch';
-    (global.fetch as jest.Mock).mockRejectedValueOnce(new Error(errorMessage));
+    server.use(
+      http.get('/api/multiverse/videos', () => {
+        return new HttpResponse(null, { status: 500 });
+      })
+    );
 
     render(<MultiverseGallery />);
 
     await waitFor(() => {
-      expect(screen.getByText(`Error loading gallery: ${errorMessage}`)).toBeInTheDocument();
+      expect(screen.getByText(/Error loading gallery/)).toBeInTheDocument();
     });
   });
 
   it('renders "No videos found" message when the gallery is empty', async () => {
-    (global.fetch as jest.Mock).mockResolvedValueOnce({
-      ok: true,
-      json: async () => [],
-    });
+    server.use(
+      http.get('/api/multiverse/videos', () => {
+        return HttpResponse.json([]);
+      })
+    );
 
     render(<MultiverseGallery />);
 

@@ -5,10 +5,10 @@
     { "path": "./tsconfig.node.json" }
   ],
   "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["./src/*"]
-    },
+    "moduleResolution": "bundler",
+    "module": "ESNext",
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
     "esModuleInterop": true,
     "jsx": "react-jsx",
     "noImplicitAny": false,
@@ -16,7 +16,8 @@
     "skipLibCheck": true,
     "allowJs": true,
     "noUnusedLocals": false,
-    "strictNullChecks": false,
-    "types": ["cypress/support/index.d.ts", "jest", "@testing-library/jest-dom", "node"]
+    "strictNullChecks": true,
+    "types": ["jest", "@testing-library/jest-dom", "node", "vitest"],
+    "resolveJsonModule": true
   }
 }

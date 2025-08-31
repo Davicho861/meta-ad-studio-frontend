@@ -1,7 +1,7 @@
-import { MetaverseDashboard } from "@/components/MetaverseDashboard";
+import { MetaverseDashboard } from '@/components/MetaverseDashboard'
 
 const Index = () => {
-  return <MetaverseDashboard />;
-};
+  return <MetaverseDashboard />
+}
 
-export default Index;
+export default Index

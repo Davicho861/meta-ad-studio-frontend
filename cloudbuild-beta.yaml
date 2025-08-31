@@ -1,0 +1,39 @@
+# Cloud Build Pipeline for Beta Releases
+# This pipeline builds and pushes the container image.
+
+steps:
+# Install dependencies and fix vulnerabilities in parallel
+- name: 'gcr.io/cloud-builders/npm'
+  entrypoint: 'bash'
+  args:
+  - '-c'
+  - 'npm install --include=dev & npm audit fix --force && wait'
+
+# Run tests
+- name: 'gcr.io/cloud-builders/npm'
+  entrypoint: 'npm'
+  args: ['test']
+
+# Build the application
+- name: 'gcr.io/cloud-builders/npm'
+  entrypoint: 'npm'
+  args: ['run', 'build']
+
+# Build and push the beta version image
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', '${_GCP_REGION}-docker.pkg.dev/${_PROJECT_ID}/ad-studio-app-repo/app-e2e:$SHORT_SHA', '.']
+
+# Push the container image
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', '${_GCP_REGION}-docker.pkg.dev/${_PROJECT_ID}/ad-studio-app-repo/app-e2e:$SHORT_SHA']
+
+# Deploy to GKE
+- name: 'gcr.io/cloud-builders/gke-deploy'
+  args:
+  - 'run'
+  - '--image=${_GCP_REGION}-docker.pkg.dev/${_PROJECT_ID}/ad-studio-app-repo/app-e2e:$SHORT_SHA'
+  - '--location=${_GCP_REGION}'
+  - '--cluster=e2e-gke-cluster'
+  - '--namespace=default'
+  - '--deployment=ad-studio-app'
+  - '--filename=k8s/'

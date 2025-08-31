@@ -1,0 +1,71 @@
+# =================================================================================
+# ArgoCD Application Definitions (App-of-Apps Pattern)
+# =================================================================================
+
+# ---------------------------------------------------------------------------------
+# Root Application (App of Apps)
+#
+# This is the parent application that bootstraps all other applications in the
+# cluster. It points to the directory containing the application manifests.
+# ---------------------------------------------------------------------------------
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: root-app
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: 'https://github.com/your-repo/your-k8s-configs.git' # Replace with your Git repo URL
+    path: 'k8s/apps'
+    targetRevision: HEAD
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: argocd
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+
+---
+# =================================================================================
+# ApplicationSet for Dynamic Application Management
+#
+# This ApplicationSet automatically discovers and manages applications based on
+# directories in a Git repository. It's a powerful way to manage microservices
+# or multi-tenant environments.
+# =================================================================================
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: cluster-addons
+  namespace: argocd
+spec:
+  generators:
+    - git:
+        repoURL: 'https://github.com/your-repo/your-k8s-configs.git' # Replace with your Git repo URL
+        revision: HEAD
+        directories:
+          - path: 'k8s/addons/*'
+  template:
+    metadata:
+      name: '{{path.basename}}'
+    spec:
+      project: default
+      source:
+        repoURL: 'https://github.com/your-repo/your-k8s-configs.git' # Replace with your Git repo URL
+        targetRevision: HEAD
+        path: '{{path}}'
+      destination:
+        server: 'https://kubernetes.default.svc'
+        namespace: '{{path.basename}}'
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true

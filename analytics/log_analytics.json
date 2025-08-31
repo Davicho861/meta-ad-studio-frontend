@@ -1,0 +1,32 @@
+{
+  "metadata": {
+    "report_date": "2025-09-15",
+    "data_source": "unified_app_logs"
+  },
+  "user_engagement": {
+    "daily_active_users": 48500,
+    "monthly_active_users": 150000,
+    "session_duration_avg_minutes": 15.5,
+    "user_retention_rate_weekly": 0.65,
+    "feature_adoption": {
+      "ad_creation_tool": 0.85,
+      "analytics_dashboard": 0.72,
+      "vr_preview": 0.40
+    },
+    "user_satisfaction_score": 4.2
+  },
+  "regional_engagement": {
+    "north_america": {
+      "active_users": 25000,
+      "latency_avg_ms": 45
+    },
+    "europe": {
+      "active_users": 15000,
+      "latency_avg_ms": 65
+    },
+    "asia_pacific": {
+      "active_users": 8500,
+      "latency_avg_ms": 120
+    }
+  }
+}

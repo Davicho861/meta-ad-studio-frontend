@@ -5,7 +5,9 @@ module.exports = defineConfig({
     setupNodeEvents(on, config) {
       // implement node event listeners here
     },
-    baseUrl: 'http://localhost:5175/', // Adjust if your app runs on a different port
+    supportFile: 'tests/cypress/support/e2e.ts',
+    baseUrl: 'http://localhost:5173/', // Adjust if your app runs on a different port
+    specPattern: 'tests/cypress/integration/**/*.cy.{js,jsx,ts,tsx}',
     retries: {
       runMode: 2, // Retry failing tests twice in headless mode
       openMode: 0, // Do not retry in interactive mode

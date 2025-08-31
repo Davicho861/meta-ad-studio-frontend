@@ -1,3 +1,4 @@
+import React from "react";
 
 import { Code, Activity, GitBranch, Bug, CheckCircle, PlusCircle } from "lucide-react";
 import AIAgentCard from "../components/dashboard/AIAgentCard";

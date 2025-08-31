@@ -1,0 +1,28 @@
+# Alertmanager configuration for multi-cloud notifications
+
+global:
+  resolve_timeout: 5m
+
+route:
+  group_by: ['alertname', 'cluster', 'service']
+  group_wait: 30s
+  group_interval: 5m
+  repeat_interval: 12h
+  receiver: 'default-receiver'
+
+receivers:
+  - name: 'default-receiver'
+    webhook_configs:
+      - url: 'http://notification-service.example.com/webhook'
+
+  - name: 'gcp-alerts'
+    webhook_configs:
+      - url: 'http://gcp-notification-service.example.com/webhook'
+
+  - name: 'aws-alerts'
+    webhook_configs:
+      - url: 'http://aws-notification-service.example.com/webhook'
+
+  - name: 'azure-alerts'
+    webhook_configs:
+      - url: 'http://azure-notification-service.example.com/webhook'

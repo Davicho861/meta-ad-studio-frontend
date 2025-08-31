@@ -1,0 +1,15 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: meta-studio-ad-studio-app-spa-vs
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - meta-studio-ad-studio-app-spa-gateway
+  http:
+  - route:
+    - destination:
+        host: meta-studio-ad-studio-app-spa
+        subset: v1
+      weight: 100

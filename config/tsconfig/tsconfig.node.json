@@ -4,6 +4,7 @@
     "lib": ["ES2023"],
     "module": "ESNext",
     "skipLibCheck": true,
+    "resolveJsonModule": true, // Habilitar importación de JSON
 
     /* Bundler mode */
     "moduleResolution": "bundler",
@@ -17,7 +18,11 @@
     "strict": true,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "baseUrl": "../../",
+    "paths": {
+      "@/*": ["server/src/*"]
+    }
   },
-  "include": ["vite.config.ts"]
+  "include": ["vite.config.ts", "server/**/*.ts"]
 }

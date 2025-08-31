@@ -1,0 +1,77 @@
+# Helm Values for Knative Serving Component
+# Configures a serverless application for event-driven, auto-scaling inference.
+
+# ==============================================================================
+# 1. Knative Serving Service Definition
+# ==============================================================================
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: planetary-scale-serverless-inference
+  namespace: serverless
+spec:
+  template:
+    spec:
+      containers:
+        - image: "gcr.io/knative-releases/knative.dev/serving/cmd/helloworld-go" # Placeholder image
+          env:
+            - name: TARGET
+              value: "Planetary Scale Inference"
+          # In a real scenario, this would be an image with our ML model
+          # served via a framework like KServe, BentoML, or FastAPI.
+          ports:
+            - containerPort: 8080
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "1"
+              memory: "1Gi"
+
+      # ========================================================================
+      # Autoscaling Configuration (Knative Pod Autoscaler - KPA)
+      # ========================================================================
+      # See: https://knative.dev/docs/serving/autoscaling/kpa-specific/
+      # This configuration will scale the service based on concurrent requests.
+      # It will scale down to zero when there is no traffic.
+      # ========================================================================
+      podAutoscaler:
+        metric: "concurrency"
+        target: 100 # Target 100 concurrent requests per pod
+        scaleDownDelay: "300s" # 5 minutes
+        scaleUpDelay: "0s"
+
+# ==============================================================================
+# 2. Namespace for Serverless Workloads
+# ==============================================================================
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: serverless
+
+# ==============================================================================
+# 3. Example Event Source (CronJob) to Trigger the Service
+# ==============================================================================
+# This CronJob simulates a periodic event that triggers the Knative service.
+# In a real-world scenario, this could be an event from a message queue (Kafka, RabbitMQ)
+# or a cloud event source (e.g., AWS S3, Google Cloud Storage).
+# ==============================================================================
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: serverless-trigger
+  namespace: serverless
+spec:
+  schedule: "*/5 * * * *" # Every 5 minutes
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: curl-trigger
+            image: curlimages/curl
+            args:
+            - "-v"
+            - "http://planetary-scale-serverless-inference.serverless.svc.cluster.local"
+          restartPolicy: OnFailure

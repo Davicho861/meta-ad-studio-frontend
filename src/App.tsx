@@ -1,11 +1,10 @@
+import React from "react";
 
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
+import { Toaster as Sonner } from "./components/ui/sonner.tsx";
+import { TooltipProvider } from "./components/ui/tooltip.tsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { RouterProvider } from "react-router-dom";
-import { ThemeProvider } from "./components/ThemeProvider";
-import { router } from "./router";
+import { ThemeProvider } from "./components/ThemeProvider.tsx";
+import { AppRouter } from "./router.tsx";
 
 const queryClient = new QueryClient();
 
@@ -13,9 +12,8 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
       <TooltipProvider>
-        <Toaster />
         <Sonner />
-        <RouterProvider router={router} />
+        <AppRouter />
       </TooltipProvider>
     </ThemeProvider>
   </QueryClientProvider>

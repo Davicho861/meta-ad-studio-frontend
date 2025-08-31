@@ -1,117 +1,106 @@
-# Improved Project Plan: Meta Ad Studio
+# Plan de Proyecto Mejorado: Meta Studio Ad Studio App SPA
 
-This document provides a comprehensive plan for improving the Meta Ad Studio project, including a code audit, refactoring suggestions, performance optimizations, a security analysis, testing integrations, documentation updates, a cloud deployment plan, and recommendations for monitoring and future expansions.
+## 1. Resumen Ejecutivo
 
-## 1. Code Audit and Refactoring
+Este documento detalla el plan de proyecto para la implementación de las mejoras identificadas en `FINAL_REPORT.md` y estructuradas en `PLAN_DE_ACCION_Y_MEJORAS.md`. El objetivo es ejecutar un conjunto de acciones correctivas y de optimización de forma iterativa, segura y medible, asegurando la estabilidad y escalabilidad del sistema.
 
-### Frontend
+## 2. Cronograma General y Fases
 
-- **Routing:** Centralize routing in a dedicated file (`src/router.tsx`) to improve scalability and maintainability.
+| Fase                                      | Responsable Principal | Timeline Estimado |
+| :---------------------------------------- | :-------------------- | :---------------- |
+| **1. Planificación y Diseño**             | Project Manager       | Semanas 1-2       |
+| **2. Desarrollo e Implementación**        | Tech Lead             | Semanas 2-4       |
+| **3. Manejo de Incidentes y Resiliencia** | DevOps Team           | Semanas 4-6       |
+| **4. Despliegue Local Optimizado**        | DevOps Team           | Semanas 6-8       |
+| **5. Pruebas y Calidad**                  | QA Lead               | Semanas 8-10      |
+| **6. Monitoreo y Mejoras Futuras**        | SRE Team              | Continuo          |
 
-  **Action:** Create `src/router.tsx` and use `createBrowserRouter` to define all routes. Update `src/App.tsx` to use `RouterProvider`.
+---
 
-- **State Management:** Evaluate the need for a global state management library (e.g., Redux, Zustand) to handle complex state interactions.
+## 3. Detalle por Fases
 
-  **Action:** For complex state that is shared across multiple components, consider using Zustand for its simplicity and performance.
+### Fase 1: Planificación y Diseño (Semanas 1-2)
 
-- **Component Structure:** Ensure components are small, reusable, and follow the single responsibility principle.
+**Objetivo:** Establecer una base sólida para el proyecto, actualizando la planificación, refinando el diseño de la API y optimizando la configuración de la interfaz de usuario.
 
-  **Action:** Break down large components into smaller, more manageable ones. Use a tool like Storybook to develop and test components in isolation.
+| Acción                                     | Hitos Clave                                                              | Responsable       | Estado      |
+| :----------------------------------------- | :----------------------------------------------------------------------- | :---------------- | :---------- |
+| **1.1. Actualizar Plan de Proyecto**       | - Plan de proyecto aprobado por stakeholders.<br>- Hitos y timelines definidos. | Project Manager   | [ ] Pendiente |
+| **1.2. Refinar Diseño de API (`openapi.yaml`)** | - Especificación OpenAPI validada sin errores.<br>- Documentación de endpoints completa. | Backend Team      | [ ] Pendiente |
+| **1.3. Optimizar UI (`tailwind.config.ts`)** | - Conflictos de alias de importación resueltos.<br>- Configuración de rutas validada. | Frontend Team     | [ ] Pendiente |
 
-### Backend
+**Métricas de Éxito:**
+- Cero errores de validación en `openapi.yaml`.
+- 100% de reducción de errores de build relacionados con alias de importación.
 
-- **Error Handling:** Implement a centralized error handling middleware to standardize error responses.
+### Fase 2: Desarrollo e Implementación (Semanas 2-4)
 
-  **Action:** Create a middleware that catches all errors and sends a standardized JSON response.
+**Objetivo:** Abordar la deuda técnica, mejorar la calidad del código y optimizar el proceso de construcción.
 
-- **Dependency Injection:** Use a dependency injection framework (e.g., InversifyJS) to improve modularity and testability.
+| Acción                                       | Hitos Clave                                                                 | Responsable   | Estado      |
+| :------------------------------------------- | :-------------------------------------------------------------------------- | :------------ | :---------- |
+| **2.1. Resolver Dependencias (`package.json`)** | - `npm audit` sin vulnerabilidades críticas.<br>- `package-lock.json` actualizado y consistente. | Tech Lead     | [ ] Pendiente |
+| **2.2. Integrar Auditorías de Código**       | - `eslint.config.js` configurado y aplicado.<br>- Pipeline de CI incluye paso de linting. | Backend/Frontend Teams | [ ] Pendiente |
+| **2.3. Optimizar Builds Locales**            | - Script de build local (`scripts/run-dev.sh`) mejorado.<br>- Tiempo de build reducido. | DevOps Team   | [ ] Pendiente |
 
-  **Action:** Refactor the backend to use dependency injection for services and controllers.
+**Métricas de Éxito:**
+- Reducción del 100% de vulnerabilidades críticas.
+- Tiempo de build local reducido en un 30%.
 
-- **Database Migrations:** Ensure that database migrations are handled properly with Prisma Migrate.
+### Fase 3: Manejo de Incidentes y Resiliencia (Semanas 4-6)
 
-  **Action:** Use `npx prisma migrate dev` to create and apply migrations.
+**Objetivo:** Aumentar la resiliencia del sistema mediante la implementación de planes de diagnóstico y chequeos automáticos.
 
-## 2. Performance and Scalability
+| Acción                                            | Hitos Clave                                                                    | Responsable   | Estado      |
+| :------------------------------------------------ | :----------------------------------------------------------------------------- | :------------ | :---------- |
+| **3.1. Implementar Planes de Resiliencia**        | - Procedimientos de `RESOLUTION_AND_RESILIENCE_PLAN.md` integrados en runbooks. | SRE Team      | [ ] Pendiente |
+| **3.2. Automatizar Chequeos (Cuotas/AppArmor)**   | - Script `scripts/check_system_health.sh` creado y funcional.<br>- Alertas configuradas. | DevOps Team   | [ ] Pendiente |
+| **3.3. Actualizar `GLOBAL_INCIDENT_POST_MORTEM.md`** | - Plantilla de post-mortem creada.<br>- Análisis de incidentes previos documentado. | SRE Team      | [ ] Pendiente |
 
-- **Code Splitting:** Implement route-based code splitting in the frontend to reduce the initial bundle size.
+**Métricas de Éxito:**
+- MTTR (Tiempo Medio de Recuperación) reducido en un 25%.
+- Cero incidentes causados por agotamiento de cuotas o mala configuración de AppArmor.
 
-  **Action:** Use `React.lazy` and `Suspense` to lazy-load components that are not needed for the initial render.
+### Fase 4: Despliegue Local Optimizado (Semanas 6-8)
 
-- **Caching:** Use a caching layer (e.g., Redis) in the backend to reduce database load.
+**Objetivo:** Agilizar y robustecer el proceso de despliegue en entornos locales.
 
-  **Action:** Use a Redis client to cache frequently accessed data.
+| Acción                                           | Hitos Clave                                                                    | Responsable   | Estado      |
+| :----------------------------------------------- | :----------------------------------------------------------------------------- | :------------ | :---------- |
+| **4.1. Optimizar `deploy_local.sh`**             | - El script permite builds desde fuente local.<br>- Proceso de despliegue documentado. | DevOps Team   | [ ] Pendiente |
+| **4.2. Integrar Dashboard "Mission Control"**    | - `index.html` muestra métricas básicas de estado.<br>- Conexión con logs de la aplicación. | Frontend Team | [ ] Pendiente |
+| **4.3. Crear Guía de Despliegue Docker**         | - Documento `docs/DOCKER_DEPLOYMENT.md` creado.<br>- `docker-compose.yml` verificado. | DevOps Team   | [ ] Pendiente |
+| **4.4. Mejorar `pre-deployment-check.sh`**       | - Script incluye validación de variables de entorno y conectividad.            | DevOps Team   | [ ] Pendiente |
 
-- **Load Balancing:** Use a load balancer to distribute traffic across multiple instances of the backend server.
+**Métricas de Éxito:**
+- Tiempo de despliegue local reducido en un 40%.
+- 90% de reducción de fallos de despliegue debido a errores de configuración.
 
-  **Action:** Use a cloud provider's load balancer to distribute traffic across multiple backend instances.
+### Fase 5: Pruebas y Calidad (Semanas 8-10)
 
-## 3. Security Analysis
+**Objetivo:** Elevar la calidad del software a través de una estrategia de pruebas robusta y automatizada.
 
-- **Dependencies:** Regularly audit dependencies for known vulnerabilities using `npm audit`.
+| Acción                                       | Hitos Clave                                                                    | Responsable | Estado      |
+| :------------------------------------------- | :----------------------------------------------------------------------------- | :---------- | :---------- |
+| **5.1. Corregir Configuraciones de Pruebas** | - `cypress.config.cjs` y `jest.config.js` corregidos.<br>- Todas las suites de pruebas ejecutan sin errores. | QA Team     | [ ] Pendiente |
+| **5.2. Aumentar Cobertura de Pruebas**       | - Reporte de cobertura generado.<br>- Nuevas pruebas unitarias y de integración implementadas. | Backend/Frontend Teams | [ ] Pendiente |
+| **5.3. Integrar CI/CD Local**                | - Pipeline local en `ci-cd/` ejecuta pruebas en cada commit.<br>- Notificaciones de fallo configuradas. | DevOps Team | [ ] Pendiente |
+| **5.4. Incorporar Pruebas de Seguridad**     | - Herramienta SAST (ej. Trivy) integrada en el pipeline.<br>- Escaneo de vulnerabilidades automatizado. | Security Team | [ ] Pendiente |
 
-  **Action:** Run `npm audit` regularly and update any vulnerable dependencies.
+**Métricas de Éxito:**
+- Cobertura de código superior al 80%.
+- Cero vulnerabilidades críticas detectadas por el pipeline de CI/CD.
 
-- **Input Validation:** Implement robust input validation in the backend to prevent common security vulnerabilities (e.g., XSS, SQL injection).
+### Fase 6: Monitoreo y Mejoras Futuras (Continuo)
 
-  **Action:** Use a library like Zod to validate all incoming data.
+**Objetivo:** Garantizar la observabilidad del sistema y planificar su evolución a largo plazo.
 
-- **Authentication and Authorization:** Implement a secure authentication and authorization mechanism (e.g., JWT, OAuth).
+| Acción                                       | Hitos Clave                                                                    | Responsable | Estado      |
+| :------------------------------------------- | :----------------------------------------------------------------------------- | :---------- | :---------- |
+| **6.1. Extender Dashboards de Monitoreo**    | - Métricas de rendimiento (CPU, memoria, latencia) visibles en "Mission Control". | SRE Team    | [ ] Pendiente |
+| **6.2. Desarrollar Plan de Migración a Cloud** | - Documento de estrategia de migración creado.<br>- Análisis de costos y beneficios completado. | SRE/DevOps Team | [ ] Pendiente |
+| **6.3. Establecer Proceso de Best Practices**| - Política de revisión de código por pares definida.<br>- Proceso de actualización de dependencias programado. | Tech Lead   | [ ] Pendiente |
 
-  **Action:** Use a library like Passport.js to implement a secure authentication and authorization system.
-
-## 4. Testing Integrations
-
-- **Unit Tests:** Write unit tests for all critical components and functions in the frontend and backend.
-
-  **Action:** Use Jest and React Testing Library to write unit tests for the frontend. Use Jest and Supertest to write unit tests for the backend.
-
-- **Integration Tests:** Write integration tests to ensure that the frontend and backend are working together correctly.
-
-  **Action:** Use Cypress to write integration tests that simulate user workflows.
-
-- **E2E Tests:** Write E2E tests to simulate user workflows and catch bugs before they reach production.
-
-  **Action:** Use Cypress to write E2E tests that cover all critical user flows.
-
-## 5. Documentation Updates
-
-- **API Documentation:** Generate API documentation from the OpenAPI specification.
-
-  **Action:** Use a tool like Swagger UI to generate interactive API documentation.
-
-- **Architecture Diagrams:** Create architecture diagrams to visualize the project's structure.
-
-  **Action:** Use a tool like Mermaid.js to create architecture diagrams in Markdown.
-
-- **Deployment Guide:** Write a comprehensive guide for deploying the application to production.
-
-  **Action:** Create a `DEPLOYMENT.md` file with detailed instructions for deploying the application.
-
-## 6. Cloud Deployment Plan
-
-- **Containerization:** Use Docker to containerize the frontend and backend applications.
-
-  **Action:** Create a `Dockerfile` for the frontend and backend applications.
-
-- **CI/CD:** Use a CI/CD pipeline to automate the build, testing, and deployment process.
-
-  **Action:** Use a tool like GitHub Actions to create a CI/CD pipeline.
-
-- **Infrastructure as Code:** Use Terraform to manage the cloud infrastructure as code.
-
-  **Action:** Use Terraform to create and manage all cloud resources.
-
-## 7. Monitoring and Future Expansions
-
-- **Logging:** Use a centralized logging solution (e.g., ELK stack) to collect and analyze logs.
-
-  **Action:** Use a logging library like Winston to send logs to a centralized logging solution.
-
-- **Metrics:** Use a monitoring tool (e.g., Prometheus, Grafana) to track key performance indicators.
-
-  **Action:** Use a library like `prom-client` to expose application metrics to Prometheus.
-
-- **Internationalization:** Plan for internationalization by extracting all user-facing strings into resource files.
-
-  **Action:** Use a library like `i18next` to manage translations.
+**Métricas de Éxito:**
+- Disponibilidad del sistema > 99.9%.
+- Tiempo de respuesta de la API < 200ms.

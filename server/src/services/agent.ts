@@ -31,10 +31,10 @@ export const runAgent = async (taskType: string, taskDetails: Record<string, unk
         result = await developmentAgent(taskDetails.featureDescription as string, taskDetails.openapiContent as string, reasoning_effort);
         break;
       case 'test':
-        result = await testingAgent(taskDetails.testType as string, reasoning_effort);
+        result = await testingAgent(taskDetails.testType as 'cypress' | 'jest', reasoning_effort);
         break;
       case 'deploy':
-        result = await deploymentAgent(taskDetails.action as string, reasoning_effort);
+        result = await deploymentAgent(taskDetails.action as 'deploy' | 'rollback', reasoning_effort);
         break;
       case 'iac':
         result = await iacAgent(taskDetails.action as string, taskDetails.details as Record<string, unknown>);

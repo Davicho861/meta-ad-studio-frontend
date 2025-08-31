@@ -38,7 +38,7 @@ router.get('/:id', async (req: Request, res: Response) => {
 });
 
 // Create sprint (authenticated)
-router.post('/', authMiddleware, async (req: Request, res: Response) => {
+router.post('/', authMiddleware, async (req: any, res: Response) => {
   try {
     const sprint = await createSprint(req.body, req.user!.id);
     res.status(201).json(sprint);

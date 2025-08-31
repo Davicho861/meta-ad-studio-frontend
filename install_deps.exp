@@ -1,0 +1,6 @@
+#!/usr/bin/expect -f
+set timeout -1
+spawn sudo apt install -y expect postgresql postgresql-contrib libpq-dev
+expect "password for davicho:"
+send "davicho\r"
+expect eof

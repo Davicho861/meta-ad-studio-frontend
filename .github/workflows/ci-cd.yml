@@ -1,0 +1,263 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  lint-and-unit-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run linter
+        run: npm run lint
+
+      - name: Run unit tests
+        run: npm run test
+
+  e2e-test:
+    runs-on: ubuntu-latest
+    needs: lint-and-unit-test
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run E2E tests
+        uses: cypress-io/github-action@v6
+        with:
+          build: npm run build
+          start: npm run dev
+          command: npx cypress run --config-file tests/cypress.config.cjs --headless --browser chrome --config video=false
+
+  opa-validate:
+    runs-on: ubuntu-latest
+    needs: lint-and-unit-test
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Install OPA
+        run: |
+          curl -L -o opa https://openpolicyagent.org/downloads/latest/opa_linux_amd64
+          chmod +x ./opa
+          sudo mv ./opa /usr/local/bin/
+      - name: Validate OPA policies
+        run: opa test ./compliance -v
+      - name: Validate k8s manifests against OPA policies
+        run: |
+          # This step assumes you have Kubernetes manifests to check.
+          # You would typically check your 'k8s/' directory.
+          # Example: opa exec --decision kubernetes/admission/deny --bundle ./compliance k8s/deployment.yaml
+          echo "OPA validation against manifests would go here."
+
+  build-and-push-docker-image:
+    runs-on: ubuntu-latest
+    needs: e2e-test
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          push: true
+          tags: |
+            your-repo/ad-studio-app:latest
+            your-repo/ad-studio-app:${{ github.sha }}
+
+  provision-infrastructure:
+    runs-on: ubuntu-latest
+    needs: build-and-push-docker-image
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.5.0
+
+      - name: Terraform Init
+        run: terraform -chdir=terraform init
+
+      - name: Terraform Apply
+        run: terraform -chdir=terraform apply -auto-approve
+
+  update-gitops-repo:
+    runs-on: ubuntu-latest
+    needs: [provision-infrastructure, build-and-push-docker-image]
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout GitOps repo
+        uses: actions/checkout@v3
+        with:
+          repository: 'your-repo/your-k8s-configs' # Replace with your GitOps repo
+          token: ${{ secrets.GITOPS_REPO_TOKEN }}
+
+      - name: Update image tag
+        run: |
+          # This is a placeholder. You would use a tool like kustomize or sed to update the image tag.
+          echo "Updating image tag in GitOps repo for sha ${{ github.sha }}"
+          # Example with sed:
+          # sed -i 's|image:.*|image: your-repo/ad-studio-app:${{ github.sha }}|g' k8s/apps/my-app/deployment.yaml
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name 'GitHub Actions'
+          git config --global user.email 'actions@github.com'
+          git commit -am "Update image to ${{ github.sha }}"
+          git push
+
+  velero-cross-cloud-test:
+    runs-on: ubuntu-latest
+    needs: update-gitops-repo
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+      - name: Run Velero DR test script
+        run: |
+          echo "Running Velero cross-cloud DR test..."
+          # This would be a script that:
+          # 1. Triggers a Velero backup.
+          # 2. Deletes a sample application.
+          # 3. Restores the application from a GCS or Azure Blob backup.
+          # 4. Verifies the application is running.
+          echo "DR test complete."
+
+  train-and-deploy-ml-model:
+    runs-on: ubuntu-latest
+    needs: provision-infrastructure
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Install Kubectl
+        uses: azure/setup-kubectl@v3
+      - name: Configure Kubeconfig
+        run: |
+          # Logic to fetch kubeconfig from a secure store (e.g., Vault, AWS Secrets Manager)
+          echo "Configuring kubeconfig for Kubeflow cluster..."
+      - name: Trigger Kubeflow Pipeline
+        run: |
+          # This would use the Kubeflow Pipelines SDK or `argo` CLI to submit the workflow
+          echo "Submitting ML training pipeline from k8s/kubeflow-apps.yaml..."
+          # argo submit --watch k8s/kubeflow-apps.yaml -n kubeflow -p ...
+
+  sync-edge-clusters:
+    runs-on: ubuntu-latest
+    needs: train-and-deploy-ml-model
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Install Rancher CLI
+        run: |
+          # Logic to install Rancher CLI
+          echo "Installing Rancher CLI..."
+      - name: Sync K3s Edge Configurations
+        run: |
+          # This script would use Rancher CLI to update the K3s clusters
+          echo "Syncing edge configurations from k8s/k3s-edge.yaml..."
+          # rancher app upgrade ...
+
+  deploy-serverless-function:
+    runs-on: ubuntu-latest
+    needs: train-and-deploy-ml-model
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Install Knative CLI (kn)
+        run: |
+          # Logic to install kn
+          echo "Installing Knative CLI..."
+      - name: Deploy Knative Service
+        run: |
+          echo "Deploying serverless function from k8s/knative-values.yaml..."
+          # kn service apply -f k8s/knative-values.yaml -n serverless
+
+  verify-web3-contracts:
+    runs-on: ubuntu-latest
+    needs: provision-infrastructure
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Set up Node.js for Web3
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+      - name: Install Web3 dependencies
+        run: npm install ethers hardhat
+      - name: Compile and Test Smart Contracts
+        run: |
+          # This would use Hardhat or Truffle to compile and test the contracts
+          echo "Compiling and testing smart contracts in web3/..."
+          # npx hardhat compile
+          # npx hardhat test
+
+  notify-on-status:
+    runs-on: ubuntu-latest
+    needs:
+      - opa-validate
+      - velero-cross-cloud-test
+      - train-and-deploy-ml-model
+      - sync-edge-clusters
+      - deploy-serverless-function
+      - verify-web3-contracts
+    if: always()
+    steps:
+      - name: Send Slack Notification
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_USERNAME: "CI/CD Bot"
+          SLACK_ICON_EMOJI: ":robot_face:"
+          SLACK_CHANNEL: "devops-alerts"
+          SLACK_TITLE: "CI/CD Pipeline Status: ${{ job.status }}"
+          SLACK_MESSAGE: "Workflow for `${{ github.repository }}` finished with status: `${{ job.status }}`."
+          SLACK_COLOR: ${{ job.status == 'success' && 'good' || 'danger' }}

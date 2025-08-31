@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
 
 interface Video {
   id: string;
@@ -15,7 +16,6 @@ const MultiverseGallery: React.FC = () => {
     const fetchVideos = async () => {
       try {
         setLoading(true);
-        // Assuming the API endpoint is available and correctly configured
         const response = await fetch('/api/multiverse/videos');
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -34,61 +34,42 @@ const MultiverseGallery: React.FC = () => {
   }, []);
 
   if (loading) {
-    return <div>Loading gallery...</div>;
+    return (
+      <div className="flex justify-center items-center p-10">
+        <p className="text-muted-foreground">Loading gallery...</p>
+      </div>
+    );
   }
 
   if (error) {
-    return <div>Error loading gallery: {error}</div>;
+    return (
+      <div className="flex justify-center items-center p-10 bg-destructive/10 rounded-lg">
+        <p className="text-destructive-foreground">Error loading gallery: {error}</p>
+      </div>
+    );
   }
 
   return (
-    <div className="multiverse-gallery">
-      <h2>Multiverse Video Gallery</h2>
+    <div className="p-4 sm:p-6">
+      <h2 className="text-3xl font-bold tracking-tight text-foreground mb-6">Multiverse Video Gallery</h2>
       {videos.length > 0 ? (
-        <div className="video-grid">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {videos.map((video) => (
-            <div key={video.id} className="video-item">
-              <video src={video.url} autoPlay loop muted playsInline data-testid="video-element" title={video.caption} aria-label={video.caption} />
-              <p>{video.caption}</p>
-            </div>
+            <Card key={video.id} className="overflow-hidden transition-transform transform hover:scale-105 hover:shadow-lg hover:shadow-primary/20">
+              <CardContent className="p-0">
+                <video src={video.url} autoPlay loop muted playsInline data-testid="video-element" title={video.caption} className="w-full h-48 object-cover" />
+              </CardContent>
+              <CardFooter className="p-4">
+                <p className="text-sm font-medium text-foreground truncate">{video.caption}</p>
+              </CardFooter>
+            </Card>
           ))}
         </div>
       ) : (
-        <p>No videos found in the gallery.</p>
+        <div className="flex justify-center items-center p-10 border-2 border-dashed border-border rounded-lg">
+            <p className="text-muted-foreground">No videos found in the gallery.</p>
+        </div>
       )}
-      <style>{`
-        .multiverse-gallery {
-          padding: 20px;
-          font-family: Arial, sans-serif;
-        }
-        .multiverse-gallery h2 {
-          margin-bottom: 20px;
-          color: #333;
-        }
-        .video-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-          gap: 20px;
-        }
-        .video-item {
-          border: 1px solid #ddd;
-          padding: 10px;
-          text-align: center;
-          background-color: #fff;
-          box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .video-item video {
-          max-width: 100%;
-          height: 200px; /* Fixed height for consistency */
-          object-fit: cover; /* Ensures video covers the area */
-          margin-bottom: 10px;
-        }
-        .video-item p {
-          margin: 0;
-          font-size: 0.9em;
-          color: #555;
-        }
-      `}</style>
     </div>
   );
 };

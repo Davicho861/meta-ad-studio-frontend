@@ -1,3 +1,4 @@
+import React from "react";
 
 import { BarChart3, GitPullRequest, Search, Lightbulb, Filter, PlusCircle, ArrowUpRight, Download, Calendar, TrendingUp, AlertTriangle, Layers, CheckCircle2, Clock } from "lucide-react";
 import AIAgentCard from "../components/dashboard/AIAgentCard";

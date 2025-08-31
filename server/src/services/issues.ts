@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Prisma } from '@prisma/client';
 import { z } from 'zod';
 import { Issue } from '../models/issue';
 
@@ -20,19 +20,23 @@ const statusSchema = z.object({
 });
 
 export async function createIssue(data: Partial<Issue>, userId: string): Promise<Issue> {
-  const { projectId, sprintId, ...rest } = issueSchema.parse(data);
+  const validated = issueSchema.parse(data);
+
+  const issueData: Prisma.IssueUncheckedCreateInput = {
+    ...validated,
+    title: validated.title || '',
+    description: validated.description || '',
+    status: validated.status || 'To Do',
+    priority: validated.priority || 'Medium',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    createdById: userId,
+    projectId: validated.projectId,
+    sprintId: validated.sprintId,
+  };
+
   const issue = await prisma.issue.create({
-    data: {
-      ...rest,
-      description: rest.description || '',
-      status: rest.status || 'To Do',
-      priority: rest.priority || 'Medium',
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      createdById: userId,
-      projectId,
-      sprintId,
-    },
+    data: issueData,
   });
   return issue as unknown as Issue;
 }

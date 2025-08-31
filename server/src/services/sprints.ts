@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { Prisma, PrismaClient } from '@prisma/client';
 import { z } from 'zod';
 import { Sprint } from '../models/sprint';
 
@@ -17,11 +17,15 @@ const issueAssignmentSchema = z.object({
 
 export async function createSprint(data: Partial<Sprint>, userId: string): Promise<Sprint> {
   const validated = sprintSchema.parse(data);
+  const sprintData: Prisma.SprintUncheckedCreateInput = {
+    name: validated.name,
+    startDate: validated.startDate,
+    endDate: validated.endDate,
+    projectId: validated.projectId,
+    createdById: userId,
+  };
   const sprint = await prisma.sprint.create({
-    data: {
-      ...validated,
-      createdById: userId,
-    },
+    data: sprintData,
   });
   return sprint as unknown as Sprint;
 }

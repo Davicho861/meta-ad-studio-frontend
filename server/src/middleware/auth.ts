@@ -1,12 +1,14 @@
 import { Request, Response, NextFunction } from 'express';
+import { AuthenticatedRequest } from '../types';
 import * as admin from 'firebase-admin';
-import serviceAccount from '../../credentials/gcloud-key.json';
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
-});
+// In a GCP environment (Cloud Build, GKE), the SDK will automatically
+// use the environment's service account credentials.
+if (process.env.NODE_ENV !== 'test') {
+  admin.initializeApp();
+}
 
-export const protect = async (req: Request, res: Response, next: NextFunction) => {
+export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   const token = req.headers.authorization?.split('Bearer ')[1];
 
   if (!token) {
@@ -15,7 +17,7 @@ export const protect = async (req: Request, res: Response, next: NextFunction) =
 
   try {
     const decodedToken = await admin.auth().verifyIdToken(token);
-    req.user = decodedToken;
+    (req as AuthenticatedRequest).user = decodedToken;
     next();
   } catch (error) {
     res.status(401).json({ message: 'Unauthorized' });

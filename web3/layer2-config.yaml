@@ -1,0 +1,20 @@
+# Layer-2 blockchain scaling configuration (mock)
+
+provider: "Polygon"
+
+network:
+  name: "Polygon Mainnet"
+  rpc_url: "https://polygon-rpc.com"
+  chain_id: 137
+
+bridge:
+  # Configuration for bridging assets between Ethereum and Polygon
+  ethereum_rpc_url: "https://mainnet.infura.io/v3/YOUR_PROJECT_ID"
+  polygon_rpc_url: "https://polygon-rpc.com"
+  root_chain_proxy_address: "0x86E4Dc95c7FBdBf52e33D563BbDB00823894C287"
+  matic_erc20_tunnel_address: "0x7d1AfA7B718fb893dB30A3aBc0C4c6a9Ac2Bb20d"
+
+gas_station:
+  # Configuration for using Polygon's gas station to enable gasless transactions
+  api_url: "https://gasstation-mainnet.matic.network"
+  api_key: "YOUR_GAS_STATION_API_KEY"

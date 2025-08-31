@@ -1,0 +1,11 @@
+#!/usr/bin/expect -f
+set timeout -1
+spawn sudo apt install -y postgresql postgresql-contrib libpq-dev
+match_max 100000
+expect {
+    "password for davicho:" {
+        send "\r"
+        exp_continue
+    }
+    eof
+}

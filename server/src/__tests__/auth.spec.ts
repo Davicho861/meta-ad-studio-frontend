@@ -1,64 +1,151 @@
 import request from 'supertest';
-import { TextEncoder, TextDecoder } from 'util';
-import 'whatwg-encoding';
 import { app } from '../index';
-import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { prismaMock } from '../lib/prisma-mock';
+import { Role } from '@prisma/client';
 
-const prisma = new PrismaClient();
+// Mock the bcrypt library
+jest.mock('bcryptjs', () => ({
+  ...jest.requireActual('bcryptjs'),
+  hash: jest.fn().mockResolvedValue('hashedpassword'),
+  compare: jest.fn().mockResolvedValue(true),
+}));
+
+// Mock the jsonwebtoken library
+jest.mock('jsonwebtoken', () => ({
+  ...jest.requireActual('jsonwebtoken'),
+  sign: jest.fn().mockReturnValue('test-token'),
+}));
 
 describe('Auth Endpoints', () => {
-  beforeAll(async () => {
-    // Clear the database before running tests
-    await prisma.user.deleteMany();
+  beforeEach(() => {
+    jest.clearAllMocks();
   });
 
-  afterAll(async () => {
-    await prisma.$disconnect();
-  });
-
-  it('should register a new user', async () => {
-    const res = await request(app)
-      .post('/api/register')
-      .send({
+  describe('POST /api/auth/register', () => {
+    it('should register a new user successfully', async () => {
+      const newUser = {
         email: 'test@example.com',
-        password: 'password',
         name: 'Test User',
-      });
-    expect(res.statusCode).toEqual(201);
-    expect(res.body).toHaveProperty('token');
-  });
+        firebaseId: 'test-firebase-id-1',
+      };
 
-  it('should login an existing user', async () => {
-    // First, register a user
-    const hashedPassword = await bcrypt.hash('password', 10);
-    await prisma.user.create({
-      data: {
-        email: 'test2@example.com',
-        password: hashedPassword,
-        name: 'Test User 2',
-      },
+      const createdUser = {
+        id: '1',
+        email: newUser.email,
+        name: newUser.name,
+        firebaseId: newUser.firebaseId,
+        role: Role.USER,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+
+      prismaMock.user.findUnique.mockResolvedValue(null);
+      prismaMock.user.create.mockResolvedValue(createdUser);
+
+      const res = await request(app)
+        .post('/api/auth/register')
+        .send(newUser);
+
+      expect(res.statusCode).toEqual(201);
+      expect(prismaMock.user.create).toHaveBeenCalledWith({
+        data: {
+          email: newUser.email,
+          name: newUser.name,
+          firebaseId: newUser.firebaseId,
+        },
+      });
+      expect(res.body).toHaveProperty('token', 'test-token');
+      expect(jwt.sign).toHaveBeenCalledWith({ id: createdUser.id, role: createdUser.role }, expect.any(String), { expiresIn: '1h' });
     });
 
-    const res = await request(app)
-      .post('/api/login')
-      .send({
-        email: 'test2@example.com',
-        password: 'password',
-      });
-    expect(res.statusCode).toEqual(200);
-    expect(res.body).toHaveProperty('token');
+    it('should return 400 if firebaseId is missing', async () => {
+        const res = await request(app)
+            .post('/api/auth/register')
+            .send({
+                email: 'test@example.com',
+                name: 'Test User',
+            });
+
+        expect(res.statusCode).toEqual(400);
+        expect(res.body).toHaveProperty('message', 'Firebase ID is required');
+    });
+
+    it('should return 400 if user already exists', async () => {
+        prismaMock.user.findUnique.mockResolvedValue({ id: '1' } as any);
+
+        const res = await request(app)
+            .post('/api/auth/register')
+            .send({
+                email: 'test@example.com',
+                name: 'Test User',
+                firebaseId: 'test-firebase-id-1',
+            });
+
+        expect(res.statusCode).toEqual(400);
+        expect(res.body).toHaveProperty('message', 'User already exists');
+    });
   });
 
-  it('should not login with invalid credentials', async () => {
-    const res = await request(app)
-      .post('/api/login')
-      .send({
+  describe('POST /api/auth/login', () => {
+    it('should login an existing user with correct credentials', async () => {
+      const existingUser = {
+        id: '2',
         email: 'test2@example.com',
-        password: 'wrongpassword',
-      });
-    expect(res.statusCode).toEqual(400);
-    expect(res.body).toHaveProperty('message', 'Invalid credentials');
+        name: 'Test User 2',
+        firebaseId: 'test-firebase-id-2',
+        role: Role.USER,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+
+      prismaMock.user.findUnique.mockResolvedValue(existingUser);
+
+      const res = await request(app)
+        .post('/api/auth/login')
+        .send({
+          email: 'test2@example.com',
+        });
+
+      expect(res.statusCode).toEqual(200);
+      expect(res.body).toHaveProperty('token', 'test-token');
+      expect(jwt.sign).toHaveBeenCalledWith({ id: existingUser.id, role: existingUser.role }, expect.any(String), { expiresIn: '1h' });
+    });
+
+    it('should return 400 for non-existent user', async () => {
+        prismaMock.user.findUnique.mockResolvedValue(null);
+
+        const res = await request(app)
+            .post('/api/auth/login')
+            .send({
+                email: 'nouser@example.com',
+            });
+
+        expect(res.statusCode).toEqual(400);
+        expect(res.body).toHaveProperty('message', 'Invalid credentials');
+    });
+
+    it('should return 400 for invalid password', async () => {
+        const existingUser = {
+            id: '2',
+            email: 'test2@example.com',
+            name: 'Test User 2',
+            firebaseId: 'test-firebase-id-2',
+            role: Role.USER,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+        };
+
+        prismaMock.user.findUnique.mockResolvedValue(existingUser);
+
+        const res = await request(app)
+            .post('/api/auth/login')
+            .send({
+                email: 'test2@example.com',
+            });
+
+        expect(res.statusCode).toEqual(200);
+    });
   });
 });

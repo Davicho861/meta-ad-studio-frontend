@@ -1,0 +1,22 @@
+# Post-Quantum Cryptography Algorithms Configuration
+# This file defines the primary and fallback PQC algorithms for key exchange and digital signatures.
+# Algorithms are selected based on NIST recommendations and performance benchmarks.
+
+key_exchange_algorithms:
+  primary: CRYSTALS-Kyber-1024
+  fallback:
+    - NTRU-HPS-4096
+    - SABER-KEM
+
+digital_signature_algorithms:
+  primary: CRYSTALS-Dilithium5
+  fallback:
+    - Falcon-1024
+    - SPHINCS+-SHA256-256s-robust
+
+# Policy: Enforce primary algorithms unless a specific override is provided for compatibility.
+# All new keys must be generated using these specifications.
+# Legacy RSA/ECC keys are marked for immediate deprecation and replacement.
+enforcement_policy:
+  strict_mode: true
+  deprecation_window_hours: 0

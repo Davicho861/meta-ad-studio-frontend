@@ -1,145 +1,70 @@
+substitutions:
+  _REGION: "us-central1" # Default region, can be overridden by triggers
+
 steps:
-  # --- FASE DE INSTALACIÓN Y VERIFICACIÓN ---
-  - name: 'node:22'
-    id: 'Verificar-Version-Node'
-    entrypoint: 'node'
-    args: ['-v']
+# Build and push the unified image to the regional Artifact Registry
+- name: 'gcr.io/kaniko-project/executor:latest'
+  id: 'Build and Push Image'
+  args:
+    - --dockerfile=./terraform/docker/Dockerfile
+    - --context=.
+    - --destination=${_REGION}-docker.pkg.dev/meta-ad-studio/ad-studio-app-repo/app:latest
+    - --cache=true
+    - --cache-ttl=24h
 
-  - name: 'node:22'
-    id: 'Instalar-Dependencias'
-    entrypoint: 'npm'
-    args: ['ci']
-    dir: 'packages/web-app'
-    waitFor:
-      - 'Verificar-Version-Node'
+# Get GKE credentials for the target regional cluster
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  id: 'Get GKE Credentials'
+  entrypoint: gcloud
+  args:
+    - 'container'
+    - 'clusters'
+    - 'get-credentials'
+    - 'staging-gke-cluster-${_REGION}' # Assumes a cluster naming convention
+    - '--region=${_REGION}'
+    - '--project=meta-ad-studio'
 
-  # --- FASE DE FILTROS DE CALIDAD (Se ejecutan en paralelo) ---
-  - name: 'node:22'
-    id: 'Analisis-Calidad-Codigo'
-    entrypoint: 'npm'
-    args: ['run', 'lint']
-    dir: 'packages/web-app'
-    waitFor:
-      - 'Instalar-Dependencias'
+# Install Trivy for security scanning
+- name: 'alpine'
+  id: 'Install Trivy'
+  entrypoint: 'sh'
+  args:
+  - '-c'
+  - |
+    apk add --no-cache curl
+    curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin
 
-  - name: 'node:22'
-    id: 'Ejecutar-Pruebas'
-    entrypoint: 'npm'
-    args: ['run', 'test']
-    dir: 'packages/web-app'
-    waitFor:
-      - 'Instalar-Dependencias'
-    
-  - name: 'node:22'
-    id: 'Auditoria-Seguridad'
-    entrypoint: 'npm'
-    args: ['audit', '--audit-level=high']
-    dir: 'packages/web-app'
-    waitFor:
-      - 'Instalar-Dependencias'
+# Scan the regional image with Trivy
+- name: 'aquasec/trivy'
+  id: 'Scan Image'
+  args: ['image', '--exit-code', '1', '--severity', 'HIGH,CRITICAL', '${_REGION}-docker.pkg.dev/meta-ad-studio/ad-studio-app-repo/app:latest']
+  waitFor:
+    - 'Build and Push Image'
 
-  # --- FASE DE CONSTRUCCIÓN (Solo se ejecuta si los filtros pasan) ---
-  - name: 'node:22'
-    id: 'Construir-Aplicacion'
-    entrypoint: 'npm'
-    args: ['run', 'build', '--', '--profile']
-    dir: 'packages/web-app'
-    waitFor:
-      - 'Analisis-Calidad-Codigo'
-      - 'Ejecutar-Pruebas'
-      - 'Auditoria-Seguridad'
+# Run OPA compliance checks
+- name: 'openpolicyagent/opa'
+  id: 'OPA Compliance Check'
+  args:
+    - 'exec'
+    - '--decision'
+    - 'kubernetes/admission/deny'
+    - '--bundle'
+    - 'compliance/'
+    - 'k8s/'
 
-  - name: 'gcr.io/cloud-builders/docker'
-    id: 'Construir-Imagen-Produccion'
-    args:
-    - 'build'
-    - '--tag'
-    - 'us-central1-docker.pkg.dev/$PROJECT_ID/meta-ad-studio-repo/frontend-app:latest'
-    - '--cache-from'
-    - 'us-central1-docker.pkg.dev/$PROJECT_ID/meta-ad-studio-repo/frontend-app:latest'
-    - '-f'
-    - 'Dockerfile.frontend.prod'
-    - '.'
-    waitFor:
-      - 'Construir-Aplicacion'
+# Apply Kubernetes manifests to the regional cluster
+- name: 'gcr.io/cloud-builders/kubectl'
+  id: 'Deploy to GKE'
+  args: ['apply', '-f', 'k8s/']
+  env:
+  - 'CLOUDSDK_COMPUTE_REGION=${_REGION}'
+  - 'CLOUDSDK_CONTAINER_CLUSTER=staging-gke-cluster-${_REGION}'
+  waitFor:
+    - 'Get GKE Credentials'
+    - 'Scan Image' # Ensure deployment happens only after a successful scan
 
-  # --- FASE DE ESCANEO DE SEGURIDAD (Se ejecutan en paralelo) ---
-  - name: 'aquasec/trivy:latest'
-    id: 'Escanear-Imagen-Vulnerabilidades'
-    entrypoint: 'trivy'
-    args:
-      - 'image'
-      - '--exit-code'
-      - '1'
-      - '--severity'
-      - 'HIGH,CRITICAL'
-      - 'us-central1-docker.pkg.dev/$PROJECT_ID/meta-ad-studio-repo/frontend-app:latest'
-    waitFor:
-      - 'Construir-Imagen-Produccion'
-
-  - name: 'aquasec/trivy:latest'
-    id: 'Escanear-Codigo-Secrets'
-    entrypoint: 'trivy'
-    args:
-      - 'fs'
-      - '--exit-code'
-      - '1'
-      - '--scanners'
-      - 'secret'
-      - '.'
-    waitFor:
-      - 'Instalar-Dependencias'
-
-  # --- FASE DE DESPLIEGUE (Solo si todo lo anterior es exitoso) ---
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-    id: 'Desplegar-En-Cloud-Run'
-    entrypoint: 'gcloud'
-    args:
-      - 'run'
-      - 'deploy'
-      - 'frontend-app'
-      - '--image'
-      - 'us-central1-docker.pkg.dev/$PROJECT_ID/meta-ad-studio-repo/frontend-app:latest'
-      - '--region'
-      - 'us-central1'
-      - '--platform'
-      - 'managed'
-      - '--ingress'
-      - 'all'
-      - '--allow-unauthenticated'
-      - '--project=$PROJECT_ID'
-      - '--set-secrets=GCP_TYPE=gcp-type:latest,GCP_PROJECT_ID=gcp-project-id:latest,GCP_PRIVATE_KEY_ID=gcp-private-key-id:latest,GCP_PRIVATE_KEY=gcp-private-key:latest,GCP_CLIENT_EMAIL=gcp-client-email:latest,GCP_CLIENT_ID=gcp-client-id:latest,GCP_AUTH_URI=gcp-auth-uri:latest,GCP_TOKEN_URI=gcp-token-uri:latest,GCP_AUTH_PROVIDER_X509_CERT_URL=gcp-auth-provider-x509-cert-url:latest,GCP_CLIENT_X509_CERT_URL=gcp-client-x509-cert-url:latest'
-      - '--cpu=1'
-      - '--memory=512Mi'
-      - '--concurrency=80'
-      - '--min-instances=0'
-      - '--max-instances=10'
-    waitFor:
-      - 'Escanear-Imagen-Vulnerabilidades'
-      - 'Escanear-Codigo-Secrets'
-
-  # --- FASE DE CONFIGURACIÓN DE IAM ---
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-    id: 'Configurar-IAM-Publico'
-    entrypoint: 'gcloud'
-    args:
-      - 'run'
-      - 'services'
-      - 'add-iam-policy-binding'
-      - 'frontend-app'
-      - '--member=allUsers'
-      - '--role=roles/run.invoker'
-      - '--region=us-central1'
-      - '--platform=managed'
-      - '--project=$PROJECT_ID'
-    waitFor:
-      - 'Desplegar-En-Cloud-Run'
-
-# --- FASE DE ALMACENAMIENTO DE LA IMAGEN ---
 images:
-- 'us-central1-docker.pkg.dev/$PROJECT_ID/meta-ad-studio-repo/frontend-app:latest'
+- '${_REGION}-docker.pkg.dev/meta-ad-studio/ad-studio-app-repo/app:latest'
 
-# --- CONFIGURACIONES DE OPTIMIZACIÓN Y ROBUSTEZ ---
-timeout: '1200s' # 20 minutos timeout total
 options:
-  machineType: 'E2_HIGHCPU_8'
+  logging: CLOUD_LOGGING_ONLY

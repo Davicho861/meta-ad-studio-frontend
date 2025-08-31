@@ -1,0 +1,38 @@
+# OWASP ZAP Configuration for AR/VR Penetration Testing
+# This configuration extends the existing ZAP scans to include VR-specific security tests.
+
+apiVersion: "zaproxy.org/v1"
+kind: "ZAPScan"
+metadata:
+  name: "vr-ar-security-scan"
+spec:
+  target: "http://metaverse.api.example.com"
+  
+  # Standard ZAP scans
+  rules:
+    - id: "10020" # SQL Injection
+      threshold: "HIGH"
+    - id: "10021" # Cross Site Scripting
+      threshold: "HIGH"
+  
+  # VR/AR Specific Scans
+  # These are conceptual rules. In a real-world scenario, you would need to
+  # develop custom ZAP scripts to test for VR-specific vulnerabilities.
+  customScripts:
+    - name: "VR Hand Tracking Data Exposure"
+      type: "active"
+      script: |
+        // This script would attempt to intercept and analyze the data stream
+        // from VR controllers to check for sensitive information leakage.
+        function scan(ps, msg, src) {
+          // ... implementation ...
+        }
+    - name: "AR World Tampering"
+      type: "active"
+      script: |
+        // This script would attempt to manipulate the AR objects displayed
+        // to the user, for example, by replacing a legitimate ad with a
+        // malicious one.
+        function scan(ps, msg, src) {
+          // ... implementation ...
+        }

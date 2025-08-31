@@ -1,3 +1,4 @@
+import React from "react";
 
 import { useState } from "react";
 import {
@@ -36,18 +37,18 @@ const Sidebar = () => {
 
   return (
     <div
-      className={`h-screen bg-apple-gray transition-all duration-300 border-r border-gray-200 flex flex-col ${
+      className={`h-screen bg-card transition-all duration-300 border-r border-border flex flex-col ${
         collapsed ? "w-20" : "w-64"
       }`}
     >
-      <div className="flex items-center justify-center p-6">
+      <div className="flex items-center justify-center p-6 h-16 border-b border-border">
         {!collapsed && (
-          <div className="text-xl font-bold bg-gradient-to-r from-apple-blue to-apple-purple bg-clip-text text-transparent">
+          <div className="text-xl font-bold text-foreground">
             SDLC Nexus
           </div>
         )}
         {collapsed && (
-          <div className="h-10 w-10 rounded-full bg-gradient-to-r from-apple-blue to-apple-purple flex items-center justify-center text-white">
+          <div className="h-10 w-10 rounded-full bg-primary flex items-center justify-center text-primary-foreground">
             <span className="text-sm font-bold">SN</span>
           </div>
         )}
@@ -71,16 +72,16 @@ const Sidebar = () => {
         </nav>
       </div>
       
-      <div className="p-4 border-t border-gray-200">
+      <div className="p-4 border-t border-border">
         <button 
           className="apple-icon-button w-full flex justify-center"
           onClick={() => setCollapsed(!collapsed)}
           aria-label={collapsed ? "Expandir sidebar" : "Colapsar sidebar"}
         >
           {collapsed ? (
-            <ChevronRight size={20} className="text-gray-600" />
+            <ChevronRight size={20} className="text-muted-foreground" />
           ) : (
-            <ChevronLeft size={20} className="text-gray-600" />
+            <ChevronLeft size={20} className="text-muted-foreground" />
           )}
         </button>
       </div>

@@ -1,4 +1,4 @@
-import { PrismaClient, Project } from '@prisma/client';
+import { PrismaClient, Project, Prisma } from '@prisma/client';
 import { z } from 'zod';
 
 const prisma = new PrismaClient();
@@ -10,12 +10,13 @@ const projectSchema = z.object({
 
 export async function createProject(data: { name: string; description?: string }, userId: string): Promise<Project> {
   const validated = projectSchema.parse(data);
+  const projectData: Prisma.ProjectUncheckedCreateInput = {
+    name: validated.name,
+    description: validated.description || '',
+    createdById: userId,
+  };
   return prisma.project.create({
-    data: {
-      ...validated,
-      description: validated.description || '',
-      createdById: userId,
-    },
+    data: projectData,
   });
 }
 

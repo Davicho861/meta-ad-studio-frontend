@@ -1,9 +1,15 @@
 import { Response } from 'express';
-import { AuthenticatedRequest } from '../types';
-import { prisma } from '../index';
 
-export const getBrandProfile = async (req: AuthenticatedRequest, res: Response) => {
+
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
+
+export const getBrandProfile = async (req: any, res: Response) => {
   try {
+    if (!req.user) {
+      return res.status(401).json({ message: 'Unauthorized' });
+    }
     const user = await prisma.user.findUnique({
       where: { firebaseId: req.user.uid },
       include: { brandProfile: true },
@@ -20,10 +26,13 @@ export const getBrandProfile = async (req: AuthenticatedRequest, res: Response) 
   }
 };
 
-export const upsertBrandProfile = async (req: AuthenticatedRequest, res: Response) => {
+export const upsertBrandProfile = async (req: any, res: Response) => {
   const { brandName, logoUrl, brandColors, slogan } = req.body;
 
   try {
+    if (!req.user) {
+      return res.status(401).json({ message: 'Unauthorized' });
+    }
     const user = await prisma.user.findUnique({
       where: { firebaseId: req.user.uid },
     });

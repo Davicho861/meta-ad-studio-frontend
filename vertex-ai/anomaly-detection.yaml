@@ -1,0 +1,55 @@
+# Vertex AI Anomaly Detection Model and Deployment
+
+# 1. Dataset for training the anomaly detection model
+apiVersion: aiplatform.googleapis.com/v1
+kind: Dataset
+metadata:
+  name: ad-studio-logs-dataset
+spec:
+  displayName: Ad Studio Application Logs
+  metadataSchemaUri: gs://google-cloud-aiplatform/schema/dataset/metadata/time_series_1.0.0.yaml
+  source:
+    gcsSource:
+      uris:
+      - gs://your-project-logs/app-logs/*.json
+
+---
+# 2. Training pipeline for the anomaly detection model
+apiVersion: aiplatform.googleapis.com/v1
+kind: TrainingPipeline
+metadata:
+  name: ad-studio-anomaly-detection-training
+spec:
+  displayName: ad-studio-anomaly-detection-training
+  modelToUpload:
+    displayName: ad-studio-anomaly-detection-model
+  inputDataConfig:
+    datasetId: ad-studio-logs-dataset
+  trainingTaskDefinition: gs://google-cloud-aiplatform/schema/trainingjob/definition/automl_time_series_forecasting_1.0.0.yaml
+  trainingTaskInputs:
+    targetColumn: is_anomaly
+    timeColumn: timestamp
+    timeSeriesIdentifierColumn: user_id
+
+---
+# 3. Endpoint for deploying the model
+apiVersion: aiplatform.googleapis.com/v1
+kind: Endpoint
+metadata:
+  name: ad-studio-anomaly-detection-endpoint
+spec:
+  displayName: ad-studio-anomaly-detection-endpoint
+
+---
+# 4. Deploy the model to the endpoint
+apiVersion: aiplatform.googleapis.com/v1
+kind: DeployedModel
+metadata:
+  name: ad-studio-anomaly-detection-deployed-model
+spec:
+  endpoint: projects/your-project/locations/us-central1/endpoints/ad-studio-anomaly-detection-endpoint
+  model: projects/your-project/locations/us-central1/models/ad-studio-anomaly-detection-model
+  dedicatedResources:
+    machineSpec:
+      machineType: n1-standard-2
+    minReplicaCount: 1

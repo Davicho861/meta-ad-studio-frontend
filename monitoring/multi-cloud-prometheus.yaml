@@ -1,0 +1,42 @@
+# Federated Prometheus configuration for multi-cloud monitoring
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: 'federate'
+    scrape_interval: 60s
+    honor_labels: true
+    metrics_path: '/federate'
+    params:
+      'match[]':
+        - '{job=~".+"}'
+    static_configs:
+      - targets:
+        # GCP Prometheus endpoint
+        - 'prometheus.gcp.example.com:9090'
+        # AWS Prometheus endpoint (mock)
+        - 'prometheus.aws.example.com:9090'
+        # Azure Prometheus endpoint (mock)
+        - 'prometheus.azure.example.com:9090'
+
+  - job_name: 'gcp-nodes'
+    static_configs:
+      - targets: ['gke-node-1:9100', 'gke-node-2:9100']
+
+  - job_name: 'aws-nodes'
+    static_configs:
+      - targets: ['eks-node-1:9100', 'eks-node-2:9100']
+
+  - job_name: 'azure-nodes'
+    static_configs:
+      - targets: ['aks-node-1:9100', 'aks-node-2:9100']
+
+alerting:
+  alertmanagers:
+  - static_configs:
+    - targets:
+      - 'alertmanager.gcp.example.com:9093'
+      - 'alertmanager.aws.example.com:9093'
+      - 'alertmanager.azure.example.com:9093'

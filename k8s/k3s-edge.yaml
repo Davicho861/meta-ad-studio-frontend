@@ -1,0 +1,112 @@
+# ==============================================================================
+# KubeEdge Manifest for Edge Cluster Deployment
+# ==============================================================================
+# This manifest defines the necessary components to bootstrap a KubeEdge node
+# and deploy a sample application to the edge.
+
+# ------------------------------------------------------------------------------
+# 1. KubeEdge EdgeCore DaemonSet
+# ------------------------------------------------------------------------------
+# This DaemonSet ensures that the KubeEdge agent (EdgeCore) runs on all
+# nodes labeled for edge deployment.
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: kubeedge-edgecore
+  namespace: kubeedge
+spec:
+  selector:
+    matchLabels:
+      k8s-app: kubeedge
+      kubeedge: edgecore
+  template:
+    metadata:
+      labels:
+        k8s-app: kubeedge
+        kubeedge: edgecore
+    spec:
+      hostNetwork: true
+      containers:
+        - name: edgecore
+          image: kubeedge/edgecore:v1.12.0
+          securityContext:
+            privileged: true
+          volumeMounts:
+            - name: config
+              mountPath: /etc/kubeedge/config
+            - name: run
+              mountPath: /var/run/kubeedge
+      volumes:
+        - name: config
+          configMap:
+            name: edgecore-config
+        - name: run
+          hostPath:
+            path: /var/run/kubeedge
+
+# ------------------------------------------------------------------------------
+# 2. KubeEdge EdgeCore ConfigMap
+# ------------------------------------------------------------------------------
+# This ConfigMap provides the configuration for the EdgeCore agent.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: edgecore-config
+  namespace: kubeedge
+data:
+  edgecore.yaml: |
+    apiVersion: edgecore.config.kubeedge.io/v1alpha1
+    kind: EdgeCore
+    database:
+      driver: sqlite3
+      dataSource: /var/lib/kubeedge/edgecore.db
+    modules:
+      edgeHub:
+        enable: true
+        httpServer: https://<CLOUD_HUB_URL>:10000 # Placeholder
+        token: <EDGE_NODE_TOKEN> # Placeholder
+      edgeMesh:
+        enable: true
+      edged:
+        enable: true
+        cgroupDriver: systemd
+        clusterDNS: 169.254.96.16
+        clusterDomain: cluster.local
+        hostnameOverride: <EDGE_NODE_HOSTNAME> # Placeholder
+
+# ------------------------------------------------------------------------------
+# 3. Example Edge Application: IoT Data Ingress
+# ------------------------------------------------------------------------------
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: iot-data-collector
+  namespace: edge-computing
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: iot-collector
+  template:
+    metadata:
+      labels:
+        app: iot-collector
+    spec:
+      nodeSelector:
+        "node-role.kubernetes.io/edge": ""
+      containers:
+      - name: mqtt-broker
+        image: "eclipse-mosquitto:2.0"
+        ports:
+        - containerPort: 1883
+          name: mqtt
+      - name: data-forwarder
+        image: "alpine:3.16"
+        command: ["/bin/sh", "-c"]
+        args:
+          - |
+            while true; do
+              echo "Forwarding IoT data to central cluster..."
+              # Logic to forward data would go here
+              sleep 60
+            done

@@ -2,27 +2,27 @@ import { PrismaClient } from '@prisma/client';
 import { createIssue, getIssues, getBacklogIssues, getIssueById, updateIssue, updateIssueStatus, deleteIssue } from '../services/issues';
 import { Issue } from '../models/issue';
 
-jest.mock('@prisma/client', () => {
+vi.mock('@prisma/client', () => {
   const mPrismaClient = {
     issue: {
-      create: jest.fn(),
-      findMany: jest.fn(),
-      findUnique: jest.fn(),
-      update: jest.fn(),
-      delete: jest.fn(),
+      create: vi.fn(),
+      findMany: vi.fn(),
+      findUnique: vi.fn(),
+      update: vi.fn(),
+      delete: vi.fn(),
     },
     team: {
-      findUnique: jest.fn(),
+      findUnique: vi.fn(),
     },
   };
-  return { PrismaClient: jest.fn(() => mPrismaClient) };
+  return { PrismaClient: vi.fn(() => mPrismaClient) };
 });
 
 const prisma = new PrismaClient();
 
 describe('Issue Service', () => {
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should create an issue', async () => {
@@ -35,7 +35,7 @@ describe('Issue Service', () => {
     const userId = '1';
     const createdIssue = { ...issueData, id: '1', createdById: userId, createdAt: new Date(), updatedAt: new Date() };
 
-    (prisma.issue.create as jest.Mock).mockResolvedValue(createdIssue);
+    (prisma.issue.create as any).mockResolvedValue(createdIssue);
 
     const result = await createIssue(issueData, userId);
     expect(result).toEqual(createdIssue);
@@ -55,7 +55,7 @@ describe('Issue Service', () => {
 
   it('should get issues', async () => {
     const issues = [{ id: '1', title: 'Test Issue' }];
-    (prisma.issue.findMany as jest.Mock).mockResolvedValue(issues);
+    (prisma.issue.findMany as any).mockResolvedValue(issues);
 
     const result = await getIssues({ projectId: '1' });
     expect(result).toEqual(issues);
@@ -68,7 +68,7 @@ describe('Issue Service', () => {
 
   it('should get backlog issues', async () => {
     const issues = [{ id: '1', title: 'Test Issue' }];
-    (prisma.issue.findMany as jest.Mock).mockResolvedValue(issues);
+    (prisma.issue.findMany as any).mockResolvedValue(issues);
 
     const result = await getBacklogIssues({ projectId: '1' });
     expect(result).toEqual(issues);
@@ -83,8 +83,8 @@ describe('Issue Service', () => {
   // it('should get team issues', async () => {
   //   const team = { id: '1', members: [{ id: '1' }, { id: '2' }] };
   //   const issues = [{ id: '1', title: 'Test Issue' }];
-  //   (prisma.team.findUnique as jest.Mock).mockResolvedValue(team);
-  //   (prisma.issue.findMany as jest.Mock).mockResolvedValue(issues);
+  //   (prisma.team.findUnique as any).mockResolvedValue(team);
+  //   (prisma.issue.findMany as any).mockResolvedValue(issues);
 
   //   const result = await getTeamIssues('1');
   //   expect(result).toEqual(issues);
@@ -103,7 +103,7 @@ describe('Issue Service', () => {
 
   it('should get an issue by id', async () => {
     const issue = { id: '1', title: 'Test Issue' };
-    (prisma.issue.findUnique as jest.Mock).mockResolvedValue(issue);
+    (prisma.issue.findUnique as any).mockResolvedValue(issue);
 
     const result = await getIssueById('1');
     expect(result).toEqual(issue);
@@ -115,7 +115,7 @@ describe('Issue Service', () => {
   it('should update an issue', async () => {
     const issueData: Partial<Issue> = { title: 'Updated Issue' };
     const updatedIssue = { id: '1', ...issueData };
-    (prisma.issue.update as jest.Mock).mockResolvedValue(updatedIssue);
+    (prisma.issue.update as any).mockResolvedValue(updatedIssue);
 
     const result = await updateIssue('1', issueData, '1');
     expect(result).toEqual(updatedIssue);
@@ -130,7 +130,7 @@ describe('Issue Service', () => {
 
   it('should update an issue status', async () => {
     const updatedIssue = { id: '1', status: 'In Progress' };
-    (prisma.issue.update as jest.Mock).mockResolvedValue(updatedIssue);
+    (prisma.issue.update as any).mockResolvedValue(updatedIssue);
 
     const result = await updateIssueStatus('1', 'In Progress');
     expect(result).toEqual(updatedIssue);
@@ -144,7 +144,7 @@ describe('Issue Service', () => {
   });
 
   it('should delete an issue', async () => {
-    (prisma.issue.delete as jest.Mock).mockResolvedValue({});
+    (prisma.issue.delete as any).mockResolvedValue({});
 
     await deleteIssue('1');
     expect(prisma.issue.delete).toHaveBeenCalledWith({

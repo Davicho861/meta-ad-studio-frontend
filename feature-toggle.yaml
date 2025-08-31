@@ -1,0 +1,19 @@
+# Feature toggles for A/B testing and phased rollouts
+
+features:
+  new_dashboard_ui:
+    enabled: true
+    rollout_percentage: 100
+    description: "Enables the new user interface for the dashboard."
+  vr_ar_multi_user:
+    enabled: true
+    rollout_percentage: 50
+    description: "Enables multi-user VR/AR support for A/B testing."
+  edge_computing_latam_africa:
+    enabled: true
+    rollout_percentage: 50
+    description: "Enables edge computing to reduce latency in emerging markets (LATAM, Africa)."
+  experimental_feature_x:
+    enabled: false
+    rollout_percentage: 0
+    description: "An experimental feature for testing purposes."

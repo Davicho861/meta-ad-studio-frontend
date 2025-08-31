@@ -1,0 +1,42 @@
+# Terraform Green Policies for Sustainable Cloud Infrastructure
+# These policies automate the process of shutting down idle resources and migrating workloads to low-carbon regions.
+
+# Policy to automatically shut down idle development servers outside of business hours
+resource "google_compute_instance" "dev_server" {
+  name         = "dev-server"
+  machine_type = "e2-medium"
+  zone         = "us-central1-a"
+
+  # This is a mock representation. In a real scenario, you would use a scheduler
+  # to stop and start the instance based on a predefined schedule.
+  scheduling {
+    automatic_restart   = false
+    on_host_maintenance = "TERMINATE"
+  }
+
+  # A startup script could check the time and shut down if it's outside of business hours.
+  metadata_startup_script = <<-EOT
+    #!/bin/bash
+    HOUR=$(date +%H)
+    if (( HOUR < 9 || HOUR > 18 )); then
+      gcloud compute instances stop $(hostname) --zone=$(gcloud compute instances list --filter="name=$(hostname)" --format="value(zone)")
+    fi
+  EOT
+}
+
+# Policy to prefer low-carbon regions for new deployments
+# This is a conceptual representation. In a real-world scenario, you would use a tool
+# like the Google Cloud Carbon Footprint dashboard to identify low-carbon regions and
+# then prioritize them in your Terraform configurations.
+variable "preferred_regions" {
+  description = "A list of preferred GCP regions, ordered by carbon efficiency."
+  type        = list(string)
+  default     = ["europe-west1", "us-central1", "asia-east1"] # Example order
+}
+
+# Example of using the preferred_regions variable in a module
+module "app_deployment" {
+  source  = "./modules/app"
+  project_id = "your-gcp-project"
+  region     = var.preferred_regions[0] # Deploy to the most carbon-efficient region
+}

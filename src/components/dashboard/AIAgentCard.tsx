@@ -1,3 +1,4 @@
+import React from "react";
 
 import { Activity, Brain, RefreshCcw, Pause, Play, Info } from "lucide-react";
 import { useState } from "react";
