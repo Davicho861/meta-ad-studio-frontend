@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, lazy, Suspense } from 'react'
 import { auth } from '@/firebaseConfig'
 import { GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth'
 import useAuthStore from '@/store/authStore'
@@ -10,7 +10,8 @@ import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { CustomizationModal } from './CustomizationModal'
 import { GalleryPreview } from './GalleryPreview'
-import MetaverseScene from './MetaverseScene'
+import { Pagination } from './ui/pagination'
+const MetaverseScene = lazy(() => import('./MetaverseScene'))
 import {
   Search,
   Sparkles,
@@ -117,6 +118,45 @@ export const MetaverseDashboard = () => {
   const [interactivity, setInteractivity] = useState([85])
   const [dimensionalMapping, setDimensionalMapping] = useState([60])
   const [isGenerating, setIsGenerating] = useState(false)
+  const [galleryData, setGalleryData] = useState([])
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 5
+  const [searchTerm, setSearchTerm] = useState('')
+
+  useEffect(() => {
+    const fetchVideos = async () => {
+      if (auth.currentUser) {
+        try {
+          const token = await auth.currentUser.getIdToken();
+          const response = await fetch('http://localhost:3001/api/v1/generate-video', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`
+            }
+          });
+          const data = await response.json();
+          if (data.success) {
+            // The backend sends video URLs, but the frontend expects imported image objects.
+            // I will map the backend data to the existing frontend structure for now.
+            const formattedData = data.videos.map((video, index) => ({
+              id: video.id,
+              title: `Video ${video.id}`,
+              description: `Description for video ${video.id}`,
+              image: index % 2 === 0 ? timesSquareImg : shibuyaImg, // Placeholder mapping
+              engagement: 'N/A',
+              location: 'Fetched from Backend'
+            }));
+            setGalleryData(formattedData);
+          }
+        } catch (error) {
+          console.error('Failed to fetch videos:', error);
+        }
+      }
+    };
+
+    fetchVideos();
+  }, [user]);
 
   const signInWithGoogle = async () => {
     const provider = new GoogleAuthProvider()
@@ -152,9 +192,6 @@ export const MetaverseDashboard = () => {
     return <div>Error: {error.message}</div>
   }
 
-  if (!isLoggedIn) {
-    return <div>Please log in to view the dashboard.</div>
-  }
 
   return (
     <div className='min-h-screen bg-background text-foreground'>
@@ -382,7 +419,9 @@ export const MetaverseDashboard = () => {
               </div>
             ) : (
               <div className='h-full bg-surface-elevated rounded-xl border border-border/50'>
-                <MetaverseScene />
+                <Suspense fallback={<div className='flex items-center justify-center h-full'>Loading 3D Scene...</div>}>
+                  <MetaverseScene />
+                </Suspense>
               </div>
             )}
           </div>
@@ -404,16 +443,36 @@ export const MetaverseDashboard = () => {
                 </div>
               </div>
 
-              <div className='space-y-4'>
-                {galleryPreviews.map((preview) => (
-                  <div
-                    key={preview.id}
-                    onClick={() => setSelectedPreview(preview)}
-                  >
-                    <GalleryPreview preview={preview} />
-                  </div>
-                ))}
+              <div className='relative'>
+                <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground' />
+                <Input
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className='pl-10'
+                  placeholder='Search gallery...'
+                />
               </div>
+
+              <div className='space-y-4'>
+                {(galleryData.length > 0 ? galleryData : galleryPreviews)
+                  .filter((preview) =>
+                    preview.title.toLowerCase().includes(searchTerm.toLowerCase())
+                  )
+                  .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+                  .map((preview) => (
+                    <div
+                      key={preview.id}
+                      onClick={() => setSelectedPreview(preview)}
+                    >
+                      <GalleryPreview preview={preview} />
+                    </div>
+                  ))}
+              </div>
+              <Pagination
+                currentPage={currentPage}
+                totalPages={Math.ceil((galleryData.length > 0 ? galleryData.length : galleryPreviews.length) / itemsPerPage)}
+                onPageChange={setCurrentPage}
+              />
 
               {/* Premium Subscription Banner */}
               <div className='bg-gradient-gold rounded-xl p-6 text-center space-y-3 border border-gold/20'>

@@ -1,7 +1,7 @@
-apiVersion: networking.istio.io/v1alpha3
+apiVersion: networking.istio.io/v1beta1
 kind: Gateway
 metadata:
-  name: meta-studio-gateway
+  name: meta-studio-ad-studio-app-spa-gateway
 spec:
   selector:
     istio: ingressgateway # use istio default controller
@@ -11,4 +11,15 @@ spec:
       name: http
       protocol: HTTP
     hosts:
-    - "*"
+    - "ad-studio-app.us-central1.meta-studio.com"
+    tls:
+      httpsRedirect: true # Redirect http to https
+  - port:
+      number: 443
+      name: https
+      protocol: HTTPS
+    tls:
+      mode: SIMPLE
+      credentialName: ingress-credential # Assumes a secret with this name exists
+    hosts:
+    - "ad-studio-app.us-central1.meta-studio.com"

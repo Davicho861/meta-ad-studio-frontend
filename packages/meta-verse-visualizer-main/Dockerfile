@@ -1,29 +1,23 @@
-# Stage 1: Build the React application
-FROM node:20-alpine as builder
+# Use an official Node.js runtime as a parent image
+FROM node:20-slim
 
-WORKDIR /app
+# Set the working directory in the container
+WORKDIR /usr/src/app
 
-# Copy root dependency-defining files
-COPY package.json package-lock.json* ./
+# Copy package.json and package-lock.json to the working directory
+COPY package*.json ./
 
-# Install all monorepo dependencies using ci for consistency
-RUN npm ci
+# Install any needed packages
+RUN npm install --legacy-peer-deps
 
-# Copy the entire monorepo source code
+# Copy the rest of the application's code
 COPY . .
 
-# Build the specific workspace application
-RUN npm run build --workspace=packages/meta-verse-visualizer-main
+# Build the React app
+RUN npm run build
 
-# Stage 2: Serve the application with Nginx
-FROM nginx:stable-alpine
+# Make port 8080 available to the world outside this container
+EXPOSE 8080
 
-# Copy the custom Nginx configuration from the workspace directory
-COPY packages/meta-verse-visualizer-main/nginx.conf /etc/nginx/conf.d/default.conf
-
-# Copy the built React app from the builder stage
-COPY --from=builder /app/packages/meta-verse-visualizer-main/dist /usr/share/nginx/html
-
-EXPOSE 80
-
-CMD ["nginx", "-g", "daemon off;"]
+# Run the app when the container launches
+CMD [ "npm", "run", "preview" ]

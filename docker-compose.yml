@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: supersecret
+      POSTGRES_DB: meta_ad_studio_db
+    ports:
+      - '5433:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - monitoring_net
+
+  api-server:
+    build:
+      context: ./packages/api-server/server
+      dockerfile: Dockerfile
+    ports:
+      - '3001:3001'
+    environment:
+      DATABASE_URL: "postgresql://admin:supersecret@postgres:5432/meta_ad_studio_db"
+    depends_on:
+      - postgres
+    networks:
+      - monitoring_net
+
+  meta-verse-visualizer-main:
+    build:
+      context: ./packages/meta-verse-visualizer-main
+      dockerfile: Dockerfile
+    ports:
+      - '8080:8080'
+    depends_on:
+      - api-server
+    networks:
+      - monitoring_net
+
+networks:
+  monitoring_net:
+    driver: bridge
+
+volumes:
+  postgres_data:

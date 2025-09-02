@@ -1,15 +1,23 @@
-apiVersion: networking.istio.io/v1alpha3
+apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
 metadata:
-  name: meta-studio-ad-studio-app-spa-vs
+  name: meta-studio-vs
 spec:
   hosts:
-  - "*"
+  - "ad-studio-app.us-central1.meta-studio.com"
   gateways:
   - meta-studio-ad-studio-app-spa-gateway
   http:
+  - match:
+    - uri:
+        prefix: /api
+    route:
+    - destination:
+        host: api-server
+        port:
+          number: 3001
   - route:
     - destination:
-        host: meta-studio-ad-studio-app-spa
-        subset: v1
-      weight: 100
+        host: meta-verse-visualizer-main
+        port:
+          number: 8080
