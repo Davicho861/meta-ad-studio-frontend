@@ -43,6 +43,29 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
 
+  /ads/generate-visual:
+    post:
+      tags:
+        - Multiverse
+      summary: Generar visual para anuncio con IA
+      description: Genera una imagen para un anuncio utilizando un prompt y referencia de estilo.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                prompt:
+                  type: string
+                  example: 'A futuristic cityscape with flying cars'
+                style_reference:
+                  type: string
+                  example: 'brand-style-001'
+              required:
+                - prompt
+                - style_reference
+      responses:
   /projects:
     get:
       tags:

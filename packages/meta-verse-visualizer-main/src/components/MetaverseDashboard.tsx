@@ -1,4 +1,6 @@
 import React, { useState, useEffect, lazy, Suspense } from 'react'
+import { gsap } from 'gsap';
+import '@/styles/metaverse-theme.css';
 import { auth } from '@/firebaseConfig'
 import { GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth'
 import useAuthStore from '@/store/authStore'
@@ -193,10 +195,13 @@ export const MetaverseDashboard = () => {
   }
 
 
+  // GSAP Animations to be added here
+
   return (
-    <div className='min-h-screen bg-background text-foreground'>
+    <div className='min-h-screen bg-background text-foreground cosmic-gradient-background'>
       {/* Top Navigation Bar */}
       <header className='border-b border-border bg-surface'>
+        <div className='dark-mode-toggle'></div>
         <div className='max-w-full px-8 py-6'>
           <div className='space-y-6'>
             {/* Main Prompt Input */}
@@ -350,7 +355,7 @@ export const MetaverseDashboard = () => {
             <Button
               variant='generate'
               size='xl'
-              className='w-full'
+              className='w-full glow-on-hover'
               onClick={handleGenerate}
               disabled={isGenerating}
             >

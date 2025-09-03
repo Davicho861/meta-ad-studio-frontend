@@ -44,4 +44,20 @@ spec:
       workers: 1
       size: "1GB"
   # In a real scenario, you would use a tool that can stress the GPU.
+---
+# Load test scenarios (example - adapt to your load testing tool)
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: load-test-scenarios
+data:
+  locustfile.py: |
+    from locust import HttpUser, task, between
+
+    class QuickstartUser(HttpUser):
+        wait_time = between(1, 2)
+
+        @task
+        def hello_world(self):
+            self.client.get("/multiverse/photos")
   # This is a conceptual representation.

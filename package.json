@@ -86,6 +86,7 @@
     "electron-squirrel-startup": "^1.0.1",
     "embla-carousel-react": "^8.6.0",
     "express-rate-limit": "^8.0.1",
+    "gsap": "^3.13.0",
     "helmet": "^8.1.0",
     "input-otp": "^1.4.2",
     "jsonwebtoken": "^9.0.2",
@@ -107,7 +108,10 @@
     "tailwindcss-animate": "^1.0.7",
     "three": "^0.179.1",
     "vaul": "^0.9.9",
-    "zod": "^3.25.76"
+    "zod": "^3.25.76",
+    "zustand": "^5.0.8",
+    "lowdb": "^5.0.0",
+    "replicate": "^1.0.0"
   },
   "devDependencies": {
     "@4tw/cypress-drag-drop": "^2.3.0",
