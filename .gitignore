@@ -53,3 +53,9 @@ Thumbs.db
 # Bun
 bun.lockb
 gcloud-key.json
+
+# ASAR temp and backup files
+*.asar.unpacked/
+*.asar.bak
+*.asar.orig
+*.asar.prepatch
