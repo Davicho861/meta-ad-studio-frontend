@@ -1,5 +1,7 @@
-import React from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Download, RotateCcw, Wand2 } from 'lucide-react'
+import toast from 'react-hot-toast'
+import useJobPolling from '../hooks/useJobPolling'
 
 interface ResultCardProps {
   result: {
@@ -7,11 +9,63 @@ interface ResultCardProps {
     prompt: string
     isLoading: boolean
     progress: number
+    // optional id to reference the result on server
+    id?: string
   }
   onVisualize?: (payload: { sceneId?: string; imageUrl?: string }) => void
 }
 
 export const ResultCardV2 = ({ result, onVisualize }: ResultCardProps) => {
+  const [animating, setAnimating] = useState(false)
+  const [jobId, setJobId] = useState<string | null>(null)
+  const jobState = useJobPolling(jobId)
+  const prevStatusRef = useRef<string | null>(null)
+
+  useEffect(() => {
+    // Show a success toast the first time the job transitions to completed
+    if (
+      jobState.status === 'completed' &&
+      prevStatusRef.current !== 'completed'
+    ) {
+      toast.success('¡Tu video está listo! Haz clic para verlo en detalle.')
+    }
+    prevStatusRef.current = jobState.status
+  }, [jobState.status])
+
+  const animateToVideo = async () => {
+    if (!result.imageUrl || animating) return
+    setAnimating(true)
+    try {
+      // Llamada a endpoint backend - aquí se asume POST /api/v1/animate-image
+      // Payload: { imageUrl, prompt, id }
+      // Respuesta esperada: { jobId } o { videoUrl, thumbnailUrl }
+      const resp = await fetch('/api/v1/animate-image', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          imageUrl: result.imageUrl,
+          prompt: result.prompt,
+          id: result.id,
+        }),
+      })
+
+      if (!resp.ok) throw new Error('API error')
+
+      // Si la API es asíncrona, podría devolver un jobId; aquí manejamos ambos casos.
+      const data = await resp.json()
+      if (data.videoUrl) {
+        console.log('Video ready', data)
+      } else if (data.jobId) {
+        console.log('Video job queued', data.jobId)
+        setJobId(data.jobId)
+      }
+    } catch (e) {
+      console.error('Failed to animate', e)
+    } finally {
+      setAnimating(false)
+    }
+  }
+
   if (result.isLoading) {
     return (
       <div className='relative rounded-lg aspect-square bg-surface-dark flex flex-col items-center justify-center text-center p-4 animate-pulse'>
@@ -31,11 +85,15 @@ export const ResultCardV2 = ({ result, onVisualize }: ResultCardProps) => {
       </div>
     )
   }
+  // If job completed, show thumbnail+play overlay
+  const isJobProcessing =
+    jobState.status === 'processing' || jobState.status === 'queued'
+  const isJobCompleted = jobState.status === 'completed'
 
   return (
     <div className='group relative rounded-lg overflow-hidden aspect-square'>
       <img
-        src={result.imageUrl}
+        src={isJobCompleted ? jobState.data!.thumbnailUrl : result.imageUrl}
         alt={result.prompt}
         className='w-full h-full object-cover'
       />
@@ -88,6 +146,20 @@ export const ResultCardV2 = ({ result, onVisualize }: ResultCardProps) => {
           </button>
           <button className='p-2 bg-secondary-text/80 hover:bg-secondary-text text-white rounded-lg transition-colors'>
             <Download className='w-4 h-4' />
+          </button>
+
+          <button
+            className='p-2 bg-yellow-600/90 hover:bg-yellow-600 text-white rounded-lg transition-colors flex items-center gap-2'
+            onClick={animateToVideo}
+            title='Animar a Video'
+          >
+            {animating || isJobProcessing ? (
+              <svg className='w-4 h-4 animate-spin' viewBox='0 0 24 24' />
+            ) : isJobCompleted ? (
+              '▶️'
+            ) : (
+              '🎬'
+            )}
           </button>
         </div>
       </div>

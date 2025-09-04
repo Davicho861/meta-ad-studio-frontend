@@ -34,8 +34,13 @@ app.use('/api', apiRoutes);
 
 const port = process.env.PORT || 3001;
 
-const server = app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-});
+let server: any = null
+// Only start listening when not running in test environment. This prevents EADDRINUSE
+// when tests import the app and start their own server instance.
+if (process.env.NODE_ENV !== 'test') {
+  server = app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
+  });
+}
 
 export { app, server };

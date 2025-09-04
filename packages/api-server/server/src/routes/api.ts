@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { authMiddleware } from '../middleware/auth';
 import { collectDefaultMetrics, register } from 'prom-client';
 import { generateVideoGrok } from '../controllers/aiController';
+import animateController from '../controllers/animateController';
 
 collectDefaultMetrics();
 
@@ -34,5 +35,9 @@ router.post('/v1/generate-video', authMiddleware, (req, res) => {
 });
 
 router.post('/v1/generate-video-grok', authMiddleware, generateVideoGrok);
+
+// Endpoint to request animation of an image -> returns jobId
+router.post('/v1/animate-image', authMiddleware, animateController.animateImage);
+router.get('/v1/animate-image/status/:jobId', authMiddleware, animateController.getJobStatus);
 
 export default router;
