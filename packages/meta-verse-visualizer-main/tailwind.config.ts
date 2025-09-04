@@ -78,6 +78,13 @@ export default {
           border: 'hsl(var(--sidebar-border))',
           ring: 'hsl(var(--sidebar-ring))',
         },
+        // Nuevos colores neón para estilo Midjourney/Kling AI
+        'background-dark': '#121212',
+        'surface-dark': '#1E1E1E',
+        'primary-text': '#E0E0E0',
+        'secondary-text': '#A0A0A0',
+        'accent-blue': '#00AFFF',
+        'accent-purple': '#9B59B6',
       },
       backgroundImage: {
         'gradient-primary': 'var(--gradient-primary)',

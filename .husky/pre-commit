@@ -1,0 +1,1 @@
+cd packages/meta-verse-visualizer-main && npx lint-staged

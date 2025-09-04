@@ -37,8 +37,8 @@ All colors MUST be HSL.
     --silver-muted: 200 10% 70%;
     --gold: 45 70% 65%;
     --gold-muted: 45 50% 55%;
-    --executive-blue: 214 84% 56%;
-    --executive-blue-muted: 214 60% 45%;
+    --executive-blue: 200 100% 50%; /* Más neón: #00AFFF */
+    --executive-blue-muted: 200 80% 45%;
 
     /* Interactive States */
     --hover: 220 15% 22%;
@@ -137,4 +137,20 @@ All colors MUST be HSL.
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* Custom animations */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.6s ease-out forwards;
 }

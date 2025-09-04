@@ -1,0 +1,14 @@
+export const examples = [
+  { id: 1, title: 'Campaña Neón', location: 'Digital Shibuya Crossing', imageUrl: '/assets/metaverse-shibuya.jpg', prompt: 'Campaña publicitaria de neón para una bebida energética futurista, estilo cyberpunk, en Shibuya Crossing de noche.' },
+  { id: 2, title: 'Lujo en las Alturas', location: 'Burj Khalifa Light Show', imageUrl: '/assets/metaverse-burj-khalifa.jpg', prompt: 'Proyección holográfica de un reloj de lujo en el Burj Khalifa, con partículas doradas flotando.' },
+  { id: 3, title: 'Moda Urbana', location: 'Virtual Times Square', imageUrl: '/assets/metaverse-times-square.jpg', prompt: 'Anuncio gigante de zapatillas de edición limitada en Times Square, arte callejero, colores vibrantes.' },
+  { id: 4, title: 'Tecnología Inmersiva', location: 'Akihabara Tech District', imageUrl: '/assets/metaverse-akihabara.jpg', prompt: 'Pantallas holográficas interactivas para un nuevo smartphone en Akihabara, con efectos de realidad aumentada.' },
+  { id: 5, title: 'Entretenimiento Espectacular', location: 'Las Vegas Sphere', imageUrl: '/assets/metaverse-vegas-sphere.jpg', prompt: 'Espectáculo de luces en la Sphere de Las Vegas para un concierto virtual, con avatares bailando.' },
+  { id: 6, title: 'Belleza Natural', location: 'Sydney Opera House', imageUrl: '/assets/metaverse-sydney-opera.jpg', prompt: 'Campaña de cosméticos proyectada en la Ópera de Sídney, con efectos de agua y luz.' },
+  { id: 7, title: 'Viajes de Lujo', location: 'Dubai Airport', imageUrl: '/assets/metaverse-dubai-airport.jpg', prompt: 'Anuncio de aerolínea de lujo en el aeropuerto de Dubái, con jets holográficos.' },
+  { id: 8, title: 'Deportes Extremos', location: 'Piccadilly Circus', imageUrl: '/assets/metaverse-piccadilly.jpg', prompt: 'Campaña de equipo deportivo en Piccadilly Circus, con atletas virtuales en acción.' },
+  { id: 9, title: 'Innovación Verde', location: 'Central Park Virtual', imageUrl: '/assets/metaverse-central-park.jpg', prompt: 'Publicidad ecológica en Central Park virtual, con árboles digitales y mensajes ambientales.' },
+  { id: 10, title: 'Gastronomía Futurista', location: 'Virtual Paris', imageUrl: '/assets/metaverse-paris.jpg', prompt: 'Restaurante virtual en París con platos holográficos flotantes y menús interactivos.' },
+  { id: 11, title: 'Educación Interactiva', location: 'Virtual Library of Alexandria', imageUrl: '/assets/metaverse-library.jpg', prompt: 'Campaña educativa en la Biblioteca Virtual de Alejandría, con libros animados y lecciones inmersivas.' },
+  { id: 12, title: 'Salud y Bienestar', location: 'Zen Garden Metaverse', imageUrl: '/assets/metaverse-zen.jpg', prompt: 'Publicidad de spa virtual en un jardín zen, con meditación guiada y tratamientos holográficos.' },
+];
