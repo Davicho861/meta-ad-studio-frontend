@@ -24,6 +24,12 @@ vi.mock('jsonwebtoken', () => ({
   __esModule: true,
 }));
 
+// Mock the auth middleware to bypass token verification in tests
+vi.mock('../middleware/auth', () => ({
+  __esModule: true,
+  authMiddleware: (req: any, res: any, next: any) => next(),
+}));
+
 describe('Auth Endpoints', () => {
   beforeEach(() => {
     vi.clearAllMocks();

@@ -1,4 +1,5 @@
 /// <reference types="vitest" />
+import { vi, describe, it, expect } from 'vitest'
 import request from 'supertest'
 import express from 'express'
 import bodyParser from 'body-parser'
@@ -29,8 +30,8 @@ describe('animateController (in-memory jobs)', () => {
     expect(status1.status).toBe(200)
     expect(status1.body.status).toBe('processing')
 
-    // Advance time by 6 seconds
-    jest.advanceTimersByTime(6000)
+  // Advance time by 6 seconds
+  vi.advanceTimersByTime(6000)
 
     const status2 = await request(app).get(`/api/v1/animate-image/status/${jobId}`)
     expect(status2.status).toBe(200)
