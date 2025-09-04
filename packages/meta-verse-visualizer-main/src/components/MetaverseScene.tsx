@@ -1,5 +1,6 @@
-import { Canvas } from '@react-three/fiber';
-import { OrbitControls } from '@react-three/drei';
+import React from 'react'
+import { Canvas } from '@react-three/fiber'
+import { OrbitControls } from '@react-three/drei'
 
 const MetaverseScene: React.FC = () => {
   return (
@@ -8,11 +9,11 @@ const MetaverseScene: React.FC = () => {
       <pointLight position={[10, 10, 10]} />
       <mesh>
         <boxGeometry args={[1, 1, 1]} />
-        <meshStandardMaterial color="orange" />
+        <meshStandardMaterial color='orange' />
       </mesh>
       <OrbitControls />
     </Canvas>
-  );
-};
+  )
+}
 
-export default MetaverseScene;
+export default MetaverseScene

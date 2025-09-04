@@ -128,6 +128,14 @@ export const GalleryPreview: React.FC<GalleryPreviewProps> = ({ preview }) => {
     >
       <div
         onClick={handleImageClick}
+        role='button'
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            handleImageClick()
+          }
+        }}
         className='aspect-video relative overflow-hidden cursor-pointer'
       >
         {(itemState.loading || itemState.adLoading) && (

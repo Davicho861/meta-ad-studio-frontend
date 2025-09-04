@@ -1,38 +1,47 @@
-import React from 'react';
-import { Canvas } from '@react-three/fiber';
-import { OrbitControls, useGLTF } from '@react-three/drei';
+import React, { Suspense } from 'react'
+import { Canvas } from '@react-three/fiber'
+import { OrbitControls, useGLTF } from '@react-three/drei'
+import { Object3D } from 'three'
 
 type VisualizationStageProps = {
-  sceneId?: string;
-  imageUrl?: string;
-  onClose?: () => void;
-};
+  sceneId?: string
+  onClose?: () => void
+}
 
-const GLTFPlaceholder: React.FC<{ path?: string }> = ({ path }) => {
-  // Placeholder for GLTF loading. In Sprint 1 this will be replaced with useGLTF(path)
-  // Keep a simple box so the Canvas renders correctly.
-  return (
-    <mesh>
-      <boxGeometry args={[2, 2, 2]} />
-      <meshStandardMaterial color="#ff6a00" />
-    </mesh>
-  );
-};
+const Model: React.FC<{ path?: string }> = ({ path }) => {
+  const gltf = useGLTF(path || '/models/placeholder-scene.glb')
+  // cast explícito para cumplir con typing de primitive
+  return <primitive object={gltf.scene as unknown as Object3D} />
+}
 
-const VisualizationStage: React.FC<VisualizationStageProps> = ({ sceneId, imageUrl, onClose }) => {
+const VisualizationStage: React.FC<VisualizationStageProps> = ({
+  sceneId,
+  onClose,
+}) => {
   // skeleton component: will lazy-load GLTF in Sprint 1
   // Example: const gltf = useGLTF(`/models/${sceneId || 'placeholder-scene'}.glb`);
 
   return (
-    <div className="w-full h-full bg-black">
+    <div className='w-full h-full bg-black'>
       <Canvas camera={{ position: [0, 2, 6], fov: 50 }}>
         <ambientLight intensity={0.6} />
         <directionalLight position={[10, 10, 5]} intensity={1} />
-        <GLTFPlaceholder path={`/models/${sceneId || 'placeholder-scene'}.glb`} />
+        <Suspense fallback={null}>
+          <Model path={`/models/${sceneId || 'placeholder-scene'}.glb`} />
+        </Suspense>
         <OrbitControls enablePan enableRotate enableZoom />
       </Canvas>
-    </div>
-  );
-};
 
-export default VisualizationStage;
+      <div className='absolute top-4 left-4 z-60'>
+        <button
+          onClick={() => onClose?.()}
+          className='px-3 py-2 bg-black/60 text-white rounded-md backdrop-blur-sm'
+        >
+          Volver al Hub
+        </button>
+      </div>
+    </div>
+  )
+}
+
+export default VisualizationStage

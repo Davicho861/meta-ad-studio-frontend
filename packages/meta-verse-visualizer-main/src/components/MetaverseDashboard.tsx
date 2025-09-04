@@ -13,7 +13,7 @@ import sydneyOperaImg from '@/assets/metaverse-sydney-opera.jpg'
 import akihabaraImg from '@/assets/metaverse-akihabara.jpg'
 import dubaiAirportImg from '@/assets/metaverse-dubai-airport.jpg'
 
-const galleryPreviews = [
+const _galleryPreviews = [
   {
     id: 1,
     title: 'Virtual Times Square - New York Metaverse',
@@ -89,23 +89,23 @@ const galleryPreviews = [
 ]
 
 export const MetaverseDashboard = () => {
-  const [inspirationData, setInspirationData] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [inspirationData, setInspirationData] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     // Simula una llamada a la API para precargar los datos de la galería
-    console.log("PRECARGANDO DATOS DE INSPIRACIÓN...");
+    console.log('PRECARGANDO DATOS DE INSPIRACIÓN...')
     setTimeout(() => {
-      setInspirationData(examples);
-      setIsLoading(false);
-      console.log("DATOS DE INSPIRACIÓN CARGADOS.");
-    }, 1000); // Simular delay de 1 segundo
-  }, []);
+      setInspirationData(examples)
+      setIsLoading(false)
+      console.log('DATOS DE INSPIRACIÓN CARGADOS.')
+    }, 1000) // Simular delay de 1 segundo
+  }, [])
 
   return (
-    <div className="flex h-screen bg-background-dark text-primary-text font-sans">
+    <div className='flex h-screen bg-background-dark text-primary-text font-sans'>
       <Sidebar />
-      <main className="flex-1 overflow-y-auto">
+      <main className='flex-1 overflow-y-auto'>
         <MainContent inspirationData={inspirationData} isLoading={isLoading} />
       </main>
     </div>
