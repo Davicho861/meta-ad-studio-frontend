@@ -17,14 +17,14 @@ interface VideoCardProps {
   onClick?: (result: VideoResult) => void
 }
 
-export const VideoCard: React.FC<VideoCardProps> = ({ result, onClick }) => {
+const VideoCard: React.FC<VideoCardProps> = ({ result, onClick }) => {
   const videoRef = useRef<HTMLVideoElement | null>(null)
   const [isHovering, setIsHovering] = useState(false)
 
   const handleMouseEnter = () => {
     setIsHovering(true)
     try {
-      videoRef.current?.play()
+      void videoRef.current?.play()
     } catch (e) {
       // ignore play errors (autoplay policies)
     }
@@ -34,9 +34,7 @@ export const VideoCard: React.FC<VideoCardProps> = ({ result, onClick }) => {
     setIsHovering(false)
     try {
       videoRef.current?.pause()
-      if (videoRef.current) {
-        videoRef.current.currentTime = 0
-      }
+      if (videoRef.current) videoRef.current.currentTime = 0
     } catch (e) {
       // ignore
     }
