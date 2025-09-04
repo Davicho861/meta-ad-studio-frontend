@@ -23,11 +23,18 @@ export const videoWorker = new Worker(
 
     const result = { status: 'completed', videoUrl: 'https://example.com/video.mp4' }
 
-    // Persist the simulated result to the database
+    // Persist the simulated result to the database using typed Prisma client
     try {
-      await prisma.$executeRaw`
-        INSERT INTO "VideoGenerationJobs" (id, status, prompt, "imageUrl", "videoUrl", provider, "createdAt")
-        VALUES (${String(job.id)}, ${result.status}, ${job.data.prompt || ''}, ${job.data.imageUrl || null}, ${result.videoUrl}, ${job.data.provider || null}, NOW())`
+      await prisma.videoGenerationJob.create({
+        data: {
+          id: String(job.id),
+          status: result.status,
+          prompt: job.data.prompt || '',
+          imageUrl: job.data.imageUrl || null,
+          videoUrl: result.videoUrl,
+          provider: job.data.provider || null,
+        },
+      })
     } catch (err) {
       console.error('Failed to persist VideoGenerationJob', err)
     }
