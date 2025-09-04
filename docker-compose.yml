@@ -6,9 +6,10 @@ services:
     image: postgres:15-alpine
     container_name: meta_ad_studio_db
     environment:
-      POSTGRES_USER: devuser
-      POSTGRES_PASSWORD: devpassword
-      POSTGRES_DB: meta_ad_studio
+      POSTGRES_USER: "${POSTGRES_USER:-devuser}"
+      # POSTGRES_PASSWORD must be provided via environment or .env; never commit secrets to repo
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+      POSTGRES_DB: "${POSTGRES_DB:-meta_ad_studio}"
     ports:
       - "5433:5432"
     volumes:
@@ -41,8 +42,9 @@ services:
       - monitoring_net
     environment:
       # Default development DB and Redis pointing to local compose services
-      DATABASE_URL: "postgresql://devuser:devpassword@postgres:5432/meta_ad_studio?schema=public"
-      REDIS_URL: "redis://redis:6379"
+      # DATABASE_URL should be constructed from env vars; avoid embedding credentials in repo
+      DATABASE_URL: "${DATABASE_URL}"
+      REDIS_URL: "${REDIS_URL:-redis://redis:6379}"
     depends_on:
       - postgres
       - redis
