@@ -1,5 +1,6 @@
-import { Queue, Worker, QueueScheduler } from 'bullmq'
+import { Queue, Worker } from 'bullmq'
 import IORedis from 'ioredis'
+import { prisma } from '../lib/prisma'
 
 // Redis connection (env-driven)
 const connection = new IORedis(process.env.REDIS_URL || 'redis://localhost:6379')
@@ -7,7 +8,6 @@ const connection = new IORedis(process.env.REDIS_URL || 'redis://localhost:6379'
 export const videoQueueName = 'video-generation-queue'
 
 export const videoQueue = new Queue(videoQueueName, { connection })
-export const videoQueueScheduler = new QueueScheduler(videoQueueName, { connection })
 
 // Basic worker skeleton - implement provider integration here
 export const videoWorker = new Worker(
@@ -21,7 +21,18 @@ export const videoWorker = new Worker(
     // Simulate processing
     await new Promise((r) => setTimeout(r, 1000))
 
-    return { status: 'completed', videoUrl: 'https://example.com/video.mp4' }
+    const result = { status: 'completed', videoUrl: 'https://example.com/video.mp4' }
+
+    // Persist the simulated result to the database
+    try {
+      await prisma.$executeRaw`
+        INSERT INTO "VideoGenerationJobs" (id, status, prompt, "imageUrl", "videoUrl", provider, "createdAt")
+        VALUES (${String(job.id)}, ${result.status}, ${job.data.prompt || ''}, ${job.data.imageUrl || null}, ${result.videoUrl}, ${job.data.provider || null}, NOW())`
+    } catch (err) {
+      console.error('Failed to persist VideoGenerationJob', err)
+    }
+
+    return result
   },
   { connection }
 )
