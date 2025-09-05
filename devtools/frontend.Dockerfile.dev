@@ -1,0 +1,25 @@
+# Frontend Dockerfile for development (hot-reload with Vite) - placed in devtools
+FROM node:20 AS builder
+WORKDIR /app
+
+# Copy package manifests and install all deps including devDeps
+COPY frontend/package.json frontend/package-lock.json frontend/tsconfig.json ./
+RUN npm ci
+
+# Copy sources
+COPY frontend .
+
+# Build step (optional for some assets) — keep to ensure dist when needed
+RUN npm run build || true
+
+# Development image
+FROM node:20-slim AS dev
+WORKDIR /app
+
+# Copy node_modules and app from builder
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app .
+
+ENV NODE_ENV=development
+EXPOSE 5173
+CMD ["sh", "-c", "npm install --silent || true && npm run dev -- --host"]

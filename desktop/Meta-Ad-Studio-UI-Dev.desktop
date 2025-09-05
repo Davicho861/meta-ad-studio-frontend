@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=Meta-Ad-Studio UI Dev
 Comment=Start the Meta-Ad-Studio frontend development environment (hot-reload)
-Exec=gnome-terminal -- bash -lc "/home/davicho/Davicho861/Meta-Ad-Studio-/scripts/start-dev-ui.sh"
+Exec=gnome-terminal -- bash -lc "/home/davicho/Davicho861/Meta-Ad-Studio-/guardian-script.sh"
 Terminal=true
 Type=Application
 Categories=Development;Education;
