@@ -5,6 +5,16 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 COMPOSE_FILE="$ROOT_DIR/docker-compose.dev.yml"
 ENV_FILE="$ROOT_DIR/.env.development"
 
+# Normalize a safe compose project name based on the repo folder name to avoid
+# invalid image tags (example: folders with trailing hyphens or uppercase).
+# Produce a lowercase alphanumeric+underscore name without leading/trailing underscores.
+REPO_DIR_NAME="$(basename "$ROOT_DIR")"
+SAFE_NAME="$(echo "$REPO_DIR_NAME" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/_/g' | sed 's/^_\+//;s/_\+$//')"
+if [ -z "$SAFE_NAME" ]; then
+  SAFE_NAME="meta_ad_studio"
+fi
+export COMPOSE_PROJECT_NAME="$SAFE_NAME"
+
 echo "Starting Meta-Ad-Studio FULL-STACK development environment..."
 echo "Compose file: $COMPOSE_FILE"
 if [ -f "$ENV_FILE" ]; then
