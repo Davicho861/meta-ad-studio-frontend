@@ -1,0 +1,3 @@
+[submodule "frontend"]
+	path = frontend
+	url = /home/davicho/Davicho861/git-bare/meta-ad-studio-frontend.bare.git
