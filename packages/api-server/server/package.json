@@ -7,6 +7,8 @@
     "build": "tsc",
     "start": "node -r dotenv/config dist/index.js",
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+  "migrate": "npx prisma migrate deploy --schema=./prisma/schema.prisma",
+  "seed": "node ./prisma/seed.js || node -e \"console.log('no seed script')\"",
     "test": "dotenv -e .env -- vitest run",
     "postinstall": "prisma generate --schema=./prisma/schema.prisma"
   },

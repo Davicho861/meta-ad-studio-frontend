@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Meta-Ad-Studio UI Dev
+Comment=Inicia el entorno de desarrollo Full-Stack de Meta-Ad-Studio
+Exec=/home/$USER/.local/bin/meta-ad-studio-ui-dev-launcher.sh
+Icon=/home/$USER/Davicho861/Meta-Ad-Studio-/desktop/icon-meta-ad-studio.svg
+Terminal=false
+Type=Application
+Categories=Development;IDE;
+StartupNotify=true

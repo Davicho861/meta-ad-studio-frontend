@@ -4,53 +4,22 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "$0")" && pwd)"
 ENV_FILE="$ROOT_DIR/.env.development"
 
-echo "Guardian: pre-flight checks for Meta-Ad-Studio dev environment"
+echo "Orquestador: comprobaciones iniciales para Meta-Ad-Studio dev environment"
 
-# Check docker
-if ! command -v docker >/dev/null 2>&1; then
-    echo "Docker no está instalado. Instálalo y vuelve a intentarlo."
-    exit 1
-fi
-
-# Check docker-compose
-if ! command -v docker-compose >/dev/null 2>&1; then
-    echo "docker-compose no está instalado. Instálalo y vuelve a intentarlo."
-    exit 1
-fi
-
-# Check .env
-if [ ! -f "$ENV_FILE" ]; then
-    echo ".env.development no encontrado en $ROOT_DIR. Crea uno basado en .env.example si existe."
-    exit 1
-fi
-
-check_port() {
-    local port=$1
-    if ss -ltn "sport = :$port" | grep -q LISTEN; then
-        echo "Puerto $port en uso. Para identificar el proceso ejecuta: sudo lsof -i :$port || ss -ltnp | grep ':$port'"
-        return 1
+# Utilities
+fail_if_missing() {
+    if ! command -v "$1" >/dev/null 2>&1; then
+        echo "$2"
+        exit 1
     fi
-    return 0
 }
 
-PORTS=(5173 4000 5432 6379)
-conflicts=()
-for p in "${PORTS[@]}"; do
-    if ! check_port "$p"; then
-        conflicts+=("$p")
-    fi
-done
+fail_if_missing docker "Docker no está instalado. Instálalo y vuelve a intentarlo."
+fail_if_missing docker-compose "docker-compose no está instalado. Instálalo y vuelve a intentarlo."
 
-if [ ${#conflicts[@]} -ne 0 ]; then
-    echo "Se detectaron puertos en conflicto: ${conflicts[*]}."
-    echo "Opciones: 1) Detener procesos que usan esos puertos, 2) Remapear puertos en docker-compose.dev.yml."
-    echo "Comandos útiles para diagnosticar:"
-    for p in "${conflicts[@]}"; do
-        echo "  sudo lsof -i :$p"
-        echo "  ss -ltnp | grep ':$p'"
-    done
-    echo "El Guardian no continuará hasta que se resuelvan los conflictos." 
-    exit 2
+if [ ! -f "$ENV_FILE" ]; then
+    echo ".env.development no encontrado en $ROOT_DIR. Crea uno basado en .env.example si lo necesitas."
+    # no fatal; allow user to proceed if compose files contain necessary defaults
 fi
 
 # Normalize compose project name
@@ -61,6 +30,60 @@ if [ -z "$SAFE_NAME" ]; then
 fi
 export COMPOSE_PROJECT_NAME="$SAFE_NAME"
 
-# Run the start script
-echo "Pre-flight checks OK. Lanzando entorno con ./scripts/start-dev-fullstack.sh"
-exec "$ROOT_DIR/scripts/start-dev-fullstack.sh"
+COMPOSE_FILE="$ROOT_DIR/docker-compose.dev.yml"
+
+running_containers() {
+    # returns list of running container IDs for the compose project
+    docker-compose -p "$COMPOSE_PROJECT_NAME" -f "$COMPOSE_FILE" ps -q 2>/dev/null || true
+}
+
+start_flow() {
+    echo "Iniciando flujo de arranque: actualización Git y levantar servicios..."
+    (cd "$ROOT_DIR" && git pull --ff-only || true)
+    (cd "$ROOT_DIR" && git submodule update --init --recursive || true)
+    echo "Levantando servicios (docker-compose up -d --build)..."
+    docker-compose -p "$COMPOSE_PROJECT_NAME" -f "$COMPOSE_FILE" up -d --build
+    echo "Servicios levantados. Para ver logs: docker-compose -p $COMPOSE_PROJECT_NAME -f $COMPOSE_FILE logs -f"
+}
+
+interactive_menu() {
+    echo
+    echo "El entorno '$COMPOSE_PROJECT_NAME' ya está en ejecución. ¿Qué deseas hacer?"
+    echo "(1) Ver el estado y los logs en tiempo real"
+    echo "(2) Reiniciar los servicios"
+    echo "(3) Detener los servicios por completo"
+    echo "(Cualquier otra tecla) Salir"
+    read -r -p "Selecciona una opción: " choice
+    case "$choice" in
+        1)
+            echo "Mostrando logs en tiempo real (Ctrl+C para salir)..."
+            docker-compose -p "$COMPOSE_PROJECT_NAME" -f "$COMPOSE_FILE" ps
+            docker-compose -p "$COMPOSE_PROJECT_NAME" -f "$COMPOSE_FILE" logs -f
+            ;;
+        2)
+            echo "Reiniciando servicios..."
+            docker-compose -p "$COMPOSE_PROJECT_NAME" -f "$COMPOSE_FILE" restart
+            echo "Reinicio completo. Usa logs o ps para verificar estado."
+            ;;
+        3)
+            echo "Deteniendo servicios..."
+            docker-compose -p "$COMPOSE_PROJECT_NAME" -f "$COMPOSE_FILE" down
+            echo "Servicios detenidos."
+            ;;
+        *)
+            echo "Saliendo sin cambios."
+            ;;
+    esac
+}
+
+echo "Comprobando contenedores del proyecto '$COMPOSE_PROJECT_NAME'..."
+running=$(running_containers)
+if [ -z "${running// /}" ]; then
+    echo "No hay contenedores en ejecución para $COMPOSE_PROJECT_NAME. Procediendo con arranque."
+    start_flow
+else
+    echo "Se detectaron contenedores en ejecución para $COMPOSE_PROJECT_NAME:" && docker ps --filter "name=${COMPOSE_PROJECT_NAME}" --format 'table {{.Names}}	{{.Status}}'
+    interactive_menu
+fi
+
+exit 0
