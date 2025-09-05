@@ -28,7 +28,7 @@ variable "db_password" {
   description = "The password for the Cloud SQL database."
   type        = string
   sensitive   = true
-  default     = "a-secure-password" # Placeholder - Se recomienda gestionar a través de un sistema de secretos.
+  # No default value: require provisioning via terraform vars or Secret Manager
 }
 
 variable "db_user" {

@@ -1,3 +1,76 @@
+# Meta Ad Studio
+
+## Empaquetar e instalar la aplicación (generar .deb)
+
+Sigue estos pasos para crear e instalar un paquete .deb instalable de la aplicación de escritorio (Linux/Debian/Ubuntu):
+
+1) Asegúrate de que el entorno de desarrollo está listo. Ejecuta desde la raíz del proyecto:
+
+```bash
+./start-local.sh
+```
+
+Cuando la aplicación se abra en modo desarrollo, puedes cerrarla y detener los procesos con Ctrl+C. Esto deja las dependencias y servicios listos para el paso de empaquetado.
+
+2) Ejecuta el comando de empaquetado (usa el script definido en `package.json`):
+
+```bash
+npm run make
+```
+
+Esto usa Electron Forge (configurado en `package.json`) para construir la versión de producción y crear instalables. El proceso puede tardar unos minutos.
+
+3) Localiza el .deb generado. Por lo general estará en una ruta similar a:
+
+```bash
+out/make/deb/x64/
+```
+
+Lista los archivos para encontrar el paquete .deb:
+
+```bash
+ls out/make/deb/x64/
+```
+
+4) Instala el .deb con dpkg:
+
+```bash
+sudo dpkg -i meta-ad-studio_1.0.0_amd64.deb
+# Si faltan dependencias, arregla con:
+sudo apt-get install -f
+```
+
+Notas:
+- `package.json` en la raíz ya define `make` (`electron-forge make`) y `build:deb` (`electron-builder --linux deb`).
+- Asegúrate de tener instaladas dependencias del sistema (build-essential, libgtk-3-0, libnss3, etc.) según las necesidades de Electron en tu distribución.
+
+Opcional: script helper
+Puedes usar el script `make-deb.sh` (si lo creas) para automatizar `npm run make` y mostrar la ruta del .deb resultante.
+
+Meta Ad Studio es una plataforma de gestión y optimización de campañas publicitarias con herramientas de análisis, backend y frontend listos para desplegar en Google Cloud.
+
+## Lanzamiento Rápido en Google Cloud
+
+Haz clic en el siguiente botón para abrir Google Cloud Shell, clonar este repositorio y ejecutar el instalador interactivo. Solo necesitarás tu Project ID, una región y tu API key de Gemini.
+
+[![Deploy to Google Cloud](https://deploy.cloud.run/button.svg)](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/Davicho861/Meta-Ad-Studio-&git_branch=main&show=terminal)
+
+Instrucciones rápidas (3 pasos):
+
+1. Prerrequisitos: Necesitas una cuenta de Google Cloud con facturación activada y tu clave de API de Gemini.
+2. Haz clic en el botón "Deploy to Google Cloud"; se abrirá Google Cloud Shell en tu navegador y clonará el repositorio.
+
+3. En la terminal ejecuta:
+
+	chmod +x deploy.sh && ./deploy.sh
+
+Nota: Si quieres que Cloud Shell ejecute el script automáticamente al abrir, copia y pega en la terminal:
+
+	git clone https://github.com/Davicho861/Meta-Ad-Studio- && cd Meta-Ad-Studio- && chmod +x deploy.sh && ./deploy.sh
+
+Sigue las indicaciones en pantalla. El script configurará gcloud, creará secretos en Secret Manager, ejecutará Terraform (si existe) y lanzará Cloud Build.
+
+Si prefieres ver la guía técnica completa, consulta `README.deployment.md`.
 # Meta Studio Ad Studio — Instalación y Uso (Debian 12)
 
 Este documento explica cómo instalar y ejecutar la aplicación empaquetada para Debian 12.

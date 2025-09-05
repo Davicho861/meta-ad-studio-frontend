@@ -1,0 +1,79 @@
+version: '3.8'
+
+services:
+  frontend:
+    # Extiende la definición del frontend en docker-compose.yml para desarrollo.
+    # Monta el código local, arranca el servidor de dev (hot-reload) y expone el puerto.
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    volumes:
+      - ./frontend:/app/frontend:cached
+      - /app/frontend/node_modules
+    working_dir: /app/frontend
+    env_file:
+      - ./.env.development
+    # For Vite we need to ensure the dev server listens on network interfaces.
+    # `npm run dev -- --host` passes the --host flag to vite so HMR works from host machine.
+    command: sh -c "npm install --silent || true && npm run dev -- --host"
+    ports:
+      - "5173:5173" # Vite
+      - "3000:3000" # fallback (create-react-app / other)
+    environment:
+      - NODE_ENV=development
+    stdin_open: true
+    tty: true
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    volumes:
+      - ./backend:/app/backend:cached
+      - /app/backend/node_modules
+    working_dir: /app/backend
+    env_file:
+      - ./.env.development
+    # Ensure dev experience: install (if needed), generate prisma client and run dev server
+    command: sh -c "npm install --silent || true && npx prisma generate || true && npm run dev"
+    ports:
+      - "4000:4000"
+    environment:
+      - NODE_ENV=development
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  db:
+    image: postgres:15
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
+volumes:
+  pgdata:
+
