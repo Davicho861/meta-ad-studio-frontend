@@ -1,0 +1,33 @@
+name: Publish Storybook to Chromatic
+
+on:
+  push:
+    branches:
+      - 'feat/**'
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  chromatic:
+    name: Chromatic
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: |
+          cd frontend
+          npm ci
+
+      - name: Publish Storybook to Chromatic
+        env:
+          CHROMATIC_TOKEN: ${{ secrets.CHROMATIC_TOKEN }}
+        run: |
+          cd frontend
+          npx chromatic --project-token=$CHROMATIC_TOKEN --exit-zero-on-changes
