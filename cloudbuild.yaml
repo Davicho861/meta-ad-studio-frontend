@@ -1,3 +1,71 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'Build Backend Image'
+    args: [ 'build', '-t', '$(params.REGION)-docker.pkg.dev/$(params.PROJECT)/meta-ad-studio-repo/backend:latest', './backend' ]
+
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'Build Frontend Image'
+    args: [ 'build', '-t', '$(params.REGION)-docker.pkg.dev/$(params.PROJECT)/meta-ad-studio-repo/frontend:latest', './frontend' ]
+
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'Push Backend Image'
+    args: [ 'push', '$(params.REGION)-docker.pkg.dev/$(params.PROJECT)/meta-ad-studio-repo/backend:latest' ]
+
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'Push Frontend Image'
+    args: [ 'push', '$(params.REGION)-docker.pkg.dev/$(params.PROJECT)/meta-ad-studio-repo/frontend:latest' ]
+
+  # Run DB migrations using the backend image (assumes prisma migrate deploy is configured)
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: 'Run Migrations'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e
+        echo "Running migrations..."
+        # Use Cloud Run Job or run a one-off Cloud Run service; simplest approach: run a Cloud Run job (beta)
+        gcloud run jobs create meta-ad-migrations --image=$(params.REGION)-docker.pkg.dev/$(params.PROJECT)/meta-ad-studio-repo/backend:latest --region=$(params.REGION) --command "npx" --args "prisma,migrate,deploy" || true
+        gcloud run jobs execute meta-ad-migrations --region=$(params.REGION) || true
+
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: 'Deploy Backend'
+    args:
+      - 'run'
+      - 'deploy'
+      - 'meta-ad-studio-backend'
+      - '--image'
+      - '$(params.REGION)-docker.pkg.dev/$(params.PROJECT)/meta-ad-studio-repo/backend:latest'
+      - '--region'
+      - '$(params.REGION)'
+      - '--platform'
+      - 'managed'
+      - '--allow-unauthenticated'
+      - '--set-secrets'
+      - 'DATABASE_URL=DATABASE_URL:latest,JWT_SECRET=JWT_SECRET:latest,GEMINI_API_KEY=GEMINI_API_KEY:latest'
+
+  - name: 'gcr.io/cloud-builders/gcloud'
+    id: 'Deploy Frontend'
+    args:
+      - 'run'
+      - 'deploy'
+      - 'meta-ad-studio-frontend'
+      - '--image'
+      - '$(params.REGION)-docker.pkg.dev/$(params.PROJECT)/meta-ad-studio-repo/frontend:latest'
+      - '--region'
+      - '$(params.REGION)'
+      - '--platform'
+      - 'managed'
+      - '--allow-unauthenticated'
+
+options:
+  substitution_option: ALLOW_LOOSE
+
+substitutions:
+  _REGION: 'us-central1'
+  _PROJECT: ''
+
+timeout: '1200s'
 substitutions:
   _REGION: "us-central1" # Default region, can be overridden by triggers
 
