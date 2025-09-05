@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Meta Studio
+Comment=Launch Meta-Ad-Studio orchestrator
+Exec=gnome-terminal -- /bin/bash -c "'$HOME/Davicho861/Meta-Ad-Studio-/meta-studio.sh'; exec bash"
+Terminal=false
+Categories=Development;Application;
+Icon=utilities-terminal
+StartupNotify=true
+Name[es]=Meta Studio
