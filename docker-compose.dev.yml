@@ -4,15 +4,15 @@ services:
   db:
     image: postgres:15-alpine
     environment:
-      POSTGRES_USER: "${POSTGRES_USER:-devuser}"
-      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-devpass}"
-      POSTGRES_DB: "${POSTGRES_DB:-meta_ad_studio}"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+      POSTGRES_DB: "postgres"
     ports:
-      - "5433:5432"
+      - "5434:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-devuser} -d ${POSTGRES_DB:-meta_ad_studio} || exit 1"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -20,7 +20,7 @@ services:
   redis:
     image: redis:7-alpine
     ports:
-      - "6379:6379"
+      - "6381:6379"
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
@@ -31,42 +31,43 @@ services:
     build:
       context: ./packages/api-server/server
       dockerfile: Dockerfile
+    image: meta-ad-studio/api-server:dev
+    volumes:
+      - ./packages/api-server/server:/app:cached
+      - /app/node_modules
     environment:
-      DATABASE_URL: "${DATABASE_URL:-postgresql://devuser:devpass@db:5432/meta_ad_studio}"
+      DATABASE_URL: "postgresql://postgres:postgres@db:5432/postgres"
       REDIS_URL: "redis://redis:6379"
     ports:
-      - '3002:3001'
+      - "3003:3001"
     command: sh -c "npm run migrate || true && npm run seed || true && npm run dev"
     depends_on:
-      db:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
+      - db
+      - redis
 
-  frontend:
-    image: node:20
-    working_dir: /app
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    image: meta-ad-studio/backend:dev
     volumes:
-      - ./frontend:/app:cached
-      - /app/node_modules
-    command: sh -c "npm ci --silent || true && npm run dev -- --host"
+      - ./backend:/app/backend:cached
+      - /app/backend/node_modules
+    working_dir: /app/backend
+    env_file:
+      - ./.env.development
+    command: sh -c "npm install --silent || true && npx prisma generate || true && npm run build || true && npm run start"
     ports:
-      - "5173:5173"
+      - "4001:4000"
     depends_on:
-      - api-server
-    environment:
-      - NODE_ENV=development
+      - db
+      - redis
 
-volumes:
-  postgres_data:
-version: '3.8'
-
-services:
   frontend:
-    # Frontend dev with hot-reload using devtools/frontend.Dockerfile.dev
     build:
       context: .
       dockerfile: devtools/frontend.Dockerfile.dev
+    image: meta-ad-studio/frontend:dev
     volumes:
       - ./frontend:/app:cached
       - /app/node_modules
@@ -75,62 +76,14 @@ services:
       - ./.env.development
     command: sh -c "npm install --silent || true && npm run dev -- --host"
     ports:
-      - "5173:5173"
+      - "5174:5173"
     environment:
-      - NODE_ENV=development
+      NODE_ENV: development
     stdin_open: true
     tty: true
-
-  backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    volumes:
-      - ./backend:/app/backend:cached
-      - /app/backend/node_modules
-    working_dir: /app/backend
-    env_file:
-      - ./.env.development
-    # Ensure dev experience: install (if needed), generate prisma client and run dev server
-    command: sh -c "npm install --silent || true && npx prisma generate || true && npm run dev"
-    ports:
-      - "4000:4000"
-    environment:
-      - NODE_ENV=development
     depends_on:
-      db:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-
-  db:
-    image: postgres:15
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=postgres
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-    ports:
-      - "5433:5432"
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 10s
-
-  redis:
-    image: redis:7
-    ports:
-      - "6380:6379"
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 5s
+      - api-server
+      - backend
 
 volumes:
   pgdata:
-
