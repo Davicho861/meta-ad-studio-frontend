@@ -1,3 +1,6 @@
+# Generating a .desktop file with absolute path and cleaning up desktop/meta-studio.desktop to avoid immediate closures
+
+#!/usr/bin/env bash
 #!/usr/bin/env bash
 set -euo pipefail
 echo "Instalando el lanzador de Meta-Ad Studio..."
@@ -10,14 +13,21 @@ echo "✓ Permisos del orquestador asegurados."
 # Create the applications directory
 mkdir -p "$HOME/.local/share/applications"
 
-# Copy the desktop file
-if [[ -f "$SCRIPT_DIR/desktop/meta-studio.desktop" ]]; then
-  cp "$SCRIPT_DIR/desktop/meta-studio.desktop" "$HOME/.local/share/applications/"
-  echo "✓ Acceso directo copiado a ~/.local/share/applications/"
-else
-  echo "ERROR: desktop/meta-studio.desktop no encontrado en el repo."
-  exit 1
-fi
+DESKTOP_PATH="$HOME/.local/share/applications/meta-studio.desktop"
+cat > "$DESKTOP_PATH" <<EOF
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Meta-Ad Studio (Dev Env)
+Comment=Lanza y gestiona el entorno de desarrollo de Meta-Ad Studio
+Exec=gnome-terminal -- /bin/bash -ic "$SCRIPT_DIR/meta-studio.sh; exec bash"
+Icon=utilities-terminal
+Terminal=false
+Categories=Development;
+StartupNotify=true
+EOF
+
+echo "✓ Acceso directo creado en $DESKTOP_PATH"
 
 # Update desktop database if available
 if command -v update-desktop-database &> /dev/null; then
