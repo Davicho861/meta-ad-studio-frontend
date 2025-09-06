@@ -1,4 +1,13 @@
 [Desktop Entry]
+Version=1.0
+Name=Meta-Ad Studio (Dev Env)
+Comment=Lanza y gestiona el entorno de desarrollo de Meta-Ad Studio
+Exec=gnome-terminal -- /bin/bash -c "'$HOME/Davicho861/Meta-Ad-Studio-/meta-studio.sh'; exec bash"
+Icon=utilities-terminal
+Terminal=true
+Type=Application
+Categories=Development;
+[Desktop Entry]
 Type=Application
 Name=Meta Studio
 Comment=Launch Meta-Ad-Studio orchestrator

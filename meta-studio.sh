@@ -1,6 +1,96 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# meta-studio.sh - Master orchestrator for Meta-Ad Studio development environment
+# Features:
+# - auto-update (git pull)
+# - interactive menu: start, stop, restart services, open frontend, open docs
+# - basic health checks
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$SCRIPT_DIR"
+
+function ensure_git_clean() {
+  if [[ -n "$(git -C "$REPO_ROOT" status --porcelain)" ]]; then
+    echo "Your git working tree has local changes. Commit or stash them before auto-update."
+    return 1
+  fi
+  return 0
+}
+
+function auto_update() {
+  echo "Checking for updates..."
+  if ensure_git_clean; then
+    git -C "$REPO_ROOT" fetch --all --prune
+    git -C "$REPO_ROOT" pull --ff-only || echo "Fast-forward pull failed; please update manually."
+    echo "Repository updated."
+  else
+    echo "Skipping auto-update due to local changes."
+  fi
+}
+
+function start_frontend() {
+  echo "Starting frontend in a new terminal..."
+  if command -v gnome-terminal &> /dev/null; then
+    gnome-terminal -- bash -lc "cd '$REPO_ROOT/frontend' && ./node_modules/.bin/vite --host" || true
+  elif command -v x-terminal-emulator &> /dev/null; then
+    x-terminal-emulator -e bash -c "cd '$REPO_ROOT/frontend' && npm run dev" || true
+  else
+    echo "No supported terminal emulator found; run 'cd frontend && npm run dev' manually."
+  fi
+}
+
+function stop_frontend() {
+  echo "Stopping frontend (best-effort by killing vite processes)..."
+  pkill -f vite || echo "No vite process found or insufficient permissions."
+}
+
+function open_repo_in_editor() {
+  if command -v code &> /dev/null; then
+    code "$REPO_ROOT"
+  else
+    echo "VSCode not found in PATH; open the project folder in your editor of choice: $REPO_ROOT"
+  fi
+}
+
+function show_menu() {
+  while true; do
+    cat <<EOF
+
+Meta-Ad Studio - Development Orchestrator
+=========================================
+1) Auto-update repository (git pull)
+2) Start frontend (dev server)
+3) Stop frontend
+4) Open repo in VSCode
+5) Show git status
+6) Health check
+7) Exit
+
+Choose an option [1-7]: 
+EOF
+    read -r choice
+    case "$choice" in
+      1) auto_update ;;
+      2) start_frontend ;;
+      3) stop_frontend ;;
+      4) open_repo_in_editor ;;
+      5) git -C "$REPO_ROOT" status --short ;;
+      6) echo "Health checks:"; git -C "$REPO_ROOT" rev-parse --abbrev-ref HEAD; ps aux | grep -E 'vite|storybook' | grep -v grep || true ;;
+      7) echo "Goodbye!"; exit 0 ;;
+      *) echo "Invalid option" ;;
+    esac
+  done
+}
+
+if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then
+  # If run directly, ensure script is executable
+  chmod +x "$SCRIPT_DIR/meta-studio.sh" || true
+  show_menu
+fi
+#!/usr/bin/env bash
+set -euo pipefail
+
 # meta-studio.sh - Orquestador maestro para Meta-Ad-Studio
 # Consolidates auto-update, docker-compose orchestration and an interactive menu.
 
