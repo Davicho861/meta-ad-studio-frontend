@@ -2,135 +2,354 @@ version: '3.8'
 
 services:
   db:
-    image: postgres:15-alpine
-    environment:
-      POSTGRES_USER: "${POSTGRES_USER:-devuser}"
-      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-devpass}"
-      POSTGRES_DB: "${POSTGRES_DB:-meta_ad_studio}"
-    ports:
-      - "5433:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-devuser} -d ${POSTGRES_DB:-meta_ad_studio} || exit 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+    version: '3.8'
 
-  redis:
-    image: redis:7-alpine
-    ports:
-      - "6379:6379"
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-  api-server:
-    build:
-      context: ./packages/api-server/server
-      dockerfile: Dockerfile
-    environment:
-      DATABASE_URL: "${DATABASE_URL:-postgresql://devuser:devpass@db:5432/meta_ad_studio}"
-      REDIS_URL: "redis://redis:6379"
-    ports:
-      - '3002:3001'
-    command: sh -c "npm run migrate || true && npm run seed || true && npm run dev"
-    depends_on:
+    services:
       db:
-        condition: service_healthy
+        image: postgres:15-alpine
+        environment:
+          POSTGRES_USER: "postgres"
+          POSTGRES_PASSWORD: "postgres"
+          POSTGRES_DB: "postgres"
+        ports:
+          - "5434:5432"
+        volumes:
+          - pgdata:/var/lib/postgresql/data
+        healthcheck:
+          test: ["CMD-SHELL", "pg_isready -U postgres -d postgres || exit 1"]
+          interval: 10s
+          timeout: 5s
+          retries: 5
+
       redis:
-        condition: service_healthy
+        image: redis:7-alpine
+        ports:
+          - "6381:6379"
+        healthcheck:
+          test: ["CMD", "redis-cli", "ping"]
+          interval: 10s
+          timeout: 5s
+          retries: 5
 
-  frontend:
-    image: node:20
-    working_dir: /app
+      api-server:
+        build:
+          context: ./packages/api-server/server
+          dockerfile: Dockerfile
+        image: meta-ad-studio/api-server:dev
+        volumes:
+          - ./packages/api-server/server:/app:cached
+          - /app/node_modules
+        environment:
+          DATABASE_URL: "postgresql://postgres:postgres@db:5432/postgres"
+          REDIS_URL: "redis://redis:6379"
+        ports:
+          - "3003:3001"
+        command: sh -c "npm run migrate || true && npm run seed || true && npm run dev"
+        depends_on:
+          db:
+            condition: service_healthy
+          redis:
+            condition: service_healthy
+
+      backend:
+        build:
+          context: ./backend
+          dockerfile: Dockerfile
+        image: meta-ad-studio/backend:dev
+        volumes:
+          - ./backend:/app/backend:cached
+          - /app/backend/node_modules
+        working_dir: /app/backend
+        env_file:
+          - ./.env.development
+        command: sh -c "npm install --silent || true && npx prisma generate || true && npm run build || true && npm run start"
+        ports:
+          - "4001:4000"
+        depends_on:
+          db:
+            condition: service_healthy
+          redis:
+            condition: service_healthy
+
+      frontend:
+        build:
+          context: .
+          dockerfile: devtools/frontend.Dockerfile.dev
+        image: meta-ad-studio/frontend:dev
+        volumes:
+          - ./frontend:/app:cached
+          - /app/node_modules
+        working_dir: /app
+        env_file:
+          - ./.env.development
+        command: sh -c "npm install --silent || true && npm run dev -- --host"
+        ports:
+          - "5174:5173"
+        environment:
+          NODE_ENV: development
+        stdin_open: true
+        tty: true
+        depends_on:
+          - api-server
+          - backend
+
     volumes:
-      - ./frontend:/app:cached
-      - /app/node_modules
-    command: sh -c "npm ci --silent || true && npm run dev -- --host"
-    ports:
-      - "5173:5173"
-    depends_on:
-      - api-server
-    environment:
-      - NODE_ENV=development
+      pgdata:
 
-volumes:
-  postgres_data:
-version: '3.8'
-
-services:
-  frontend:
-    # Frontend dev with hot-reload using devtools/frontend.Dockerfile.dev
-    build:
-      context: .
-      dockerfile: devtools/frontend.Dockerfile.dev
-    volumes:
-      - ./frontend:/app:cached
-      - /app/node_modules
-    working_dir: /app
-    env_file:
-      - ./.env.development
-    command: sh -c "npm install --silent || true && npm run dev -- --host"
-    ports:
-      - "5173:5173"
-    environment:
-      - NODE_ENV=development
-    stdin_open: true
-    tty: true
-
-  backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    volumes:
-      - ./backend:/app/backend:cached
-      - /app/backend/node_modules
-    working_dir: /app/backend
-    env_file:
-      - ./.env.development
-    # Ensure dev experience: install (if needed), generate prisma client and run dev server
-    command: sh -c "npm install --silent || true && npx prisma generate || true && npm run dev"
-    ports:
-      - "4000:4000"
-    environment:
-      - NODE_ENV=development
-    depends_on:
+    services:
       db:
-        condition: service_healthy
+        image: postgres:15-alpine
+        environment:
+          POSTGRES_USER: "${POSTGRES_USER:-postgres}"
+          POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-postgres}"
+          POSTGRES_DB: "${POSTGRES_DB:-postgres}"
+        ports:
+          - "5434:5432" # changed temporarily to avoid host port conflict
+        volumes:
+          - pgdata:/var/lib/postgresql/data
+        healthcheck:
+          test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-postgres} || exit 1"]
+          interval: 10s
+          timeout: 5s
+          retries: 5
+
       redis:
-        condition: service_healthy
+        image: redis:7-alpine
+        ports:
+          - "6381:6379" # changed temporarily to avoid host port conflict
+        healthcheck:
+          test: ["CMD", "redis-cli", "ping"]
+          interval: 10s
+          timeout: 5s
+          retries: 5
 
-  db:
-    image: postgres:15
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=postgres
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-    ports:
-      - "5433:5432"
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 10s
+      api-server:
+        image: meta-ad-studio/api-server:dev
+        build:
+          context: ./packages/api-server/server
+          dockerfile: Dockerfile
+        volumes:
+          - ./packages/api-server/server:/app:cached
+          - /app/node_modules
+        environment:
+          DATABASE_URL: "${DATABASE_URL:-postgresql://postgres:postgres@db:5432/postgres}"
+          REDIS_URL: "redis://redis:6379"
+        ports:
+          - "3003:3001" # changed temporarily to avoid host port conflict
+        command: sh -c "npm run migrate || true && npm run seed || true && npm run dev"
+        depends_on:
+          db:
+            condition: service_healthy
+          redis:
+            condition: service_healthy
 
-  redis:
-    image: redis:7
-    ports:
-      - "6380:6379"
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 5s
+      backend:
+        image: meta-ad-studio/backend:dev
+        build:
+          context: ./backend
+          dockerfile: Dockerfile
+        volumes:
+          - ./backend:/app/backend:cached
+          - /app/backend/node_modules
+        working_dir: /app/backend
+        env_file:
+          - ./.env.development
+        command: sh -c "npm install --silent || true && npx prisma generate || true && npm run build || true && npm run start"
+        ports:
+          - "4001:4000" # changed temporarily to avoid host port conflict
+        depends_on:
+          db:
+            condition: service_healthy
+          redis:
+            condition: service_healthy
 
-volumes:
-  pgdata:
+      frontend:
+        image: meta-ad-studio/frontend:dev
+        build:
+          context: .
+          dockerfile: devtools/frontend.Dockerfile.dev
+        volumes:
+          - ./frontend:/app:cached
+          - /app/node_modules
+        working_dir: /app
+        env_file:
+          - ./.env.development
+        command: sh -c "npm install --silent || true && npm run dev -- --host"
+        ports:
+          - "5174:5173" # changed temporarily to avoid host port conflict
+        version: '3.8'
 
+        services:
+          db:
+            image: postgres:15-alpine
+            environment:
+              POSTGRES_USER: "${POSTGRES_USER:-postgres}"
+              POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-postgres}"
+              POSTGRES_DB: "${POSTGRES_DB:-postgres}"
+            ports:
+              - "5434:5432" # changed temporarily to avoid host port conflict
+            volumes:
+              - pgdata:/var/lib/postgresql/data
+            healthcheck:
+              test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-postgres} || exit 1"]
+              interval: 10s
+              timeout: 5s
+              retries: 5
+
+          redis:
+            image: redis:7-alpine
+            ports:
+              - "6381:6379" # changed temporarily to avoid host port conflict
+            healthcheck:
+              test: ["CMD", "redis-cli", "ping"]
+              interval: 10s
+              timeout: 5s
+              retries: 5
+
+          api-server:
+            image: meta-ad-studio/api-server:dev
+            build:
+              context: ./packages/api-server/server
+              dockerfile: Dockerfile
+            volumes:
+              - ./packages/api-server/server:/app:cached
+              - /app/node_modules
+            environment:
+              DATABASE_URL: "${DATABASE_URL:-postgresql://postgres:postgres@db:5432/postgres}"
+              REDIS_URL: "redis://redis:6379"
+            ports:
+              - "3003:3001" # changed temporarily to avoid host port conflict
+            command: sh -c "npm run migrate || true && npm run seed || true && npm run dev"
+            depends_on:
+              db:
+                condition: service_healthy
+              redis:
+                condition: service_healthy
+
+          backend:
+            image: meta-ad-studio/backend:dev
+            build:
+              context: ./backend
+              dockerfile: Dockerfile
+            volumes:
+              - ./backend:/app/backend:cached
+              - /app/backend/node_modules
+            working_dir: /app/backend
+            env_file:
+              - ./.env.development
+            command: sh -c "npm install --silent || true && npx prisma generate || true && npm run build || true && npm run start"
+            ports:
+              - "4001:4000" # changed temporarily to avoid host port conflict
+            depends_on:
+              db:
+                condition: service_healthy
+              redis:
+                condition: service_healthy
+
+          frontend:
+            image: meta-ad-studio/frontend:dev
+            build:
+              context: .
+              dockerfile: devtools/frontend.Dockerfile.dev
+            volumes:
+              - ./frontend:/app:cached
+              - /app/node_modules
+            working_dir: /app
+            env_file:
+              - ./.env.development
+            command: sh -c "npm install --silent || true && npm run dev -- --host"
+            ports:
+              - "5174:5173" # changed temporarily to avoid host port conflict
+            version: '3.8'
+
+            services:
+              db:
+                image: postgres:15-alpine
+                environment:
+                  POSTGRES_USER: "${POSTGRES_USER:-postgres}"
+                  POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-postgres}"
+                  POSTGRES_DB: "${POSTGRES_DB:-postgres}"
+                ports:
+                  - "5434:5432" # changed temporarily to avoid host port conflict
+                volumes:
+                  - pgdata:/var/lib/postgresql/data
+                healthcheck:
+                  test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-postgres} || exit 1"]
+                  interval: 10s
+                  timeout: 5s
+                  retries: 5
+
+              redis:
+                image: redis:7-alpine
+                ports:
+                  - "6381:6379" # changed temporarily to avoid host port conflict
+                healthcheck:
+                  test: ["CMD", "redis-cli", "ping"]
+                  interval: 10s
+                  timeout: 5s
+                  retries: 5
+
+              api-server:
+                build:
+                  context: ./packages/api-server/server
+                  dockerfile: Dockerfile
+                image: meta-ad-studio/api-server:dev
+                volumes:
+                  - ./packages/api-server/server:/app:cached
+                  - /app/node_modules
+                environment:
+                  DATABASE_URL: "${DATABASE_URL:-postgresql://postgres:postgres@db:5432/postgres}"
+                  REDIS_URL: "redis://redis:6379"
+                ports:
+                  - "3003:3001" # changed temporarily to avoid host port conflict
+                command: sh -c "npm run migrate || true && npm run seed || true && npm run dev"
+                depends_on:
+                  db:
+                    condition: service_healthy
+                  redis:
+                    condition: service_healthy
+
+              backend:
+                build:
+                  context: ./backend
+                  dockerfile: Dockerfile
+                image: meta-ad-studio/backend:dev
+                volumes:
+                  - ./backend:/app/backend:cached
+                  - /app/backend/node_modules
+                working_dir: /app/backend
+                env_file:
+                  - ./.env.development
+                command: sh -c "npm install --silent || true && npx prisma generate || true && npm run build || true && npm run start"
+                ports:
+                  - "4001:4000" # changed temporarily to avoid host port conflict
+                depends_on:
+                  db:
+                    condition: service_healthy
+                  redis:
+                    condition: service_healthy
+
+              frontend:
+                build:
+                  context: .
+                  dockerfile: devtools/frontend.Dockerfile.dev
+                image: meta-ad-studio/frontend:dev
+                volumes:
+                  - ./frontend:/app:cached
+                  - /app/node_modules
+                working_dir: /app
+                env_file:
+                  - ./.env.development
+                command: sh -c "npm install --silent || true && npm run dev -- --host"
+                ports:
+                  - "5174:5173" # changed temporarily to avoid host port conflict
+                environment:
+                  NODE_ENV: development
+                stdin_open: true
+                tty: true
+                depends_on:
+                  - api-server
+                  - backend
+
+            volumes:
+              pgdata:
