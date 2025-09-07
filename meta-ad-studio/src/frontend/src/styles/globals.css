@@ -1,0 +1,89 @@
+:root {
+  --bg-color: #1a1a1a; /* Fondo oscuro */
+  --text-color: #ffffff; /* Texto blanco */
+  --input-bg-color: #2a2a2a; /* Fondo del input */
+  --input-border-color: #444444; /* Color del borde del input */
+  --button-bg-color: #3b82f6; /* Color de fondo del botón */
+  --button-hover-bg-color: #2563eb; /* Color de fondo del botón al pasar el ratón */
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  font-family: 'Inter', sans-serif; /* Tipografía cuidada */
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+input {
+  background-color: var(--input-bg-color);
+  border: 1px solid var(--input-border-color);
+  color: var(--text-color);
+  padding: 10px;
+  border-radius: 5px;
+  width: 100%;
+  max-width: 600px; /* Ancho máximo del input */
+}
+
+input:focus {
+  outline: none;
+  border-color: var(--button-bg-color);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5); /* Sombra al enfocar */
+}
+
+button {
+  background-color: var(--button-bg-color);
+  color: var(--text-color);
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: var(--button-hover-bg-color);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px; /* Espaciado entre tarjetas */
+  width: 100%;
+  max-width: 1200px; /* Ancho máximo de la cuadrícula */
+}
+
+.card {
+  background-color: var(--input-bg-color);
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+}
+
+.card img {
+  width: 100%;
+  height: auto;
+}
+
+.card:hover .overlay {
+  opacity: 1; /* Mostrar overlay al pasar el ratón */
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}

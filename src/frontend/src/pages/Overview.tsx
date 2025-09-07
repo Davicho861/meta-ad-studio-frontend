@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Sparkles, Image, Zap, Settings, History, User, Moon, Sun, Wand2, Download, Share2, Heart, MessageCircle, MoreHorizontal } from "lucide-react";
 import { motion } from "framer-motion";
-import PromptBar from "../components/PromptBar";
+import PromptBar from "../components/prompting/PromptBar";
 import ResultsGrid from "../components/ResultsGrid";
 
 const MidjourneyStudio = () => {

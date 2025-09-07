@@ -25,7 +25,7 @@ const App = () => (
       <BrowserRouter>
           {/* Tiny dev-only banner to verify Hot Reload updates quickly */}
           <div style={{position: 'fixed', top: 8, right: 8, zIndex: 9999, background: 'rgba(0,0,0,0.6)', color: 'white', padding: '4px 8px', borderRadius: 6, fontSize: 12}}>
-            Dev HotReload (test change): {new Date().toLocaleTimeString()}
+            Dev HotReload: {new Date().toLocaleTimeString()}
           </div>
         <Routes>
           <Route path='/' element={<Index />} />

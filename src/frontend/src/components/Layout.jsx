@@ -1,5 +1,5 @@
 import React from 'react'
-import PromptBar from './PromptBar'
+import PromptBar from './prompting/PromptBar'
 import ResultsGrid from './ResultsGrid'
 import SettingsPanel from './SettingsPanel'
 import HistorySidebar from './HistorySidebar'
