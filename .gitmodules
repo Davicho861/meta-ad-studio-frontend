@@ -1,4 +1,0 @@
-[submodule "frontend"]
-	path = frontend
-	url = https://github.com/Davicho861/meta-ad-studio-frontend.git
-	branch = main

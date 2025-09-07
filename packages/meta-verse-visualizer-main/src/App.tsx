@@ -7,6 +7,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Index from './pages/Index'
 import NotFound from './pages/NotFound'
+import DashboardPage from './pages/DashboardPage'
 
 const queryClient = new QueryClient()
 
@@ -15,16 +16,19 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <HotToaster toastOptions={{
-        style: {
-          background: '#1E1E1E', // surface-dark
-          color: '#E0E0E0', // primary-text
-          border: '1px solid #333'
-        },
-      }} />
+      <HotToaster
+        toastOptions={{
+          style: {
+            background: '#1E1E1E', // surface-dark
+            color: '#E0E0E0', // primary-text
+            border: '1px solid #333',
+          },
+        }}
+      />
       <BrowserRouter>
         <Routes>
           <Route path='/' element={<Index />} />
+          <Route path='/dashboard' element={<DashboardPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path='*' element={<NotFound />} />
         </Routes>
