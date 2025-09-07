@@ -60,3 +60,16 @@ gcloud-key.json
 *.asar.orig
 *.asar.prepatch
 src/backend/server/node_modules
+
+# Test/coverage artifacts
+.nyc_output/
+src/frontend/.nyc_output/
+coverage/
+
+# Build caches and outputs
+.cache/
+dist/
+build/
+
+# Ignore node_modules everywhere
+**/node_modules/
