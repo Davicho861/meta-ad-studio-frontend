@@ -4,9 +4,9 @@
   "version": "0.1.0",
   "identifier": "com.tauri.dev",
   "build": {
-  "frontendDist": "../src/frontend/meta-verse-visualizer-main/dist",
-  "devUrl": "http://localhost:8080",
-  "beforeDevCommand": "npm run dev --prefix src/frontend/meta-verse-visualizer-main",
+    "frontendDist": "../src/frontend/meta-verse-visualizer-main/dist",
+    "devUrl": "http://localhost:8080",
+    "beforeDevCommand": "npm run dev --prefix src/frontend/meta-verse-visualizer-main",
     "beforeBuildCommand": "npm run build"
   },
   "app": {
@@ -16,8 +16,8 @@
         "width": 800,
         "height": 600,
         "resizable": true,
-      "frontendDist": "../src/frontend/meta-verse-visualizer-main/dist",
-      "beforeDevCommand": "npm run dev --prefix src/frontend/meta-verse-visualizer-main",
+        "fullscreen": false
+      }
     ],
     "security": {
       "csp": null
