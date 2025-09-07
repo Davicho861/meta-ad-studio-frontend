@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-. "$(dirname "$0")/_/husky.sh"
 
 # Ejecutar lint en la raíz (eslint) usando script definido en package.json
 echo "Running lint (pre-commit)..."
