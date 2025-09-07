@@ -32,8 +32,8 @@ jobs:
       - name: Build and push frontend image
         uses: docker/build-push-action@v4
         with:
-          context: ./frontend
-          file: ./frontend/Dockerfile
+          context: ./src/frontend
+          file: ./src/frontend/Dockerfile
           push: true
           platforms: linux/amd64,linux/arm64
           tags: |
@@ -60,16 +60,16 @@ jobs:
           node-version: '20'
 
       - name: Install dependencies for api-server
-        run: cd packages/api-server/server && npm install --legacy-peer-deps
+        run: cd src/backend/server && npm install --legacy-peer-deps
 
       - name: Run tests for api-server
-        run: cd packages/api-server/server && npm test
+        run: cd src/backend/server && npm test
 
       - name: Install dependencies for meta-verse-visualizer
-        run: cd packages/meta-verse-visualizer-main && npm install --legacy-peer-deps
+        run: cd sr./src/frontend/meta-verse-visualizer-main && npm install --legacy-peer-deps
 
       - name: Build meta-verse-visualizer
-        run: cd packages/meta-verse-visualizer-main && npm run build
+        run: cd sr./src/frontend/meta-verse-visualizer-main && npm run build
 
   deploy:
     needs: build-and-test
@@ -88,16 +88,16 @@ jobs:
       - name: Build and push api-server image
         uses: docker/build-push-action@v4
         with:
-          context: ./packages/api-server/server
-          file: ./packages/api-server/server/Dockerfile
+          context: ./src/backend/server
+          file: ./src/backend/server/Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/meta-ad-studio-api:latest
 
       - name: Build and push meta-verse-visualizer image
         uses: docker/build-push-action@v4
         with:
-          context: ./packages/meta-verse-visualizer-main
-          file: ./packages/meta-verse-visualizer-main/Dockerfile
+          context: ./sr./src/frontend/meta-verse-visualizer-main
+          file: ./sr./src/frontend/meta-verse-visualizer-main/Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/meta-ad-studio-frontend:latest
 

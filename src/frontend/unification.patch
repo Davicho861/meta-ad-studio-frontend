@@ -1,6 +1,6 @@
-diff --git a/frontend b/frontend
---- a/frontend
-+++ b/frontend
+diff --git ./src/frontend ./src/frontend
+--- ./src/frontend
++++ ./src/frontend
 @@ -1 +1 @@
 -Subproject commit 664c8f225247b922c2dbd970296d1aff1dc8fafe
 +Subproject commit 664c8f225247b922c2dbd970296d1aff1dc8fafe-dirty
@@ -80,10 +80,10 @@ index ab15b3d7..e69de29b 100644
 --- a/unification.patch
 +++ b/unification.patch
 @@ -1,293 +0,0 @@
--diff --git a/backend/package.json b/backend/package.json
+-diff --git ./src/backend/package.json ./src/backend/package.json
 -index 6fca052f..fd852eba 100644
----- a/backend/package.json
--+++ b/backend/package.json
+---- ./src/backend/package.json
+-+++ ./src/backend/package.json
 -@@ -4,13 +4,14 @@
 -   "private": true,
 -   "type": "module",
@@ -136,10 +136,10 @@ index ab15b3d7..e69de29b 100644
 --Icon=applications-development
 -+Categories=Development;IDE;
 - StartupNotify=true
--diff --git a/devtools/frontend.Dockerfile.dev b/devtools/frontend.Dockerfile.dev
+-diff --git a/devtool./src/frontend.Dockerfile.dev b/devtool./src/frontend.Dockerfile.dev
 -index 82a7778c..1e415763 100644
----- a/devtools/frontend.Dockerfile.dev
--+++ b/devtools/frontend.Dockerfile.dev
+---- a/devtool./src/frontend.Dockerfile.dev
+-+++ b/devtool./src/frontend.Dockerfile.dev
 -@@ -4,7 +4,8 @@ WORKDIR /app
 - 
 - # Copy package manifests and install all deps including devDeps
@@ -186,7 +186,7 @@ index ab15b3d7..e69de29b 100644
 -+
 -+  api-server:
 -+    build:
--+      context: ./packages/api-server/server
+-+      context: ./src/backend/server
 -+      dockerfile: Dockerfile
 -+    environment:
 -+      DATABASE_URL: "${DATABASE_URL:-postgresql://devuser:devpass@db:5432/meta_ad_studio}"
@@ -204,7 +204,7 @@ index ab15b3d7..e69de29b 100644
 -+    image: node:20
 -+    working_dir: /app
 -+    volumes:
--+      - ./frontend:/app:cached
+-+      - ./src/frontend:/app:cached
 -+      - /app/node_modules
 -+    command: sh -c "npm ci --silent || true && npm run dev -- --host"
 -+    ports:
@@ -220,10 +220,10 @@ index ab15b3d7..e69de29b 100644
 -+
 - services:
 -   frontend:
--     # Frontend dev with hot-reload using devtools/frontend.Dockerfile.dev
--diff --git a/frontend b/frontend
----- a/frontend
--+++ b/frontend
+-     # Frontend dev with hot-reload using devtool./src/frontend.Dockerfile.dev
+-diff --git ./src/frontend ./src/frontend
+---- ./src/frontend
+-+++ ./src/frontend
 -@@ -1 +1 @@
 --Subproject commit 664c8f225247b922c2dbd970296d1aff1dc8fafe
 -+Subproject commit 664c8f225247b922c2dbd970296d1aff1dc8fafe-dirty
@@ -360,10 +360,10 @@ index ab15b3d7..e69de29b 100644
 -+fi
 -+
 -+exit 0
--diff --git a/packages/api-server/server/package.json b/packages/api-server/server/package.json
+-diff --git a/src/backend/server/package.json b/src/backend/server/package.json
 -index 7057d2d9..55bdce26 100644
----- a/packages/api-server/server/package.json
--+++ b/packages/api-server/server/package.json
+---- a/src/backend/server/package.json
+-+++ b/src/backend/server/package.json
 -@@ -7,6 +7,8 @@
 -     "build": "tsc",
 -     "start": "node -r dotenv/config dist/index.js",

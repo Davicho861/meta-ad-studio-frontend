@@ -65,12 +65,12 @@ El artefacto `BACKEND_STATE_AUDIT_2025-09-03.md` resume el estado actual del Bac
 
 ### 4.2. Pruebas Automatizadas y Calidad del Código
 
-*   **Pruebas Server-Side:** Se ampliará la suite de pruebas en `packages/api-server/server/__tests__/` para cubrir la lógica de negocio crítica.
+*   **Pruebas Server-Side:** Se ampliará la suite de pruebas en `src/backend/server/__tests__/` para cubrir la lógica de negocio crítica.
 *   **Cobertura de Pruebas:** El `coverage-server/` muestra una cobertura del 85%. El objetivo es superar el 95%, con especial atención a los nuevos servicios de IA y Web3.
 
 ### 4.3. Sincronización GitHub para Mejoras Continuas
 
-*   **Gestión de Ramas:** Se ha creado la rama `feature/backend-optimizations` para centralizar los cambios.
+*   **Gestión de Ramas:** Se ha creado la rama `featur./src/backend-optimizations` para centralizar los cambios.
 *   **CI/CD para Backend:** El pipeline en `.github/workflows/deploy.yml` se ha actualizado para incluir pruebas unitarias y de integración del backend en cada commit.
 
 ---

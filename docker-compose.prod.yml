@@ -25,7 +25,7 @@ services:
 
   api-server:
     build:
-      context: ./packages/api-server/server
+      context: ./src/backend/server
       dockerfile: Dockerfile
     environment:
       DATABASE_URL: "${DATABASE_URL}"
@@ -42,7 +42,7 @@ services:
 
   frontend:
     build:
-      context: ./frontend
+      context: ./src/frontend
       dockerfile: Dockerfile
       target: prod
     ports:

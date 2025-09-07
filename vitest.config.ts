@@ -6,8 +6,8 @@ import path from 'path';
 export default defineConfig({
   test: {
     projects: [
-      'packages/meta-verse-visualizer-main/vitest.config.ts',
-      'packages/api-server/server/vitest.config.ts'
+      'sr./src/frontend/meta-verse-visualizer-main/vitest.config.ts',
+      'src/backend/server/vitest.config.ts'
     ]
   }
 });

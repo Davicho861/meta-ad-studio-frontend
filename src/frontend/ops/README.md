@@ -18,7 +18,7 @@ Comprobaciones rápidas:
 Notas:
 
 - Asegúrate de exportar las variables de entorno sensibles (POSTGRES_PASSWORD, DATABASE_URL) fuera del repositorio.
-- Ejecuta npm ci en `./frontend` localmente para actualizar package-lock.json si lo deseas antes de build.
+- Ejecuta npm ci en `./src/frontend` localmente para actualizar package-lock.json si lo deseas antes de build.
 
 Orquestador interactivo (guardian -> orchestrator)
 -----------------------------------------------

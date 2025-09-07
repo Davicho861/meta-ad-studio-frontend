@@ -116,7 +116,7 @@ data:
   runtime-config.yaml: |
     {}
 ---
-# Source: loki/templates/backend/clusterrole.yaml
+# Source: loki/template./src/backend/clusterrole.yaml
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
@@ -131,7 +131,7 @@ rules:
   resources: ["configmaps", "secrets"]
   verbs: ["get", "watch", "list"]
 ---
-# Source: loki/templates/backend/clusterrolebinding.yaml
+# Source: loki/template./src/backend/clusterrolebinding.yaml
 kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:

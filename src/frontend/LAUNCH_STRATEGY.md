@@ -29,7 +29,7 @@ Sugerencia de modificaciones para `ci-cd/cloudbuild.yaml`:
 - Añadir una trigger que dispare en push de tags `v*.*.*`.
 - Incluir sustituciones: _VERSION = $TAG_NAME
 - Steps (resumen):
-  - 'gcr.io/cloud-builders/docker' build -t ${_REGISTRY}/api-server:${_VERSION} -f packages/api-server/server/Dockerfile .
+  - 'gcr.io/cloud-builders/docker' build -t ${_REGISTRY}/api-server:${_VERSION} -f src/backend/server/Dockerfile .
   - 'gcr.io/cloud-builders/docker' push ${_REGISTRY}/api-server:${_VERSION}
   - Repetir para meta-verse-visualizer-main y otros servicios.
 

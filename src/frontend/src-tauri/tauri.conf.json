@@ -4,9 +4,9 @@
   "version": "0.1.0",
   "identifier": "com.tauri.dev",
   "build": {
-    "frontendDist": "../packages/meta-verse-visualizer-main/dist",
+    "frontendDist": "../sr./src/frontend/meta-verse-visualizer-main/dist",
     "devUrl": "http://localhost:8080",
-    "beforeDevCommand": "npm run dev --prefix packages/meta-verse-visualizer-main",
+    "beforeDevCommand": "npm run dev --prefix sr./src/frontend/meta-verse-visualizer-main",
     "beforeBuildCommand": "npm run build"
   },
   "app": {

@@ -22,13 +22,13 @@ steps:
   - name: 'node:22'
     id: 'Lint-ApiServer'
     entrypoint: 'npm'
-    args: ['run', 'lint', '--workspace=packages/api-server/server']
+    args: ['run', 'lint', '--workspace=src/backend/server']
     waitFor: ['Install-Dependencies']
 
   - name: 'node:22'
     id: 'Test-ApiServer'
     entrypoint: 'npm'
-    args: ['run', 'test', '--workspace=packages/api-server/server']
+    args: ['run', 'test', '--workspace=src/backend/server']
     waitFor: ['Install-Dependencies']
 
   # 3. Build de ambos artefactos en paralelo
@@ -41,7 +41,7 @@ steps:
   - name: 'node:22'
     id: 'Build-ApiServer'
     entrypoint: 'npm'
-    args: ['run', 'build', '--workspace=packages/api-server/server']
+    args: ['run', 'build', '--workspace=src/backend/server']
     waitFor: ['Lint-ApiServer', 'Test-ApiServer']
 
   # 4. Construir y Pushear Imágenes Docker en paralelo
@@ -50,7 +50,7 @@ steps:
     args:
       - 'build'
       - '-t'
-      - 'us-central1-docker.pkg.dev/$PROJECT_ID/meta-ad-studio-repo/frontend-app:${_ENV}_${SHORT_SHA}'
+      - 'us-central1-docker.pkg.dev/$PROJECT_ID/meta-ad-studio-rep./src/frontend-app:${_ENV}_${SHORT_SHA}'
       - '.'
       - '-f'
       - 'packages/web-app/Dockerfile' # Asumiendo un Dockerfile por paquete
@@ -64,7 +64,7 @@ steps:
       - 'us-central1-docker.pkg.dev/$PROJECT_ID/meta-ad-studio-repo/api-server:${_ENV}_${SHORT_SHA}'
       - '.'
       - '-f'
-      - 'packages/api-server/server/Dockerfile'
+      - 'src/backend/server/Dockerfile'
     waitFor: ['Build-ApiServer']
 
   # 4.5 Escaneo de Vulnerabilidades con Trivy (Simulado)
@@ -77,7 +77,7 @@ steps:
       - '1'
       - '--severity'
       - 'CRITICAL'
-      - 'us-central1-docker.pkg.dev/$PROJECT_ID/meta-ad-studio-repo/frontend-app:${_ENV}_${SHORT_SHA}'
+      - 'us-central1-docker.pkg.dev/$PROJECT_ID/meta-ad-studio-rep./src/frontend-app:${_ENV}_${SHORT_SHA}'
     waitFor: ['Build-Push-WebApp-Image']
 
   - name: 'aquasec/trivy:latest'
@@ -100,7 +100,7 @@ steps:
       - 'run'
       - 'deploy'
       - 'frontend-app-${_ENV}'
-      - '--image=us-central1-docker.pkg.dev/$PROJECT_ID/meta-ad-studio-repo/frontend-app:${_ENV}_${SHORT_SHA}'
+      - '--image=us-central1-docker.pkg.dev/$PROJECT_ID/meta-ad-studio-rep./src/frontend-app:${_ENV}_${SHORT_SHA}'
       - '--region=us-central1'
       - '--platform=managed'
       - '--allow-unauthenticated'
@@ -123,7 +123,7 @@ steps:
     waitFor: ['Scan-ApiServer-Image']
 
 images:
-  - 'us-central1-docker.pkg.dev/$PROJECT_ID/meta-ad-studio-repo/frontend-app:${_ENV}_${SHORT_SHA}'
+  - 'us-central1-docker.pkg.dev/$PROJECT_ID/meta-ad-studio-rep./src/frontend-app:${_ENV}_${SHORT_SHA}'
   - 'us-central1-docker.pkg.dev/$PROJECT_ID/meta-ad-studio-repo/api-server:${_ENV}_${SHORT_SHA}'
 
 options:

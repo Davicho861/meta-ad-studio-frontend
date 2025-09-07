@@ -1,19 +1,19 @@
 steps:
   - name: 'gcr.io/cloud-builders/docker'
     id: 'Build Backend Image'
-    args: [ 'build', '-t', '$(params.REGION)-docker.pkg.dev/$(params.PROJECT)/meta-ad-studio-repo/backend:latest', './backend' ]
+    args: [ 'build', '-t', '$(params.REGION)-docker.pkg.dev/$(params.PROJECT)/meta-ad-studio-rep./src/backend:latest', './src/backend' ]
 
   - name: 'gcr.io/cloud-builders/docker'
     id: 'Build Frontend Image'
-    args: [ 'build', '-t', '$(params.REGION)-docker.pkg.dev/$(params.PROJECT)/meta-ad-studio-repo/frontend:latest', './frontend' ]
+    args: [ 'build', '-t', '$(params.REGION)-docker.pkg.dev/$(params.PROJECT)/meta-ad-studio-rep./src/frontend:latest', './src/frontend' ]
 
   - name: 'gcr.io/cloud-builders/docker'
     id: 'Push Backend Image'
-    args: [ 'push', '$(params.REGION)-docker.pkg.dev/$(params.PROJECT)/meta-ad-studio-repo/backend:latest' ]
+    args: [ 'push', '$(params.REGION)-docker.pkg.dev/$(params.PROJECT)/meta-ad-studio-rep./src/backend:latest' ]
 
   - name: 'gcr.io/cloud-builders/docker'
     id: 'Push Frontend Image'
-    args: [ 'push', '$(params.REGION)-docker.pkg.dev/$(params.PROJECT)/meta-ad-studio-repo/frontend:latest' ]
+    args: [ 'push', '$(params.REGION)-docker.pkg.dev/$(params.PROJECT)/meta-ad-studio-rep./src/frontend:latest' ]
 
   # Run DB migrations using the backend image (assumes prisma migrate deploy is configured)
   - name: 'gcr.io/cloud-builders/gcloud'
@@ -25,7 +25,7 @@ steps:
         set -e
         echo "Running migrations..."
         # Use Cloud Run Job or run a one-off Cloud Run service; simplest approach: run a Cloud Run job (beta)
-        gcloud run jobs create meta-ad-migrations --image=$(params.REGION)-docker.pkg.dev/$(params.PROJECT)/meta-ad-studio-repo/backend:latest --region=$(params.REGION) --command "npx" --args "prisma,migrate,deploy" || true
+        gcloud run jobs create meta-ad-migrations --image=$(params.REGION)-docker.pkg.dev/$(params.PROJECT)/meta-ad-studio-rep./src/backend:latest --region=$(params.REGION) --command "npx" --args "prisma,migrate,deploy" || true
         gcloud run jobs execute meta-ad-migrations --region=$(params.REGION) || true
 
   - name: 'gcr.io/cloud-builders/gcloud'
@@ -35,7 +35,7 @@ steps:
       - 'deploy'
       - 'meta-ad-studio-backend'
       - '--image'
-      - '$(params.REGION)-docker.pkg.dev/$(params.PROJECT)/meta-ad-studio-repo/backend:latest'
+      - '$(params.REGION)-docker.pkg.dev/$(params.PROJECT)/meta-ad-studio-rep./src/backend:latest'
       - '--region'
       - '$(params.REGION)'
       - '--platform'
@@ -51,7 +51,7 @@ steps:
       - 'deploy'
       - 'meta-ad-studio-frontend'
       - '--image'
-      - '$(params.REGION)-docker.pkg.dev/$(params.PROJECT)/meta-ad-studio-repo/frontend:latest'
+      - '$(params.REGION)-docker.pkg.dev/$(params.PROJECT)/meta-ad-studio-rep./src/frontend:latest'
       - '--region'
       - '$(params.REGION)'
       - '--platform'

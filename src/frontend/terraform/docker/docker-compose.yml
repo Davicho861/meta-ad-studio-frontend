@@ -45,7 +45,7 @@ services:
   frontend:
     build:
       context: ../..
-      dockerfile: ./packages/meta-verse-visualizer-main/Dockerfile
+      dockerfile: ./sr./src/frontend/meta-verse-visualizer-main/Dockerfile
     ports:
       - "8081:80"
     networks:

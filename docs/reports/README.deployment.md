@@ -138,7 +138,7 @@ Cómo funciona (resumen):
 - Los servicios comparten la misma red de Docker; dentro de esa red cada servicio puede resolverse por su nombre.
 
 Variables de entorno entre servicios:
-- El `frontend` recibe `VITE_API_BASE_URL=http://backend:8000`. Dentro de Docker, `http://backend:8000` resuelve al contenedor `backend` gracias al DNS interno de Docker Compose.
+- El `frontend` recibe `VITE_API_BASE_URL=http:./src/backend:8000`. Dentro de Docker, `http:./src/backend:8000` resuelve al contenedor `backend` gracias al DNS interno de Docker Compose.
 - Desde el host, el `backend` también está mapeado a `http://localhost:8000` por conveniencia.
 
 Ejemplo: consumir la variable en Vite (frontend JavaScript):
@@ -149,8 +149,8 @@ const apiBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000'
 fetch(`${apiBase}/api/health`).then(res => res.json()).then(console.log)
 ```
 
-Por qué `http://backend:8000` funciona dentro de Docker y `http://localhost:8000` no:
-- Dentro de la red de Docker, cada servicio tiene un nombre DNS (el servicio `backend`) que resuelve a la IP del contenedor. Por eso `http://backend:8000` apunta correctamente desde el contenedor `frontend` al contenedor `backend`.
+Por qué `http:./src/backend:8000` funciona dentro de Docker y `http://localhost:8000` no:
+- Dentro de la red de Docker, cada servicio tiene un nombre DNS (el servicio `backend`) que resuelve a la IP del contenedor. Por eso `http:./src/backend:8000` apunta correctamente desde el contenedor `frontend` al contenedor `backend`.
 - `http://localhost:8000` desde el contenedor se refiere al propio contenedor (no al host), por eso NO se debe usar para comunicación entre servicios.
 
 Comandos rápidos:
@@ -268,7 +268,7 @@ fi
 ### G) Ejecutar Backend
 
 ```bash
-cd ~/Davicho861/Meta-Ad-Studio-/backend || cd ~/Davicho861/Meta-Ad-Studio-
+cd ~/Davicho861/Meta-Ad-Studio./src/backend || cd ~/Davicho861/Meta-Ad-Studio-
 npm install
 # Ejecutar migraciones si aplica (ej. Prisma)
 npx prisma migrate deploy || true
@@ -281,7 +281,7 @@ Nota: Ajusta comandos según el gestor de paquetes (pnpm/yarn) y herramientas OR
 ### H) Ejecutar Frontend
 
 ```bash
-cd ~/Davicho861/Meta-Ad-Studio-/frontend || cd ~/Davicho861/Meta-Ad-Studio-
+cd ~/Davicho861/Meta-Ad-Studio./src/frontend || cd ~/Davicho861/Meta-Ad-Studio-
 npm install
 npm run dev
 ```

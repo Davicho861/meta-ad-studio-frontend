@@ -13,15 +13,15 @@ command -v docker >/dev/null 2>&1 || { echo "docker no está instalado. Instala 
 command -v docker-compose >/dev/null 2>&1 || { echo "docker-compose no está instalado. Instala docker-compose y vuelve a intentarlo."; exit 1; }
 
 # 2) Detectar carpetas probables
-FRONTEND_DIR="$ROOT_DIR/frontend"
-BACKEND_DIR="$ROOT_DIR/packages/api-server/server"
+FRONTEND_DIR="$ROOT_DI./src/frontend"
+BACKEND_DIR="$ROOT_DIR/src/backend/server"
 if [ ! -d "$BACKEND_DIR" ]; then
   # fallback a carpeta 'backend' si existe
-  BACKEND_DIR="$ROOT_DIR/backend"
+  BACKEND_DIR="$ROOT_DI./src/backend"
 fi
 if [ ! -d "$BACKEND_DIR" ]; then
-  # otro fallback: packages/api-server/server
-  BACKEND_DIR="$ROOT_DIR/packages/api-server/server"
+  # otro fallback: src/backend/server
+  BACKEND_DIR="$ROOT_DIR/src/backend/server"
 fi
 
 echo "Frontend: $FRONTEND_DIR"

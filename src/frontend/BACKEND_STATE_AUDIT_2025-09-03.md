@@ -18,7 +18,7 @@ A pesar de estas fortalezas, se han identificado varias áreas de mejora. Estas 
 
 ## 2. Arquitectura del Servidor
 
-El servidor backend, ubicado en `packages/api-server/server/`, está construido con un stack moderno de Node.js, Express y TypeScript. La estructura del proyecto sigue las mejores prácticas, con una clara separación de responsabilidades:
+El servidor backend, ubicado en `src/backend/server/`, está construido con un stack moderno de Node.js, Express y TypeScript. La estructura del proyecto sigue las mejores prácticas, con una clara separación de responsabilidades:
 
 *   **`src/controllers/`:** Maneja la lógica de negocio para cada ruta de la API.
 *   **`src/routes/`:** Define los endpoints de la API y los asocia con los controladores correspondientes.

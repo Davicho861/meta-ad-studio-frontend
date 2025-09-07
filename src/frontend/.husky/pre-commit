@@ -1,1 +1,1 @@
-cd packages/meta-verse-visualizer-main && npx lint-staged
+cd sr./src/frontend/meta-verse-visualizer-main && npx lint-staged

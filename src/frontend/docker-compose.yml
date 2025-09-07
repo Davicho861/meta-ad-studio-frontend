@@ -32,7 +32,7 @@ services:
     image: meta_ad_studio_api:dev
     container_name: meta_ad_studio_api
     build:
-      context: ./packages/api-server/server
+      context: ./src/backend/server
       dockerfile: Dockerfile
     ports:
       - '3002:3001'
@@ -53,7 +53,7 @@ services:
     image: meta_ad_studio_visualizer:dev
     container_name: meta_ad_studio_visualizer
     build:
-      context: ./packages/meta-verse-visualizer-main
+      context: ./sr./src/frontend/meta-verse-visualizer-main
       dockerfile: Dockerfile
     ports:
       - '8082:8080'
@@ -62,7 +62,7 @@ services:
     networks:
       - monitoring_net
     volumes:
-      - ./packages/meta-verse-visualizer-main/src:/usr/src/app/src
+      - ./sr./src/frontend/meta-verse-visualizer-main/src:/usr/src/app/src
 
 networks:
   monitoring_net:

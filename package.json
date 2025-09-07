@@ -10,8 +10,8 @@
   "type": "module",
   "main": "main.js",
   "workspaces": [
-    "packages/api-server/server",
-    "packages/meta-verse-visualizer-main"
+    "src/backend/server",
+    "sr./src/frontend/meta-verse-visualizer-main"
   ],
   "engines": {
     "node": "^20.9.0"

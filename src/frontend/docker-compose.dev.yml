@@ -33,11 +33,11 @@ services:
 
       api-server:
         build:
-          context: ./packages/api-server/server
+          context: ./src/backend/server
           dockerfile: Dockerfile
         image: meta-ad-studio/api-server:dev
         volumes:
-          - ./packages/api-server/server:/app:cached
+          - ./src/backend/server:/app:cached
           - /app/node_modules
         environment:
           DATABASE_URL: "postgresql://postgres:postgres@db:5432/postgres"
@@ -53,13 +53,13 @@ services:
 
       backend:
         build:
-          context: ./backend
+          context: ./src/backend
           dockerfile: Dockerfile
-        image: meta-ad-studio/backend:dev
+        image: meta-ad-studi./src/backend:dev
         volumes:
-          - ./backend:/app/backend:cached
-          - /app/backend/node_modules
-        working_dir: /app/backend
+          - ./src/backend:/ap./src/backend:cached
+          - /ap./src/backend/node_modules
+        working_dir: /ap./src/backend
         env_file:
           - ./.env.development
         command: sh -c "npm install --silent || true && npx prisma generate || true && npm run build || true && npm run start"
@@ -94,11 +94,11 @@ services:
 
           api-server:
             build:
-              context: ./packages/api-server/server
+              context: ./src/backend/server
               dockerfile: Dockerfile
             image: meta-ad-studio/api-server:dev
             volumes:
-              - ./packages/api-server/server:/app:cached
+              - ./src/backend/server:/app:cached
               - /app/node_modules
             environment:
               DATABASE_URL: "postgresql://postgres:postgres@db:5432/postgres"
@@ -114,13 +114,13 @@ services:
 
           backend:
             build:
-              context: ./backend
+              context: ./src/backend
               dockerfile: Dockerfile
-            image: meta-ad-studio/backend:dev
+            image: meta-ad-studi./src/backend:dev
             volumes:
-              - ./backend:/app/backend:cached
-              - /app/backend/node_modules
-            working_dir: /app/backend
+              - ./src/backend:/ap./src/backend:cached
+              - /ap./src/backend/node_modules
+            working_dir: /ap./src/backend
             env_file:
               - ./.env.development
             command: sh -c "npm install --silent || true && npx prisma generate || true && npm run build || true && npm run start"
@@ -135,10 +135,10 @@ services:
           frontend:
             build:
               context: .
-              dockerfile: devtools/frontend.Dockerfile.dev
-            image: meta-ad-studio/frontend:dev
+              dockerfile: devtool./src/frontend.Dockerfile.dev
+            image: meta-ad-studi./src/frontend:dev
             volumes:
-              - ./frontend:/app:cached
+              - ./src/frontend:/app:cached
               - /app/node_modules
             working_dir: /app
             env_file:
@@ -160,12 +160,12 @@ services:
                 condition: service_healthy
 
           frontend:
-            image: meta-ad-studio/frontend:dev
+            image: meta-ad-studi./src/frontend:dev
             build:
               context: .
-              dockerfile: devtools/frontend.Dockerfile.dev
+              dockerfile: devtool./src/frontend.Dockerfile.dev
             volumes:
-              - ./frontend:/app:cached
+              - ./src/frontend:/app:cached
               - /app/node_modules
             working_dir: /app
             env_file:
@@ -204,11 +204,11 @@ services:
 
               api-server:
                 build:
-                  context: ./packages/api-server/server
+                  context: ./src/backend/server
                   dockerfile: Dockerfile
                 image: meta-ad-studio/api-server:dev
                 volumes:
-                  - ./packages/api-server/server:/app:cached
+                  - ./src/backend/server:/app:cached
                   - /app/node_modules
                 environment:
                   DATABASE_URL: "${DATABASE_URL:-postgresql://postgres:postgres@db:5432/postgres}"
@@ -224,13 +224,13 @@ services:
 
               backend:
                 build:
-                  context: ./backend
+                  context: ./src/backend
                   dockerfile: Dockerfile
-                image: meta-ad-studio/backend:dev
+                image: meta-ad-studi./src/backend:dev
                 volumes:
-                  - ./backend:/app/backend:cached
-                  - /app/backend/node_modules
-                working_dir: /app/backend
+                  - ./src/backend:/ap./src/backend:cached
+                  - /ap./src/backend/node_modules
+                working_dir: /ap./src/backend
                 env_file:
                   - ./.env.development
                 command: sh -c "npm install --silent || true && npx prisma generate || true && npm run build || true && npm run start"
@@ -245,10 +245,10 @@ services:
               frontend:
                 build:
                   context: .
-                  dockerfile: devtools/frontend.Dockerfile.dev
-                image: meta-ad-studio/frontend:dev
+                  dockerfile: devtool./src/frontend.Dockerfile.dev
+                image: meta-ad-studi./src/frontend:dev
                 volumes:
-                  - ./frontend:/app:cached
+                  - ./src/frontend:/app:cached
                   - /app/node_modules
                 working_dir: /app
                 env_file:

@@ -124,7 +124,7 @@ Step #6 - "Construir-Imagen-Produccion":  ---> Running in d34cb7869366
 Step #6 - "Construir-Imagen-Produccion": Removing intermediate container d34cb7869366
 Step #6 - "Construir-Imagen-Produccion":  ---> 99fb16d51842
 Step #6 - "Construir-Imagen-Produccion": Successfully built 99fb16d51842
-Step #6 - "Construir-Imagen-Produccion": Successfully tagged us-central1-docker.pkg.dev/meta-ad-studio/meta-ad-studio-repo/frontend-app:latest
+Step #6 - "Construir-Imagen-Produccion": Successfully tagged us-central1-docker.pkg.dev/meta-ad-studio/meta-ad-studio-rep./src/frontend-app:latest
 Finished Step #6 - "Construir-Imagen-Produccion"
 Starting Step #7 - "Escanear-Imagen-Vulnerabilidades"
 Step #7 - "Escanear-Imagen-Vulnerabilidades": Already have image (with digest): aquasec/trivy:latest
@@ -145,7 +145,7 @@ Step #7 - "Escanear-Imagen-Vulnerabilidades":
 Step #7 - "Escanear-Imagen-Vulnerabilidades": ┌──────────────────────────────────────────────────────────────────────────────────┬────────┬─────────────────┬─────────┐
 Step #7 - "Escanear-Imagen-Vulnerabilidades": │                                      Target                                      │  Type  │ Vulnerabilities │ Secrets │
 Step #7 - "Escanear-Imagen-Vulnerabilidades": ├──────────────────────────────────────────────────────────────────────────────────┼────────┼─────────────────┼─────────┤
-Step #7 - "Escanear-Imagen-Vulnerabilidades": │ us-central1-docker.pkg.dev/meta-ad-studio/meta-ad-studio-repo/frontend-app:late- │ alpine │        0        │    -    │
+Step #7 - "Escanear-Imagen-Vulnerabilidades": │ us-central1-docker.pkg.dev/meta-ad-studio/meta-ad-studio-rep./src/frontend-app:late- │ alpine │        0        │    -    │
 Step #7 - "Escanear-Imagen-Vulnerabilidades": │ st (alpine 3.21.4)                                                               │        │                 │         │
 Step #7 - "Escanear-Imagen-Vulnerabilidades": └──────────────────────────────────────────────────────────────────────────────────┴────────┴─────────────────┴─────────┘
 Step #7 - "Escanear-Imagen-Vulnerabilidades": Legend:
@@ -193,7 +193,7 @@ Step #9 - "Desplegar-En-Cloud-Run": Setting IAM Policy...........warning
 Step #9 - "Desplegar-En-Cloud-Run": Creating Revision.......failed
 Step #9 - "Desplegar-En-Cloud-Run": Deployment failed
 Step #9 - "Desplegar-En-Cloud-Run":   Setting IAM policy failed, try "gcloud beta run services add-iam-policy-binding --region=us-central1 --member=allUsers --role=roles/run.invoker frontend-app"
-Step #9 - "Desplegar-En-Cloud-Run": ERROR: (gcloud.run.deploy) Revision 'frontend-app-00002-7qv' is not ready and cannot serve traffic. Image 'us-central1-docker.pkg.dev/meta-ad-studio/meta-ad-studio-repo/frontend-app:latest' not found.
+Step #9 - "Desplegar-En-Cloud-Run": ERROR: (gcloud.run.deploy) Revision 'frontend-app-00002-7qv' is not ready and cannot serve traffic. Image 'us-central1-docker.pkg.dev/meta-ad-studio/meta-ad-studio-rep./src/frontend-app:latest' not found.
 Finished Step #9 - "Desplegar-En-Cloud-Run"
 ERROR
 ERROR: build step 9 "gcr.io/google.com/cloudsdktool/cloud-sdk" failed: step exited with non-zero status: 1

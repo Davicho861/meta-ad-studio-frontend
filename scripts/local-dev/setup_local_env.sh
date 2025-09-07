@@ -127,7 +127,7 @@ server {
     server_name localhost;
 
     location / {
-        proxy_pass http://frontend-ui:5173; # Default Vite port
+        proxy_pass http:./src/frontend-ui:5173; # Default Vite port
         proxy_set_header Upgrade \$http_upgrade;
         proxy_set_header Connection 'upgrade';
         proxy_set_header Host \$host;
@@ -138,7 +138,7 @@ server {
     }
 
     location /api/ {
-        proxy_pass http://backend-api:3000/; # Backend API port
+        proxy_pass http:./src/backend-api:3000/; # Backend API port
         proxy_set_header Host \$host;
         proxy_set_header X-Real-IP \$remote_addr;
         proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
