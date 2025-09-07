@@ -1,23 +1,27 @@
-# Use an official Node.js runtime as a parent image
-FROM node:20-slim
+## Multi-stage build: build app with Node, serve with nginx
+FROM node:20-alpine AS build
+WORKDIR /app
 
-# Set the working directory in the container
-WORKDIR /usr/src/app
-
-# Copy package.json and package-lock.json to the working directory
+# Install dependencies
 COPY package*.json ./
+# Use npm ci when a lockfile exists (recommended in CI). Fall back to npm install
+# for local development when package-lock.json may be missing.
+RUN if [ -f package-lock.json ]; then \
+			npm ci --legacy-peer-deps; \
+		else \
+			npm install --legacy-peer-deps; \
+		fi
 
-# Install any needed packages
-RUN npm install --legacy-peer-deps
-
-# Copy the rest of the application's code
+# Copy source and build
 COPY . .
-
-# Build the React app
 RUN npm run build
 
-# Make port 8080 available to the world outside this container
-EXPOSE 8080
+# Production image: nginx static server
+FROM nginx:1.25-alpine
+COPY --from=build /app/dist /usr/share/nginx/html
 
-# Run the app when the container launches
-CMD [ "npm", "run", "dev" ]
+# Custom nginx config (optional override)
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]

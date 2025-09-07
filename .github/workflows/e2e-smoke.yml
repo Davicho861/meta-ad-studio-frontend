@@ -1,0 +1,35 @@
+name: E2E Smoke - Production Verification
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+
+jobs:
+  cypress-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: |
+          npm ci
+
+      - name: Run Cypress smoke test
+        env:
+          CYPRESS_baseUrl: ${{ secrets.PRODUCTION_URL }}
+        run: |
+          npx cypress run --spec "cypress/e2e/smoke-test.cy.js"
+
+      - name: Upload screenshot artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: verificacion-ui-produccion
+          path: cypress/screenshots/verificacion-ui-produccion.png

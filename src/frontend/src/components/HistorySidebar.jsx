@@ -6,11 +6,11 @@ const HistorySidebar = () => {
   const loadHistory = useAdStore((s) => s.loadHistory)
   const loadGenerationById = useAdStore((s) => s.loadGenerationById)
 
+  // loadHistory is intentionally stable (comes from a ref/parent)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
-    // loadHistory is intentionally stable (comes from a ref/parent); allow missing-deps
-     
     loadHistory();
-  }, []);
+  }, [loadHistory]);
 
   if (!history || history.length === 0) {
     return (

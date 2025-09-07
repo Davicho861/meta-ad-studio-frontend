@@ -1,74 +1,61 @@
-version: '3.8'
-
 services:
-  # SERVICIO DE LA BASE DE DATOS
   postgres:
     image: postgres:15-alpine
-    container_name: meta_ad_studio_db
     environment:
       POSTGRES_USER: "${POSTGRES_USER:-devuser}"
-      # POSTGRES_PASSWORD must be provided via environment or .env; never commit secrets to repo
-      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-password}"
       POSTGRES_DB: "${POSTGRES_DB:-meta_ad_studio}"
     ports:
       - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    restart: unless-stopped
     networks:
-      - monitoring_net
+      - meta_net
 
-  # SERVICIO DE LA COLA DE TRABAJOS (REDIS)
   redis:
     image: redis:7-alpine
-    container_name: meta_ad_studio_redis
     ports:
       - "6379:6379"
-    restart: unless-stopped
     networks:
-      - monitoring_net
+      - meta_net
 
   api-server:
-    image: meta_ad_studio_api:dev
-    container_name: meta_ad_studio_api
     build:
       context: ./src/backend/server
       dockerfile: Dockerfile
-    ports:
-      - '3002:3001'
+    image: meta_ad_studio_api:local
     env_file:
       - .env
-    networks:
-      - monitoring_net
+    ports:
+      - '3002:3001' # host:container
     environment:
-      # Default development DB and Redis pointing to local compose services
-      # DATABASE_URL should be constructed from env vars; avoid embedding credentials in repo
-      DATABASE_URL: "${DATABASE_URL}"
+      DATABASE_URL: "${DATABASE_URL:-postgresql://devuser:${POSTGRES_PASSWORD}@postgres:5432/meta_ad_studio}"
       REDIS_URL: "${REDIS_URL:-redis://redis:6379}"
     depends_on:
       - postgres
       - redis
+    networks:
+      - meta_net
 
   meta-verse-visualizer-main:
-    image: meta_ad_studio_visualizer:dev
-    container_name: meta_ad_studio_visualizer
     build:
       context: ./src/frontend/meta-verse-visualizer-main
       dockerfile: Dockerfile
+    image: meta_ad_studio_visualizer:local
     ports:
-      - '8082:8080'
+      - '8082:80'
     depends_on:
       - api-server
     networks:
-      - monitoring_net
+      - meta_net
     volumes:
-      - ./src/frontend/meta-verse-visualizer-main/src:/usr/src/app/src
+      # Enable hot-reload during dev by mounting source (activate with 'profiles: ["dev"]')
+      - ./src/frontend/meta-verse-visualizer-main:/app:cached
 
 networks:
-  monitoring_net:
+  meta_net:
     driver: bridge
 
 volumes:
   postgres_data:
 
-  # (defined for postgres service)

@@ -66,10 +66,10 @@ jobs:
         run: cd src/backend/server && npm test
 
       - name: Install dependencies for meta-verse-visualizer
-        run: cd src/frontend/meta-verse-visualizer-main && npm install --legacy-peer-deps
+        run: cd sr./src/frontend/meta-verse-visualizer-main && npm install --legacy-peer-deps
 
       - name: Build meta-verse-visualizer
-        run: cd src/frontend/meta-verse-visualizer-main && npm run build
+        run: cd sr./src/frontend/meta-verse-visualizer-main && npm run build
 
   deploy:
     needs: build-and-test
@@ -96,8 +96,8 @@ jobs:
       - name: Build and push meta-verse-visualizer image
         uses: docker/build-push-action@v4
         with:
-          context: ./src/frontend/meta-verse-visualizer-main
-          file: ./src/frontend/meta-verse-visualizer-main/Dockerfile
+          context: ./sr./src/frontend/meta-verse-visualizer-main
+          file: ./sr./src/frontend/meta-verse-visualizer-main/Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/meta-ad-studio-frontend:latest
 

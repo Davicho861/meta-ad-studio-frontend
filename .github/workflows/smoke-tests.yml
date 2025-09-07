@@ -1,0 +1,36 @@
+name: Smoke tests (docker-compose)
+
+on:
+  pull_request:
+
+jobs:
+  smoke-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Show Docker and Compose
+        run: |
+          docker --version
+          docker compose version
+
+      - name: Build and start services
+        run: docker compose up -d --build
+
+      - name: Wait for Postgres
+        run: |
+          for i in {1..60}; do
+            docker compose exec -T postgres pg_isready -U ${POSTGRES_USER:-devuser} -d ${POSTGRES_DB:-meta_ad_studio} >/dev/null 2>&1 && break || sleep 2
+          done
+
+      - name: Run smoke tests
+        run: ./scripts/smoke-test.sh
+
+      - name: Collect logs on failure
+        if: failure()
+        run: docker compose logs --no-color > compose-logs.txt || true
+
+      - name: Teardown
+        if: always()
+        run: docker compose down -v

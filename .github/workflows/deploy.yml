@@ -1,3 +1,71 @@
+name: CD - GKE
+
+on:
+  push:
+    branches: [ main ]
+
+env:
+  IMAGE_TAG: ${{ github.sha }}
+
+jobs:
+  build-push-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Authenticate to GCP
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: '${{ secrets.GCP_SA_KEY }}'
+
+      - name: Set up gcloud
+        uses: google-github-actions/setup-gcloud@v1
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          export_default_credentials: true
+
+      - name: Configure docker for Artifact Registry
+        run: gcloud auth configure-docker ${{ secrets.GCP_REGION }}-docker.pkg.dev --quiet
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build and push backend image
+        uses: docker/build-push-action@v4
+        with:
+          context: ./src/backend/server
+          file: ./src/backend/server/Dockerfile
+          push: true
+          tags: |
+            ${{ secrets.GCP_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.ARTIFACT_REGISTRY_REPO }}/meta_ad_studio_api:latest
+            ${{ secrets.GCP_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.ARTIFACT_REGISTRY_REPO }}/meta_ad_studio_api:${{ env.IMAGE_TAG }}
+
+      - name: Build and push frontend image
+        uses: docker/build-push-action@v4
+        with:
+          context: ./src/frontend/meta-verse-visualizer-main
+          file: ./src/frontend/meta-verse-visualizer-main/Dockerfile
+          push: true
+          tags: |
+            ${{ secrets.GCP_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.ARTIFACT_REGISTRY_REPO }}/meta_ad_studio_visualizer:latest
+            ${{ secrets.GCP_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.ARTIFACT_REGISTRY_REPO }}/meta_ad_studio_visualizer:${{ env.IMAGE_TAG }}
+
+      - name: Get GKE credentials
+        run: |
+          gcloud container clusters get-credentials ${{ secrets.GKE_CLUSTER_NAME }} --zone ${{ secrets.GCP_ZONE }} --project ${{ secrets.GCP_PROJECT_ID }}
+
+      - name: Apply kustomize manifests (create/patch resources)
+        run: kubectl apply -k infra/k8s/base
+
+      - name: Update deployments with new image tags
+        run: |
+          kubectl -n meta-ad-studio set image deployment/backend backend=${{ secrets.GCP_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.ARTIFACT_REGISTRY_REPO }}/meta_ad_studio_api:${{ env.IMAGE_TAG }} || true
+          kubectl -n meta-ad-studio set image deployment/frontend frontend=${{ secrets.GCP_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.ARTIFACT_REGISTRY_REPO }}/meta_ad_studio_visualizer:${{ env.IMAGE_TAG }} || true
+
 name: Build and Publish Frontend
 
 on:
