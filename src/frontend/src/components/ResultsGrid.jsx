@@ -41,7 +41,7 @@ const ResultsGrid = () => {
           </div>
         )}
 
-        <div className="text-gray-500">No ads yet. Enter a prompt and generate.</div>
+  <div className="text-gray-500">Aún no hay anuncios. Introduce un prompt y genera.</div>
       </div>
     )
   }
