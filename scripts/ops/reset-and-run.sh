@@ -19,7 +19,7 @@ echo " backend tests..."
 docker-compose exec api-server npm test
 
 echo " frontend tests..."
-(cd sr./src/frontend/meta-verse-visualizer-main && npm test)
+(cd src/frontend/meta-verse-visualizer-main && npm test)
 
 echo "🎉 ¡Todo listo! El entorno está desplegado y validado."
 echo "Frontend disponible en http://localhost:<PUERTO_FRONTEND>"

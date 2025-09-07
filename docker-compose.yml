@@ -53,7 +53,7 @@ services:
     image: meta_ad_studio_visualizer:dev
     container_name: meta_ad_studio_visualizer
     build:
-      context: ./sr./src/frontend/meta-verse-visualizer-main
+      context: ./src/frontend/meta-verse-visualizer-main
       dockerfile: Dockerfile
     ports:
       - '8082:8080'
@@ -62,7 +62,7 @@ services:
     networks:
       - monitoring_net
     volumes:
-      - ./sr./src/frontend/meta-verse-visualizer-main/src:/usr/src/app/src
+      - ./src/frontend/meta-verse-visualizer-main/src:/usr/src/app/src
 
 networks:
   monitoring_net:
