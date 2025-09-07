@@ -6,11 +6,10 @@ const HistorySidebar = () => {
   const loadHistory = useAdStore((s) => s.loadHistory)
   const loadGenerationById = useAdStore((s) => s.loadGenerationById)
 
+  // loadHistory is intentionally stable (comes from un ref/parent) — la dependencia está listada
   useEffect(() => {
-    // loadHistory is intentionally stable (comes from a ref/parent); allow missing-deps
-     
-    loadHistory();
-  }, []);
+    loadHistory()
+  }, [loadHistory])
 
   if (!history || history.length === 0) {
     return (

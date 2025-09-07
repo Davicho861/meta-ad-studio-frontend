@@ -13,9 +13,11 @@ interface ResultCardProps {
     id?: string
   }
   onVisualize?: (payload: { sceneId?: string; imageUrl?: string }) => void
+  selected?: boolean
+  onSelect?: (id: number | string) => void
 }
 
-export const ResultCardV2 = ({ result, onVisualize }: ResultCardProps) => {
+export const ResultCardV2 = ({ result, onVisualize, selected = false, onSelect }: ResultCardProps) => {
   const [animating, setAnimating] = useState(false)
   const [jobId, setJobId] = useState<string | null>(null)
   const jobState = useJobPolling(jobId)
@@ -91,7 +93,21 @@ export const ResultCardV2 = ({ result, onVisualize }: ResultCardProps) => {
   const isJobCompleted = jobState.status === 'completed'
 
   return (
-    <div className='group relative rounded-lg overflow-hidden aspect-square'>
+    <div
+      className={`group relative rounded-lg overflow-hidden aspect-square transition-transform cursor-pointer ${
+        selected ? 'ring-2 ring-accent-purple scale-105' : 'hover:scale-[1.01]'
+      }`}
+      onClick={() => onSelect?.(result.id ?? '')}
+      role='button'
+      aria-pressed={selected}
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          onSelect?.(result.id ?? '')
+        }
+      }}
+    >
       <img
         src={isJobCompleted ? jobState.data!.thumbnailUrl : result.imageUrl}
         alt={result.prompt}
@@ -106,44 +122,34 @@ export const ResultCardV2 = ({ result, onVisualize }: ResultCardProps) => {
         </div>
 
         <div className='flex gap-2 justify-center'>
-          <button className='p-2 bg-accent-purple/80 hover:bg-accent-purple text-white rounded-lg transition-colors'>
-            <Wand2 className='w-4 h-4' />
-          </button>
           <button
-            className='p-2 bg-accent-green/80 hover:bg-accent-green text-white rounded-lg transition-colors'
-            onClick={() => {
-              // Llamar al handler si está disponible
-              onVisualize?.({
-                sceneId: 'times-square',
-                imageUrl: result.imageUrl,
-              })
-            }}
-            title='Visualizar en Escenario 3D'
+            className='flex items-center gap-2 px-3 py-1 bg-accent-purple/90 hover:bg-accent-purple text-white rounded-md transition-colors'
+            aria-label='Upscale (U)'
+            title='Upscale (U)'
           >
-            {/* Icono simple: usar Wand2 como placeholder o reemplazar por otro */}
-            <svg
-              className='w-4 h-4'
-              viewBox='0 0 24 24'
-              fill='none'
-              stroke='currentColor'
-            >
-              <path
-                d='M12 2v4'
-                strokeWidth='1.5'
-                strokeLinecap='round'
-                strokeLinejoin='round'
-              />
-              <path
-                d='M5 9l14-4'
-                strokeWidth='1.5'
-                strokeLinecap='round'
-                strokeLinejoin='round'
-              />
-            </svg>
+            U
           </button>
-          <button className='p-2 bg-accent-blue/80 hover:bg-accent-blue text-white rounded-lg transition-colors'>
-            <RotateCcw className='w-4 h-4' />
+
+          <button
+            className='flex items-center gap-2 px-3 py-1 bg-accent-green/90 hover:bg-accent-green text-white rounded-md transition-colors'
+            aria-label='Variation (V)'
+            title='Variation (V)'
+          >
+            V
           </button>
+
+          <button
+            className='flex items-center gap-2 px-3 py-1 bg-accent-blue/90 hover:bg-accent-blue text-white rounded-md transition-colors'
+            aria-label='Re-roll'
+            title='Re-roll'
+            onClick={() => {
+              // Placeholder: re-roll should requeue prompt generation (frontend stub)
+              toast('Re-rolling...', { icon: '🎲' })
+            }}
+          >
+            Re-roll
+          </button>
+
           <button className='p-2 bg-secondary-text/80 hover:bg-secondary-text text-white rounded-lg transition-colors'>
             <Download className='w-4 h-4' />
           </button>

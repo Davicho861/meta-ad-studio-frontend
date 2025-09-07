@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: meta-ad-studio-ingress
+  namespace: meta-ad-studio
+  annotations:
+    kubernetes.io/ingress.class: "gce"
+    networking.gke.io/managed-certificates: "meta-ad-studio-cert"
+    ingress.gcp.kubernetes.io/pre-shared-cert: "" # optional if using pre-shared cert
+spec:
+  rules:
+    - host: example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend
+                port:
+                  number: 80
+  tls:
+    - hosts:
+        - example.com
+      secretName: tls-meta-ad-studio # created by managed cert

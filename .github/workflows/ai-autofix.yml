@@ -19,23 +19,23 @@ jobs:
 
       - name: Install dependencies
         run: |
-          cd src/frontend/meta-verse-visualizer-main
+          cd sr./src/frontend/meta-verse-visualizer-main
           npm install
 
       - name: Initial Build Attempt & Error Capture
         id: build_attempt
         continue-on-error: true
         run: |
-          cd src/frontend/meta-verse-visualizer-main
+          cd sr./src/frontend/meta-verse-visualizer-main
           npm run build > build_log.txt 2>&1
 
       - name: AI Intervention if Build Failed
         if: steps.build_attempt.outcome == 'failure'
         run: |
           echo "🚨 Build failed. Invoking AI Surgeon..."
-          ERROR_LOG=$(cat src/frontend/meta-verse-visualizer-main/build_log.txt)
+          ERROR_LOG=$(cat sr./src/frontend/meta-verse-visualizer-main/build_log.txt)
           # Asumimos que hay un script que encuentra el archivo que falló
-          FAILED_FILE_PATH="src/frontend/meta-verse-visualizer-main/src/App.tsx"
+          FAILED_FILE_PATH="sr./src/frontend/meta-verse-visualizer-main/src/App.tsx"
           FILE_CONTENT=$(cat $FAILED_FILE_PATH)
 
           # Llamada a la API de la IA (esto es pseudocódigo - requeriría configuración real)
@@ -57,7 +57,7 @@ jobs:
       - name: Retry Build After AI Fix
         if: steps.build_attempt.outcome == 'failure'
         run: |
-          cd src/frontend/meta-verse-visualizer-main
+          cd sr./src/frontend/meta-verse-visualizer-main
           npm run build
 
       - name: Commit AI Fix if Successful

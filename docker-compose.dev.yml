@@ -65,18 +65,18 @@ services:
 
   frontend:
     build:
-      context: .
-      dockerfile: devtool./src/frontend.Dockerfile.dev
-    image: meta-ad-studi./src/frontend:dev
+      context: ./src/frontend/meta-verse-visualizer-main
+      dockerfile: Dockerfile
+    image: meta-ad-studio-frontend-dev:local
     volumes:
-      - ./src/frontend:/app:cached
+      - ./src/frontend/meta-verse-visualizer-main:/app:cached
       - /app/node_modules
     working_dir: /app
     env_file:
-      - ./.env.development
-    command: sh -c "npm install --silent || true && npm run dev -- --host"
+      - ./src/frontend/meta-verse-visualizer-main/.env.development
+    command: sh -c "npm install --silent || true && npm run dev -- --host 0.0.0.0"
     ports:
-        - "5174:3000"
+      - "5173:5173"
     environment:
       NODE_ENV: development
     stdin_open: true

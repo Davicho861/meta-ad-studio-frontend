@@ -1,0 +1,98 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+      POSTGRES_DB: "postgres"
+    ports:
+      - "5434:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6381:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api-server:
+    build:
+      context: ./src/backend/server
+      dockerfile: Dockerfile
+    image: meta-ad-studio/api-server:dev
+    volumes:
+      - ./src/backend/server:/app:cached
+      - /app/node_modules
+    environment:
+      DATABASE_URL: "postgresql://postgres:postgres@db:5432/postgres"
+      REDIS_URL: "redis://redis:6379"
+    ports:
+      - "3003:3001"
+    command: sh -c "npm run migrate || true && npm run seed || true && npm run dev"
+    depends_on:
+      - db
+      - redis
+
+  backend:
+    build:
+      context: ./src/backend
+      dockerfile: Dockerfile
+    image: meta-ad-studi./src/backend:dev
+    volumes:
+      - ./src/backend:/ap./src/backend:cached
+      - /ap./src/backend/node_modules
+    working_dir: /ap./src/backend
+    env_file:
+      - ./.env.development
+    command: sh -c "npm install --silent || true && npx prisma generate || true && npm run build || true && npm run start"
+    ports:
+      - "4001:4000"
+    depends_on:
+      - db
+      - redis
+
+  frontend:
+    # Este servicio estaba mal configurado; lo reemplazamos por un servicio dev válido
+    frontend-dev:
+      build:
+        context: ./src/frontend/meta-verse-visualizer-main
+        dockerfile: Dockerfile
+      image: meta-ad-studio-frontend-dev:local
+      volumes:
+        - ./src/frontend/meta-verse-visualizer-main:/app:cached
+        - /app/node_modules
+      working_dir: /app
+      env_file:
+        - ./src/frontend/meta-verse-visualizer-main/.env.development
+      command: sh -c "npm install --silent || true && npm run dev -- --host 0.0.0.0"
+      ports:
+        - "5173:5173"
+      environment:
+        NODE_ENV: development
+      stdin_open: true
+      tty: true
+      depends_on:
+        - api-server
+        - backend
+    environment:
+      NODE_ENV: development
+    stdin_open: true
+    tty: true
+    depends_on:
+      - api-server
+      - backend
+
+volumes:
+  pgdata:

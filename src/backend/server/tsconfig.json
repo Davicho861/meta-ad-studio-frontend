@@ -6,5 +6,12 @@
     "esModuleInterop": true,
     "skipLibCheck": true
   },
-  "include": ["server/**/*.ts", "server/**/*.tsx"]
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "exclude": [
+    "src/**/__tests__/**",
+    "src/**/*.test.ts",
+    "src/**/*.spec.ts",
+    "node_modules",
+    "dist"
+  ]
 }

@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+# Ejecutar tests antes de push
+echo "Running tests before push..."
+npm test

@@ -1,0 +1,79 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+PROJECT_DIR="/home/davicho/Davicho861/Meta-Ad-Studio-"
+FRONTEND_DIR="$PROJECT_DIR/src/frontend/meta-verse-visualizer-main"
+
+# Prefer ports to try (developer expectation: 5173)
+PORTS=(5173 5174 8082)
+
+# Start dev compose if present, otherwise default compose
+cd "$PROJECT_DIR"
+if [ -f docker-compose.dev.yml ]; then
+  START_CMD="docker compose -f docker-compose.dev.yml up --build"
+else
+  START_CMD="docker compose up --build"
+fi
+
+# Open a terminal to run the start command so user can ver logs
+if command -v gnome-terminal >/dev/null 2>&1; then
+  gnome-terminal -- bash -ic "echo 'Ejecutando: $START_CMD'; $START_CMD; exec bash" &
+elif command -v x-terminal-emulator >/dev/null 2>&1; then
+  x-terminal-emulator -e bash -ic "echo 'Ejecutando: $START_CMD'; $START_CMD; exec bash" &
+else
+  echo "No se encontró emulador gráfico; ejecutando en background: $START_CMD"
+  nohup bash -c "$START_CMD" >/dev/null 2>&1 &
+fi
+
+# Esperar a que alguno de los puertos responda
+FRONTEND_URL=""
+TIMEOUT=60
+SLEEP_INTERVAL=1
+ELAPSED=0
+while [ $ELAPSED -lt $TIMEOUT ]; do
+  for p in "${PORTS[@]}"; do
+    if curl -sSf "http://localhost:$p/" >/dev/null 2>&1; then
+      FRONTEND_URL="http://localhost:$p"
+      break 2
+    fi
+  done
+  sleep $SLEEP_INTERVAL
+  ELAPSED=$((ELAPSED + SLEEP_INTERVAL))
+done
+
+# If only static server found (like 8082), also start Vite on host for proper HMR
+if [ -n "$FRONTEND_URL" ] && echo "$FRONTEND_URL" | grep -q ":8082"; then
+  echo "Servidor estático detectado en $FRONTEND_URL. Iniciando Vite en host para HMR..."
+  if [ -d "$FRONTEND_DIR" ]; then
+    if command -v gnome-terminal >/dev/null 2>&1; then
+      gnome-terminal -- bash -ic "cd '$FRONTEND_DIR' && echo 'Starting host Vite dev (HMR)...' && npm install --silent && npm run dev -- --host; exec bash" &
+    elif command -v x-terminal-emulator >/dev/null 2>&1; then
+      x-terminal-emulator -e bash -ic "cd '$FRONTEND_DIR' && echo 'Starting host Vite dev (HMR)...' && npm install --silent && npm run dev -- --host; exec bash" &
+    else
+      nohup bash -c "cd '$FRONTEND_DIR' && npm install --silent && npm run dev -- --host" >/dev/null 2>&1 &
+    fi
+
+    # wait briefly for vite
+    sleep 2
+    if curl -sSf "http://localhost:5173/" >/dev/null 2>&1; then
+      FRONTEND_URL="http://localhost:5173"
+      echo "Vite en host disponible en $FRONTEND_URL"
+    fi
+  else
+    echo "Directorio frontend no encontrado en $FRONTEND_DIR"
+  fi
+fi
+
+if [ -z "$FRONTEND_URL" ]; then
+  FRONTEND_URL="http://localhost:5173"
+  echo "No se detectó servidor en ${PORTS[*]} dentro de $TIMEOUT s. Abriré $FRONTEND_URL de todas formas."
+else
+  echo "Servidor detectado en $FRONTEND_URL"
+fi
+
+# Abrir en el navegador
+if command -v xdg-open >/dev/null 2>&1; then
+  xdg-open "$FRONTEND_URL" >/dev/null 2>&1 || true
+else
+  echo "Por favor abra $FRONTEND_URL manualmente."
+fi

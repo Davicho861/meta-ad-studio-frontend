@@ -1,3 +1,39 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install backend deps
+        working-directory: src/backend/server
+        run: npm ci
+
+      - name: Run backend tests
+        working-directory: src/backend/server
+        run: npm test
+
+      - name: Install frontend deps
+        working-directory: src/frontend/meta-verse-visualizer-main
+        run: npm ci --legacy-peer-deps
+
+      - name: Run frontend build
+        working-directory: src/frontend/meta-verse-visualizer-main
+        run: npm run build
+
+      - name: Lint (optional)
+        run: |
+          echo "Add lint steps if eslint is configured"
 name: CI/CD Pipeline
 
 on:

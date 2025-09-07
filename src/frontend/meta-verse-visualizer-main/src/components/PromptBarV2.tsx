@@ -1,5 +1,6 @@
-import React from 'react'
-import { Crop, Image, Settings } from 'lucide-react'
+import React, { useEffect, useRef, useState } from 'react'
+import { Crop, Image, Settings, Search } from 'lucide-react'
+import { PromptAutocomplete } from './PromptAutocomplete'
 
 interface ControlButtonProps {
   icon: React.ComponentType<React.SVGProps<SVGSVGElement>> | React.ElementType
@@ -26,30 +27,64 @@ export const PromptBarV2 = ({
   onGenerate,
   isGenerating,
 }: PromptBarV2Props) => {
-  return (
-    <div className='w-full max-w-5xl mx-auto p-4 bg-surface-dark rounded-xl shadow-2xl border border-gray-800'>
-      <div className='relative'>
-        <textarea
-          value={prompt}
-          onChange={(e) => setPrompt(e.target.value)}
-          className='w-full p-4 pr-32 text-lg bg-transparent rounded-lg focus:outline-none resize-none'
-          placeholder='Un anuncio holográfico de un coche volador en el distrito de Akihabara...'
-          rows={4}
-        />
-        <button
-          onClick={onGenerate}
-          disabled={isGenerating}
-          className='absolute right-4 top-1/2 -translate-y-1/2 px-6 py-3 bg-accent-blue text-white font-bold rounded-lg hover:bg-opacity-80 transition-all duration-300 disabled:bg-gray-600 disabled:cursor-not-allowed flex items-center gap-2'
-        >
-          {isGenerating ? 'Generando...' : 'Generar'}
-        </button>
+    const inputRef = useRef<HTMLTextAreaElement | null>(null)
+    const [showSuggestions, setShowSuggestions] = useState(false)
+
+    useEffect(() => {
+      // Auto-focus on mount to emphasize prompt-first UX
+      inputRef.current?.focus()
+    }, [])
+
+    return (
+      <div className='w-full max-w-4xl mx-auto'>
+        <div className='flex items-start gap-4'>
+          <div className='flex-1 relative'>
+            <textarea
+              ref={inputRef}
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              onFocus={() => setShowSuggestions(true)}
+              onBlur={() => setTimeout(() => setShowSuggestions(false), 120)}
+              placeholder='Describe tu idea... (ej: Anuncio futurista en Times Square --ar 16:9)'
+              aria-label='Prompt input'
+              className='w-full min-h-[80px] p-4 rounded-xl bg-gradient-to-br from-surface-dark to-surface-darker text-primary-text border border-transparent focus:outline-none focus:ring-2 focus:ring-accent-blue shadow-lg'
+            />
+
+            <div className='absolute right-3 top-3 text-secondary-text'>
+              <Search className='w-5 h-5' />
+            </div>
+
+            {showSuggestions && (
+              <PromptAutocomplete
+                value={prompt}
+                onSelect={(s: string) => {
+                  const next = prompt ? `${prompt} ${s}` : s
+                  setPrompt(next)
+                  inputRef.current?.focus()
+                }}
+              />
+            )}
+          </div>
+
+          <div className='flex flex-col gap-2 items-end'>
+            <button
+              onClick={onGenerate}
+              disabled={isGenerating}
+              className='px-5 py-3 rounded-lg bg-gradient-to-r from-accent-purple to-accent-blue text-white font-semibold hover:opacity-95 disabled:opacity-50 shadow-md'
+              aria-pressed={isGenerating}
+              aria-label='Generar imagen'
+            >
+              {isGenerating ? 'Generando...' : 'Generar'}
+            </button>
+
+            <button
+              onClick={() => setPrompt('')}
+              className='text-sm text-secondary-text underline hover:text-primary-text'
+            >
+              Limpiar
+            </button>
+          </div>
+        </div>
       </div>
-      <div className='border-t border-gray-700 mt-4 pt-3 flex items-center gap-4'>
-        <ControlButton icon={Crop} label='Aspect Ratio 16:9' />
-        <ControlButton icon={Image} label='Estilo: Realista' />
-        <ControlButton icon={Settings} label='Versión: 1.2' />
-        {/* Aquí puedes añadir más controles como --chaos, --style, etc. */}
-      </div>
-    </div>
-  )
+    )
 }

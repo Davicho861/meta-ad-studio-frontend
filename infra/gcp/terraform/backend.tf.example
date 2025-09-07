@@ -1,0 +1,9 @@
+# Example remote state backend using a GCS bucket.
+# Copy to backend.tf and set the bucket name before running terraform init in CI / shared environments.
+
+terraform {
+  backend "gcs" {
+    bucket = "<your-terraform-state-bucket>"
+    prefix = "meta-ad-studio/terraform/state"
+  }
+}

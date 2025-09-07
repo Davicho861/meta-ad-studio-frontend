@@ -1,9 +1,10 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import VisualizationStage from './VisualizationStage'
 import { PromptBarV2 } from './PromptBarV2'
 import { InspirationCarousel } from './InspirationCarousel'
 import { SceneSelector } from './SceneSelector'
 import { GenerationGrid } from './GenerationGrid'
+import toast from 'react-hot-toast'
 
 interface GenerationResult {
   id: number
@@ -48,6 +49,7 @@ export const MainContent = ({
   const [prompt, setPrompt] = useState('')
   const [isGenerating, setIsGenerating] = useState(false)
   const [results, setResults] = useState<GenerationResult[]>([])
+  const [selectedResultId, setSelectedResultId] = useState<number | null>(null)
   // viewState controla si estamos en el Creation Hub o en la vista Visualization
   const [viewState, setViewState] = useState<{
     view: 'creation' | 'visualization'
@@ -106,6 +108,90 @@ export const MainContent = ({
     }, 3000)
   }
 
+  // Atajos de teclado: U (Upscale), V (Variation), R (Re-roll)
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      // Ignorar si el usuario está escribiendo en un input o textarea
+      const target = e.target as HTMLElement
+      const tag = target?.tagName?.toLowerCase()
+      if (tag === 'input' || tag === 'textarea' || (target?.isContentEditable)) return
+
+      const key = e.key.toLowerCase()
+      if (!selectedResultId) return
+
+      if (key === 'u') {
+        console.log('Shortcut Upscale', selectedResultId)
+      } else if (key === 'v') {
+        console.log('Shortcut Variation', selectedResultId)
+      } else if (key === 'r') {
+        console.log('Shortcut Re-roll', selectedResultId)
+      }
+    }
+
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [selectedResultId])
+
+  // Handlers que llaman a endpoints backend (stubs seguros)
+  const handleUpscale = async (id: number | string) => {
+    const result = results.find((r) => String(r.id) === String(id))
+    if (!result?.imageUrl) return toast.error('Imagen no disponible para upscale')
+    toast.loading('Solicitando upscale...')
+    try {
+      const resp = await fetch('/api/v1/upscale', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, imageUrl: result.imageUrl }),
+      })
+      if (!resp.ok) throw new Error('Upscale API error')
+      const data = await resp.json()
+      toast.success(data.message || 'Upscale solicitado')
+    } catch (e) {
+      console.error(e)
+      toast.error('Error al solicitar upscale')
+    }
+  }
+
+  const handleVariation = async (id: number | string) => {
+    const result = results.find((r) => String(r.id) === String(id))
+    if (!result?.imageUrl) return toast.error('Imagen no disponible para variation')
+    toast.loading('Solicitando variation...')
+    try {
+      const resp = await fetch('/api/v1/variation', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, imageUrl: result.imageUrl }),
+      })
+      if (!resp.ok) throw new Error('Variation API error')
+      const data = await resp.json()
+      toast.success(data.message || 'Variation solicitado')
+    } catch (e) {
+      console.error(e)
+      toast.error('Error al solicitar variation')
+    }
+  }
+
+  const handleReroll = async (id: number | string) => {
+    const result = results.find((r) => String(r.id) === String(id))
+    if (!result) return toast.error('Resultado no encontrado para re-roll')
+    toast.loading('Re-rolling...')
+    try {
+      const resp = await fetch('/api/v1/reroll', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, prompt: result.prompt }),
+      })
+      if (!resp.ok) throw new Error('Reroll API error')
+      const data = await resp.json()
+      toast.success(data.message || 'Re-roll solicitado')
+      // Optionally push a placeholder new result
+      // setResults(prev => [{ id: Date.now(), prompt: result.prompt, isLoading: true, progress: 0}, ...prev])
+    } catch (e) {
+      console.error(e)
+      toast.error('Error al solicitar re-roll')
+    }
+  }
+
   return (
     <div className='p-8'>
       <h2 className='text-3xl font-bold mb-2'>
@@ -153,13 +239,60 @@ export const MainContent = ({
           </div>
         )}
         {activeTab === 'generaciones' && (
-          <GenerationGrid
-            results={results}
-            isGenerating={isGenerating}
-            onVisualize={(payload: { sceneId?: string; imageUrl?: string }) => {
-              setViewState({ view: 'visualization', payload })
-            }}
-          />
+          <div>
+            {/* Barra de acciones rápidas sobre el resultado seleccionado */}
+            <div className='flex items-center gap-3 mb-4'>
+              <div className='text-sm text-secondary-text mr-4'>
+                {selectedResultId ? `Seleccionado: ${selectedResultId}` : 'Ningún resultado seleccionado'}
+              </div>
+
+              <button
+                className={`px-3 py-1 rounded ${selectedResultId ? 'bg-accent-purple/90 text-white' : 'bg-surface-dark text-secondary-text cursor-not-allowed'}`}
+                onClick={() => {
+                  if (!selectedResultId) return
+                  console.log('Upscale', selectedResultId)
+                }}
+                disabled={!selectedResultId}
+              >
+                U
+              </button>
+
+              <button
+                className={`px-3 py-1 rounded ${selectedResultId ? 'bg-accent-green/90 text-white' : 'bg-surface-dark text-secondary-text cursor-not-allowed'}`}
+                onClick={() => {
+                  if (!selectedResultId) return
+                  console.log('Variation', selectedResultId)
+                }}
+                disabled={!selectedResultId}
+              >
+                V
+              </button>
+
+              <button
+                className={`px-3 py-1 rounded ${selectedResultId ? 'bg-accent-blue/90 text-white' : 'bg-surface-dark text-secondary-text cursor-not-allowed'}`}
+                onClick={() => {
+                  if (!selectedResultId) return
+                  console.log('Re-roll', selectedResultId)
+                }}
+                disabled={!selectedResultId}
+              >
+                Re-roll
+              </button>
+            </div>
+
+            <GenerationGrid
+              results={results}
+              isGenerating={isGenerating}
+              onVisualize={(payload: { sceneId?: string; imageUrl?: string }) => {
+                setViewState({ view: 'visualization', payload })
+              }}
+              selectedResultId={selectedResultId}
+              onSelect={(id: number | string) => setSelectedResultId(Number(id))}
+              onUpscale={handleUpscale}
+              onVariation={handleVariation}
+              onReroll={handleReroll}
+            />
+          </div>
         )}
       </div>
 
@@ -175,7 +308,6 @@ export const MainContent = ({
             return (
               <VisualizationStage
                 sceneId={p?.sceneId}
-                imageUrl={p?.imageUrl}
                 onClose={() =>
                   setViewState({ view: 'creation', payload: null })
                 }

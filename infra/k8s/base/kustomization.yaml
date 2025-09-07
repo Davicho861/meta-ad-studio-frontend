@@ -1,0 +1,13 @@
+resources:
+  - namespace.yaml
+  - backend-deployment.yaml
+  - backend-service.yaml
+  - frontend-deployment.yaml
+  - frontend-service.yaml
+  - configmap.yaml
+  - secret-example.yaml
+  - hpa-backend.yaml
+  - ingress.yaml
+
+commonLabels:
+  app: meta-ad-studio

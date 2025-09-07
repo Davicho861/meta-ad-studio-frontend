@@ -28,7 +28,7 @@ const PromptBar = () => {
         value={prompt}
         onChange={handleInputChange}
         onKeyDown={handleKeyDown}
-        placeholder="Describe the ad you want to generate..."
+  placeholder="Describe el anuncio que quieres generar..."
         className="flex-grow p-2 border border-gray-300 rounded-md mr-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
         disabled={isLoading}
       />

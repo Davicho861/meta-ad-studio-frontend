@@ -1,1 +1,5 @@
-cd src/frontend/meta-verse-visualizer-main && npx lint-staged
+#!/usr/bin/env bash
+
+# Ejecutar lint en la raíz (eslint) usando script definido en package.json
+echo "Running lint (pre-commit)..."
+npm run lint --silent
