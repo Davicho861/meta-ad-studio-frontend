@@ -59,3 +59,4 @@ gcloud-key.json
 *.asar.bak
 *.asar.orig
 *.asar.prepatch
+src/backend/server/node_modules
