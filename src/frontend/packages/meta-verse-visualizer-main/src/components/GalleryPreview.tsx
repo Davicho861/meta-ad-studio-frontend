@@ -68,8 +68,8 @@ export const GalleryPreview: React.FC<GalleryPreviewProps> = ({ preview }) => {
         videoUrl: data.videoUrl,
       }))
     } catch (error) {
-      console.error('Error generating video:', error)
-      setItemState((prevState) => ({
+      /* CODemod: console.error('Error generating video:', error)
+       */setItemState((prevState) => ({
         ...prevState,
         loading: false,
         error: 'Failed to generate video.',
@@ -112,8 +112,8 @@ export const GalleryPreview: React.FC<GalleryPreviewProps> = ({ preview }) => {
         videoUrl: data.videoUrl,
       }))
     } catch (error) {
-      console.error('Error generating ad with Gemini:', error)
-      setItemState((prevState) => ({
+      /* CODemod: console.error('Error generating ad with Gemini:', error)
+       */setItemState((prevState) => ({
         ...prevState,
         adLoading: false,
         error: 'Failed to generate ad.',

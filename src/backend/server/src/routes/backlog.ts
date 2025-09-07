@@ -6,7 +6,7 @@ const router = Router();
 
 // Placeholder for backlog service functions
 const getBacklog = async (projectId: string) => {
-  console.log('Fetching backlog for project:', projectId);
+  /* CODemod: console.log('Fetching backlog for project:', projectId); */
   return { projectId, issues: [] };
 };
 

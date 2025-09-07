@@ -20,8 +20,8 @@ export async function generateAdCreatives(rawPrompt) {
 
   const token = process.env.REPLICATE_API_TOKEN
   if (!token) {
-    console.error('REPLICATE_API_TOKEN is not set. Returning empty results.')
-    return []
+    /* CODemod: console.error('REPLICATE_API_TOKEN is not set. Returning empty results.')
+     */return []
   }
 
   const replicate = new Replicate({ auth: token })
@@ -84,16 +84,16 @@ export async function generateAdCreatives(rawPrompt) {
     try {
       await addGeneration({ prompt: rawPrompt, parsed: { prompt, params }, results })
     } catch (e) {
-      console.warn('Failed to persist generation to local DB', e)
-    }
+      /* CODemod: console.warn('Failed to persist generation to local DB', e)
+     */}
 
     // Update store to succeeded
     if (setGenerationProgress) setGenerationProgress({ status: 'succeeded', logs: ['Finished'] })
 
     return results
   } catch (err) {
-    console.error('Error generating images from Replicate:', err)
-    if (setGenerationProgress) setGenerationProgress({ status: 'failed', logs: [String(err)] })
+    /* CODemod: console.error('Error generating images from Replicate:', err)
+     */if (setGenerationProgress) setGenerationProgress({ status: 'failed', logs: [String(err)] })
     return []
   }
 }

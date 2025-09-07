@@ -21,7 +21,7 @@ export const getBrandProfile = async (req: any, res: Response) => {
 
     res.status(200).json(user.brandProfile);
   } catch (error) {
-    console.error('Error fetching brand profile:', error);
+    /* CODemod: console.error('Error fetching brand profile:', error); */
     res.status(500).json({ message: 'Server error' });
   }
 };
@@ -55,7 +55,7 @@ export const upsertBrandProfile = async (req: any, res: Response) => {
 
     res.status(201).json(brandProfile);
   } catch (error) {
-    console.error('Error creating/updating brand profile:', error);
+    /* CODemod: console.error('Error creating/updating brand profile:', error); */
     res.status(500).json({ message: 'Server error' });
   }
 };

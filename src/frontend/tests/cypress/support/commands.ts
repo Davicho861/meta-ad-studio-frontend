@@ -9,13 +9,13 @@ Cypress.Commands.add('login', () => {
     body: { username: 'testuser', password: 'testpass' },
     failOnStatusCode: false,
   }).then((response) => {
-    console.log('Login Response status:', response.status);
-    console.log('Login Response body:', response.body);
+    /* CODemod: console.log('Login Response status:', response.status); */
+    /* CODemod: console.log('Login Response body:', response.body); */
     if (response.body && response.body.token) {
       window.localStorage.setItem('jwt_token', response.body.token);
-      console.log('JWT token set in localStorage:', response.body.token);
+      /* CODemod: console.log('JWT token set in localStorage:', response.body.token); */
     } else {
-      console.error('JWT token not found in response body');
+      /* CODemod: console.error('JWT token not found in response body'); */
     }
   });
 });

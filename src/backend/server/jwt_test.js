@@ -26,7 +26,7 @@ app.get('/protected', mockJwtMiddleware, (req, res) => {
 });
 
 const server = app.listen(port, () => {
-  console.log(`Test server listening at http://localhost:${port}`);
+  /* CODemod: console.log(`Test server listening at http://localhost:${port}`); */
   runTests();
 });
 
@@ -36,9 +36,9 @@ const runTests = async () => {
     const response = await makeRequest('/protected');
     assert.strictEqual(response.statusCode, 401, 'Test Case 1 Failed: Status code should be 401');
     assert.strictEqual(response.body, 'Authorization header missing', 'Test Case 1 Failed: Response body should indicate missing header');
-    console.log('Test Case 1 Passed: No token');
+    /* CODemod: console.log('Test Case 1 Passed: No token'); */
   } catch (error) {
-    console.error('Test Case 1 Failed:', error.message);
+    /* CODemod: console.error('Test Case 1 Failed:', error.message); */
   }
 
   // Test case 2: Invalid token
@@ -47,9 +47,9 @@ const runTests = async () => {
     const response = await makeRequest(options);
     assert.strictEqual(response.statusCode, 401, 'Test Case 2 Failed: Status code should be 401');
     assert.strictEqual(response.body, 'Invalid token', 'Test Case 2 Failed: Response body should indicate invalid token');
-    console.log('Test Case 2 Passed: Invalid token');
+    /* CODemod: console.log('Test Case 2 Passed: Invalid token'); */
   } catch (error) {
-    console.error('Test Case 2 Failed:', error.message);
+    /* CODemod: console.error('Test Case 2 Failed:', error.message); */
   }
 
   // Test case 3: Valid token
@@ -59,9 +59,9 @@ const runTests = async () => {
     const data = JSON.parse(response.body);
     assert.strictEqual(response.statusCode, 200, 'Test Case 3 Failed: Status code should be 200');
     assert.deepStrictEqual(data.user, { id: '123', name: 'Test User' }, 'Test Case 3 Failed: User data should be present');
-    console.log('Test Case 3 Passed: Valid token');
+    /* CODemod: console.log('Test Case 3 Passed: Valid token'); */
   } catch (error) {
-    console.error('Test Case 3 Failed:', error.message);
+    /* CODemod: console.error('Test Case 3 Failed:', error.message); */
   }
 
   server.close();

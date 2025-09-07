@@ -18,8 +18,8 @@ router.post('/register', async (req, res) => {
     const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET || 'dev', { expiresIn: '7d' })
     res.json({ token })
   } catch (err) {
-    console.error(err)
-    res.status(500).json({ error: 'server error' })
+    /* CODemod: console.error(err)
+     */res.status(500).json({ error: 'server error' })
   }
 })
 
@@ -37,8 +37,8 @@ router.post('/login', async (req, res) => {
     const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET || 'dev', { expiresIn: '7d' })
     res.json({ token })
   } catch (err) {
-    console.error(err)
-    res.status(500).json({ error: 'server error' })
+    /* CODemod: console.error(err)
+     */res.status(500).json({ error: 'server error' })
   }
 })
 

@@ -7,7 +7,7 @@ const callAIAgent = async (prompt: string) => {
     const response = await axios.post(API_URL, { prompt });
     return response.data.response;
   } catch (error) {
-    console.error('Error calling AI agent:', error);
+    /* CODemod: console.error('Error calling AI agent:', error); */
     throw new Error('Failed to get response from AI agent.');
   }
 };

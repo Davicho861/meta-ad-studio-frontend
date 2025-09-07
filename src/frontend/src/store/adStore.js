@@ -28,12 +28,12 @@ export const useAdStore = create((set, get) => ({
         const h = await getAllGenerations()
         set({ history: h })
       } catch (e) {
-        console.warn('Failed to refresh history', e)
-      }
+        /* CODemod: console.warn('Failed to refresh history', e)
+       */}
     } catch (err) {
       // In production we would handle/report the error more fully
-      console.error('generateAds error', err)
-      set({ isLoading: false })
+      /* CODemod: console.error('generateAds error', err)
+       */set({ isLoading: false })
     }
   },
 
@@ -45,16 +45,16 @@ export const useAdStore = create((set, get) => ({
       const h = await getAllGenerations()
       set({ history: h })
     } catch (e) {
-      console.warn('loadHistory failed', e)
-    }
+      /* CODemod: console.warn('loadHistory failed', e)
+     */}
   },
   loadGenerationById: async (id) => {
     try {
       const g = await getGenerationById(id)
       if (g && g.results) set({ generatedAds: g.results })
     } catch (e) {
-      console.warn('loadGenerationById failed', e)
-    }
+      /* CODemod: console.warn('loadGenerationById failed', e)
+     */}
   },
 }))
 

@@ -6,7 +6,7 @@ function getStoredData() {
     const data = localStorage.getItem(STORAGE_KEY);
     return data ? JSON.parse(data) : { generations: [] };
   } catch (error) {
-    console.warn('Failed to read from localStorage:', error);
+    /* CODemod: console.warn('Failed to read from localStorage:', error); */
     return { generations: [] };
   }
 }
@@ -15,7 +15,7 @@ function setStoredData(data) {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
   } catch (error) {
-    console.warn('Failed to write to localStorage:', error);
+    /* CODemod: console.warn('Failed to write to localStorage:', error); */
   }
 }
 

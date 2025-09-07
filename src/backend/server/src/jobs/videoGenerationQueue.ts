@@ -14,9 +14,9 @@ export const videoWorker = new Worker(
   videoQueueName,
   async (job) => {
     // job.data should contain { id, prompt, imageUrl, provider }
-    console.log('Processing video job', job.id, job.data)
+    /* CODemod: console.log('Processing video job', job.id, job.data)
 
-    // TODO: integrate with real video provider (e.g., AI provider)
+     */// TODO: integrate with real video provider (e.g., AI provider)
 
     // Simulate processing
     await new Promise((r) => setTimeout(r, 1000))
@@ -36,8 +36,8 @@ export const videoWorker = new Worker(
         },
       })
     } catch (err) {
-      console.error('Failed to persist VideoGenerationJob', err)
-    }
+      /* CODemod: console.error('Failed to persist VideoGenerationJob', err)
+     */}
 
     return result
   },
@@ -45,9 +45,9 @@ export const videoWorker = new Worker(
 )
 
 videoWorker.on('completed', (job) => {
-  console.log(`Job ${job.id} completed`)
-})
+  /* CODemod: console.log(`Job ${job.id} completed`)
+ */})
 
 videoWorker.on('failed', (job, err) => {
-  console.error(`Job ${job?.id} failed`, err)
-})
+  /* CODemod: console.error(`Job ${job?.id} failed`, err)
+ */})

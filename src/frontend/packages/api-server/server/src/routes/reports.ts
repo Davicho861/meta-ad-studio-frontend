@@ -6,7 +6,7 @@ const router = Router();
 
 // Placeholder for reports service functions
 const getReport = async (projectId: string, reportType: string) => {
-  console.log('Fetching report for project:', projectId, 'of type:', reportType);
+  /* CODemod: console.log('Fetching report for project:', projectId, 'of type:', reportType); */
   return { projectId, reportType, data: {} };
 };
 

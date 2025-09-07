@@ -9,7 +9,7 @@ const callAIAgent = async (prompt: string, reasoning_effort: string = 'high') =>
     const response = await axios.post(API_URL, { prompt, reasoning_effort });
     return response.data.response;
   } catch (error) {
-    console.error('Error calling AI agent:', error);
+    /* CODemod: console.error('Error calling AI agent:', error); */
     throw new Error('Failed to get response from AI agent.');
   }
 };
@@ -36,7 +36,7 @@ class PlanningAgent {
 
       return { success: true, data: text };
     } catch (error) {
-      console.error('Error prioritizing tasks:', error);
+      /* CODemod: console.error('Error prioritizing tasks:', error); */
       return { success: false, error: 'Failed to prioritize tasks' };
     }
   }

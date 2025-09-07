@@ -13,7 +13,7 @@ export const generateVideoGrok = async (req: Request, res: Response) => {
       videos: videos,
     });
   } catch (error: any) {
-    console.error(error);
+    /* CODemod: console.error(error); */
     res.status(500).json({ message: error.message });
   }
 };

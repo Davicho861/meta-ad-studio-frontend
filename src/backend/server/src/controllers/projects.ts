@@ -26,7 +26,7 @@ export const createProject = async (req: AuthRequest, res: Response) => {
 
     res.status(201).json(newProject);
   } catch (error: unknown) {
-    console.error(error);
+    /* CODemod: console.error(error); */
     if (error instanceof Error) {
       res.status(500).json({ message: error.message });
     } else {

@@ -6,7 +6,7 @@ const router = Router();
 
 // Placeholder for roadmap service functions
 const getRoadmap = async (projectId: string) => {
-  console.log('Fetching roadmap for project:', projectId);
+  /* CODemod: console.log('Fetching roadmap for project:', projectId); */
   return { projectId, epics: [] };
 };
 

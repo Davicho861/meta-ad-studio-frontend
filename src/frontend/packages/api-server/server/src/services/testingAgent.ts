@@ -11,7 +11,7 @@ const callAIAgent = async (prompt: string, reasoning_effort: string) => {
     const response = await axios.post(API_URL, { prompt, reasoning_effort });
     return response.data.response;
   } catch (error) {
-    console.error('Error calling AI agent:', error);
+    /* CODemod: console.error('Error calling AI agent:', error); */
     throw new Error('Failed to get response from AI agent.');
   }
 };
@@ -29,10 +29,10 @@ export const testingAgent = async (testType: 'cypress' | 'jest', reasoning_effor
   }
 
   try {
-    console.log(`Executing ${testType} tests...`);
+    /* CODemod: console.log(`Executing ${testType} tests...`); */
     const { stdout, stderr } = await execAsync(command, { cwd: testType === 'jest' ? 'server/' : '.' });
     testLogs = stdout + stderr;
-    console.log(`Test execution complete. Analyzing results with Gemini...`);
+    /* CODemod: console.log(`Test execution complete. Analyzing results with Gemini...`); */
 
     const prompt = `Analyze the following test logs from a ${testType} test run. Identify any failures, suggest potential causes, and propose code corrections to fix the bugs. If no failures are found, confirm that.
 
@@ -41,7 +41,7 @@ ${testLogs}`;
 
     return await callAIAgent(prompt, reasoning_effort);
   } catch (error: unknown) {
-    console.error(`Error executing ${testType} tests or analyzing results:`, error);
+    /* CODemod: console.error(`Error executing ${testType} tests or analyzing results:`, error); */
     const prompt = `Analyze the following error output from a failed ${testType} test run. Identify the root cause of the failure and propose code corrections to fix the bugs.
 
 Error Output:
@@ -51,7 +51,7 @@ ${(error as { stdout?: string, message: string }).stdout || (error as Error).mes
       const analysis = await callAIAgent(prompt, reasoning_effort);
       return `Test execution failed. Gemini's analysis and proposed corrections:\n${analysis}`;
     } catch (geminiError) {
-      console.error("Error during Gemini analysis of failed tests:", geminiError);
+      /* CODemod: console.error("Error during Gemini analysis of failed tests:", geminiError); */
       return `Test execution failed and an error occurred during AI analysis: ${geminiError}`;
     }
   }

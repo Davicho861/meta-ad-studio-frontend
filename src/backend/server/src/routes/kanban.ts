@@ -8,7 +8,7 @@ const router = Router();
 
 // Placeholder for kanban service functions
 const getKanbanBoard = async (projectId: string) => {
-  console.log('Fetching kanban board for project:', projectId);
+  /* CODemod: console.log('Fetching kanban board for project:', projectId); */
   return { projectId, columns: [] };
 };
 
@@ -39,7 +39,7 @@ router.put(
       await updateIssueStatus(issueId, status);
       res.json({ message: 'Issue status updated successfully' });
     } catch (error) {
-      console.error(error);
+      /* CODemod: console.error(error); */
       res.status(500).json({ error: 'Failed to update issue status' });
     }
   }

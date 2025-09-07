@@ -12,7 +12,7 @@ async function initializeGCP(): Promise<{cloudBuildClient: CloudBuildClient, fir
     });
     cloudBuildClient = new CloudBuildClient({ auth });
     firebaseApp = initializeApp();
-    console.log('GCP services initialized.');
+    /* CODemod: console.log('GCP services initialized.'); */
     return { cloudBuildClient, firebaseApp };
   } catch (error: any) {
     throw new Error(`GCP initialization failed: ${error.message}`);

@@ -59,18 +59,18 @@ var runAgent = function (prompt) { return __awaiter(void 0, void 0, void 0, func
                     })];
             case 1:
                 executor = _a.sent();
-                console.log("Loaded agent.");
+                /* CODemod: console.log("Loaded agent."); */
                 _a.label = 2;
             case 2:
                 _a.trys.push([2, 4, , 5]);
                 return [4 /*yield*/, executor.call({ input: prompt })];
             case 3:
                 result = _a.sent();
-                console.log("Got output ".concat(result.output));
+                /* CODemod: console.log("Got output ".concat(result.output)); */
                 return [2 /*return*/, result.output];
             case 4:
                 error_1 = _a.sent();
-                console.error(error_1);
+                /* CODemod: console.error(error_1); */
                 return [2 /*return*/, "An error occurred while running the agent."];
             case 5: return [2 /*return*/];
         }

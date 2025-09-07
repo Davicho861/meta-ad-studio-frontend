@@ -24,7 +24,7 @@ const MultiverseGallery: React.FC = () => {
         setVideos(data);
       } catch (err: unknown) {
         setError((err as Error).message);
-        console.error("Failed to fetch videos:", err);
+        /* CODemod: console.error("Failed to fetch videos:", err); */
       } finally {
         setLoading(false);
       }

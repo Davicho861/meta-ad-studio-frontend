@@ -40,7 +40,7 @@ const BrandProfilePage: React.FC = () => {
           }
         } else if (response.status === 404) {
           // No profile exists yet, which is fine.
-          console.log('No brand profile found, user can create one.');
+          /* CODemod: console.log('No brand profile found, user can create one.'); */
         } else {
           throw new Error('Failed to fetch brand profile');
         }

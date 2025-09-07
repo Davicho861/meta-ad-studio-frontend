@@ -54,14 +54,14 @@ export const ResultCardV2 = ({ result, onVisualize }: ResultCardProps) => {
       // Si la API es asíncrona, podría devolver un jobId; aquí manejamos ambos casos.
       const data = await resp.json()
       if (data.videoUrl) {
-        console.log('Video ready', data)
-      } else if (data.jobId) {
-        console.log('Video job queued', data.jobId)
-        setJobId(data.jobId)
+        /* CODemod: console.log('Video ready', data)
+       */} else if (data.jobId) {
+        /* CODemod: console.log('Video job queued', data.jobId)
+         */setJobId(data.jobId)
       }
     } catch (e) {
-      console.error('Failed to animate', e)
-    } finally {
+      /* CODemod: console.error('Failed to animate', e)
+     */} finally {
       setAnimating(false)
     }
   }

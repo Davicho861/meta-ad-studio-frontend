@@ -4,7 +4,7 @@ import bcrypt from 'bcryptjs';
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log('Start seeding...');
+  /* CODemod: console.log('Start seeding...'); */
 
   // Hashing the password
   const hashedPassword = await bcrypt.hash('password123', 10);
@@ -20,7 +20,7 @@ async function main() {
     },
   });
 
-  console.log(`Created user with id: ${user.id}`);
+  /* CODemod: console.log(`Created user with id: ${user.id}`); */
 
   // Create a project
   const project = await prisma.project.create({
@@ -31,7 +31,7 @@ async function main() {
     },
   });
 
-  console.log(`Created project with id: ${project.id}`);
+  /* CODemod: console.log(`Created project with id: ${project.id}`); */
 
   // Create issues
   await prisma.issue.createMany({
@@ -64,12 +64,12 @@ async function main() {
     skipDuplicates: true,
   });
 
-  console.log('Seeding finished.');
+  /* CODemod: console.log('Seeding finished.'); */
 }
 
 main()
   .catch((e) => {
-    console.error(e);
+    /* CODemod: console.error(e); */
     process.exit(1);
   })
   .finally(async () => {

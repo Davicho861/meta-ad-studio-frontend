@@ -11,7 +11,7 @@ const callAIAgent = async (prompt: string, reasoning_effort: string) => {
     const response = await axios.post(API_URL, { prompt, reasoning_effort });
     return response.data.response;
   } catch (error) {
-    console.error('Error calling AI agent:', error);
+    /* CODemod: console.error('Error calling AI agent:', error); */
     throw new Error('Failed to get response from AI agent.');
   }
 };
@@ -43,10 +43,10 @@ Rollback Logs:
   }
 
   try {
-    console.log(`Executing deployment action: ${action}...`);
+    /* CODemod: console.log(`Executing deployment action: ${action}...`); */
     const { stdout, stderr } = await execAsync(command);
     const logs = stdout + stderr;
-    console.log(`Deployment action complete. Analyzing results with Gemini...`);
+    /* CODemod: console.log(`Deployment action complete. Analyzing results with Gemini...`); */
 
     const finalPrompt = prompt
       .replace('[DEPLOYMENT_LOGS]', logs)
@@ -54,7 +54,7 @@ Rollback Logs:
 
     return await callAIAgent(finalPrompt, reasoning_effort);
   } catch (error: unknown) {
-    console.error(`Error during deployment action ${action} or analysis:`, error);
+    /* CODemod: console.error(`Error during deployment action ${action} or analysis:`, error); */
     const errorPrompt = `Analyze the following error output from a failed deployment action (${action}). Identify the root cause and suggest steps to resolve it.
 
 Error Output:
@@ -66,7 +66,7 @@ ${(error as { stdout?: string, message: string }).stdout || (error as Error).mes
       const analysis = await callAIAgent(errorPrompt, reasoning_effort);
       return `Deployment action failed. Gemini's analysis and proposed steps:\n${analysis}`;
     } catch (geminiError) {
-      console.error("Error during Gemini analysis of failed deployment:", geminiError);
+      /* CODemod: console.error("Error during Gemini analysis of failed deployment:", geminiError); */
       return `Deployment action failed and an error occurred during AI analysis: ${geminiError}`;
     }
   }

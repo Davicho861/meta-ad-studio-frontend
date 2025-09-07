@@ -15,8 +15,8 @@ export const animateImage = async (req: Request, res: Response) => {
 
     return res.status(202).json({ jobId, status: 'queued' })
   } catch (err) {
-    console.error(err)
-    return res.status(500).json({ error: 'server_error' })
+    /* CODemod: console.error(err)
+     */return res.status(500).json({ error: 'server_error' })
   }
 }
 

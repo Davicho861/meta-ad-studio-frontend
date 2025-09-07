@@ -22,7 +22,7 @@ Based on these metrics, suggest a refined prompt that aims to improve the AI's o
     const response = await result.response;
     return response.text();
   } catch (error) {
-    console.error("Error in auto-evolution agent:", error);
+    /* CODemod: console.error("Error in auto-evolution agent:", error); */
     return "An error occurred while the auto-evolution agent was running.";
   }
 };

@@ -18,7 +18,7 @@ export class AdSenseClient {
   }
 
   async requestAd(request: AdRequest): Promise<AdResponse> {
-    console.log(`[AdSense Mock] Requesting ad for unit ${request.adUnitId}`);
+    /* CODemod: console.log(`[AdSense Mock] Requesting ad for unit ${request.adUnitId}`); */
     // In a real implementation, this would make an API call to AdSense.
     return {
       html: `<div style="width: 728px; height: 90px; border: 1px solid #ccc; text-align: center; line-height: 90px;">Mock Ad</div>`,

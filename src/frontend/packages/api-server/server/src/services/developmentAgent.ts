@@ -7,7 +7,7 @@ const callAIAgent = async (prompt: string, reasoning_effort: string, multimodal_
     const response = await axios.post(API_URL, { prompt, reasoning_effort, multimodal_input, iac_input });
     return response.data;
   } catch (error) {
-    console.error('Error calling AI agent:', error);
+    /* CODemod: console.error('Error calling AI agent:', error); */
     throw new Error('Failed to get response from AI agent.');
   }
 };
@@ -28,7 +28,7 @@ Generate the necessary code files (e.g., React components, Node.js routes/contro
   try {
     return await callAIAgent(prompt, reasoning_effort, multimodal_input);
   } catch (error) {
-    console.error("Error in development agent:", error);
+    /* CODemod: console.error("Error in development agent:", error); */
     return "An error occurred while the development agent was running.";
   }
 };

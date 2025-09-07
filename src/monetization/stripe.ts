@@ -15,7 +15,7 @@ export class StripeClient {
   }
 
   async createPaymentIntent(amount: number, currency: string): Promise<PaymentIntent> {
-    console.log(`[Stripe Mock] Creating payment intent for ${amount} ${currency}`);
+    /* CODemod: console.log(`[Stripe Mock] Creating payment intent for ${amount} ${currency}`); */
     // In a real implementation, this would make an API call to Stripe.
     return {
       id: `pi_${Math.random().toString(36).substr(2, 9)}`,
@@ -26,7 +26,7 @@ export class StripeClient {
   }
 
   async confirmPayment(paymentIntentId: string): Promise<PaymentIntent> {
-    console.log(`[Stripe Mock] Confirming payment for ${paymentIntentId}`);
+    /* CODemod: console.log(`[Stripe Mock] Confirming payment for ${paymentIntentId}`); */
     // In a real implementation, this would make an API call to Stripe.
     return {
       id: paymentIntentId,

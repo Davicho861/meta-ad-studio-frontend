@@ -18,5 +18,5 @@ app.get('/api/health', (req, res) => {
 
 const port = process.env.PORT || 4000
 app.listen(port, () => {
-  console.log(`Backend listening on port ${port}`)
-})
+  /* CODemod: console.log(`Backend listening on port ${port}`)
+ */})

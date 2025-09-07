@@ -34,16 +34,16 @@ class UnityModule {
       codeUrl: "Build/my-unity-app.wasm",
     }).then((instance: UnityInstance) => {
       this.unityInstance = instance;
-      console.log("Unity instance created successfully.");
+      /* CODemod: console.log("Unity instance created successfully."); */
     }).catch((error: Error) => {
-      console.error("Failed to create Unity instance:", error);
+      /* CODemod: console.error("Failed to create Unity instance:", error); */
     });
   }
 
   // Send ad data to the Unity scene for VR/AR preview
   public previewAdInVR(adData: object): void {
     if (!this.unityInstance) {
-      console.warn("Unity instance not available.");
+      /* CODemod: console.warn("Unity instance not available."); */
       return;
     }
     const adDataJson = JSON.stringify(adData);
@@ -55,7 +55,7 @@ class UnityModule {
     if (this.unityInstance) {
       await this.unityInstance.Quit();
       this.unityInstance = null;
-      console.log("Unity instance shut down.");
+      /* CODemod: console.log("Unity instance shut down."); */
     }
   }
 }

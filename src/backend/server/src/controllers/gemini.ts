@@ -17,7 +17,7 @@ export const generateVideo = async (req: Request, res: Response) => {
 
     res.status(200).json({ videoUrl });
   } catch (error: unknown) {
-    console.error('Error generating video:', error);
+    /* CODemod: console.error('Error generating video:', error); */
     if (error instanceof Error) {
       res.status(500).json({ message: 'Internal server error', error: error.message });
     } else {

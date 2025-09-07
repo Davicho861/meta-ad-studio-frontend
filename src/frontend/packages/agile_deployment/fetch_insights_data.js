@@ -12,7 +12,7 @@ const USE_MOCK_DATA = process.env.USE_MOCK_DATA === 'true' || !process.env.META_
 
 // --- Mock Data Generation (2025 Features) ---
 function getMockInsightsData() {
-    console.log('INFO: Using mock data for Insights Dashboard.');
+    /* CODemod: console.log('INFO: Using mock data for Insights Dashboard.'); */
     return {
         "summary": {
             "opportunity_score": Math.floor(Math.random() * 31) + 70, // Score between 70 and 100
@@ -45,7 +45,7 @@ function getMockInsightsData() {
 
 // --- Real API Fetching (Placeholder) ---
 async function fetchRealInsightsData() {
-    console.log('INFO: Fetching real data from Meta Marketing API...');
+    /* CODemod: console.log('INFO: Fetching real data from Meta Marketing API...'); */
     const apiToken = process.env.META_API_TOKEN;
     const adAccountId = process.env.AD_ACCOUNT_ID;
     const endpoint = `https://graph.facebook.com/v18.0/act_${adAccountId}/insights?access_token=${apiToken}&fields=campaign_name,impressions,clicks,spend,cpc`;
@@ -60,7 +60,7 @@ async function fetchRealInsightsData() {
         // return transformApiData(data); // You would need a function to match the mock structure
         throw new Error("API integration is a placeholder. Falling back to mock data.");
     } catch (error) {
-        console.error(`ERROR: Failed to fetch real API data: ${error.message}. Falling back to mock data.`);
+        /* CODemod: console.error(`ERROR: Failed to fetch real API data: ${error.message}. Falling back to mock data.`); */
         return getMockInsightsData();
     }
 }

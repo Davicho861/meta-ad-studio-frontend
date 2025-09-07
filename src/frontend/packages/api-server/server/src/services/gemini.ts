@@ -27,14 +27,14 @@ Please provide a detailed description that could be used to generate a video.`;
     // In a real scenario, the Gemini API would return a video URL or a video file.
     // For this example, we'll simulate a video URL based on the scene description.
     // You would parse the actual response from the Gemini API here.
-    console.log("Gemini API response:", text);
+    /* CODemod: console.log("Gemini API response:", text); */
 
     // Placeholder for actual video URL from Gemini API
     // For now, we'll return a dummy URL
     return `https://example.com/videos/${encodeURIComponent(sceneDescription)}.mp4`;
 
   } catch (error) {
-    console.error('Error calling Gemini API:', error);
+    /* CODemod: console.error('Error calling Gemini API:', error); */
     return null;
   }
 };

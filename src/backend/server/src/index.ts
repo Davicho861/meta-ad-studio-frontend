@@ -39,7 +39,7 @@ let server: any = null
 // when tests import the app and start their own server instance.
 if (process.env.NODE_ENV !== 'test') {
   server = app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
+    /* CODemod: console.log(`Server is running on port ${port}`); */
   });
 }
 

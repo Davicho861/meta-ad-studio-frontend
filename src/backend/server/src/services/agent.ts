@@ -15,7 +15,7 @@ const callAIAgent = async (prompt: string, reasoning_effort: string) => {
     const response = await axios.post(API_URL, { prompt, reasoning_effort });
     return response.data.response;
   } catch (error) {
-    console.error('Error calling AI agent:', error);
+    /* CODemod: console.error('Error calling AI agent:', error); */
     throw new Error('Failed to get response from AI agent.');
   }
 };
@@ -53,10 +53,10 @@ export const runAgent = async (taskType: string, taskDetails: Record<string, unk
         result = await callAIAgent(prompt, reasoning_effort);
         break;
     }
-    console.log(`Agent output for ${taskType} task:`, result);
+    /* CODemod: console.log(`Agent output for ${taskType} task:`, result); */
     return result;
   } catch (error) {
-    console.error(`Error running agent for task type ${taskType}:`, error);
+    /* CODemod: console.error(`Error running agent for task type ${taskType}:`, error); */
     return `An error occurred while running the agent for task type ${taskType}.`;
   }
 };

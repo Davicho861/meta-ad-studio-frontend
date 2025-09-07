@@ -8,7 +8,7 @@ describe('API Integration Tests', () => {
       expect(response.status).toBe(200);
       expect(data).toBeDefined();
     } catch (error) {
-      console.error('API integration test failed:', error);
+      /* CODemod: console.error('API integration test failed:', error); */
       throw error;
     }
   });

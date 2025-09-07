@@ -94,12 +94,12 @@ export const MetaverseDashboard = () => {
 
   useEffect(() => {
     // Simula una llamada a la API para precargar los datos de la galería
-    console.log('PRECARGANDO DATOS DE INSPIRACIÓN...')
-    setTimeout(() => {
+    /* CODemod: console.log('PRECARGANDO DATOS DE INSPIRACIÓN...')
+     */setTimeout(() => {
       setInspirationData(examples)
       setIsLoading(false)
-      console.log('DATOS DE INSPIRACIÓN CARGADOS.')
-    }, 1000) // Simular delay de 1 segundo
+      /* CODemod: console.log('DATOS DE INSPIRACIÓN CARGADOS.')
+     */}, 1000) // Simular delay de 1 segundo
   }, [])
 
   return (

@@ -26,10 +26,10 @@ export async function cacheAsset(assetBuffer, key, ttl) {
     const ipfsHash = await uploadToIPFS(assetBuffer);
     const cdnUrl = getCDNUrl(ipfsHash);
     cache.set(key, cdnUrl, ttl);
-    console.log(`Asset cached successfully for key: ${key}`);
+    /* CODemod: console.log(`Asset cached successfully for key: ${key}`); */
     return cdnUrl;
   } catch (error) {
-    console.error('Error caching asset:', error);
+    /* CODemod: console.error('Error caching asset:', error); */
     throw new Error('Failed to cache asset.');
   }
 }
