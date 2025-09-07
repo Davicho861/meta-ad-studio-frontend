@@ -1,0 +1,27 @@
+# Edge computing and CDN configuration (mock)
+
+provider: "Cloudflare"
+
+cdn:
+  enabled: true
+  cache_policy: "aggressive"
+  image_optimization: "on"
+  brotli_compression: "on"
+
+workers:
+  enabled: true
+  routes:
+    - pattern: "api.example.com/v1/ads/*"
+      script: "edge-ad-delivery"
+    - pattern: "api.example.com/v1/analytics/*"
+      script: "edge-analytics-ingestion"
+
+security:
+  waf:
+    enabled: true
+    ruleset: "cloudflare-managed"
+  ddos_protection: "on"
+  bot_management: "on"
+
+argo_smart_routing:
+  enabled: true

@@ -1,0 +1,200 @@
+Step #6 - "Construir-Imagen-Produccion": npm warn Could not resolve dependency:
+Step #6 - "Construir-Imagen-Produccion": npm warn peer vite@"^5.0.0" from lovable-tagger@1.1.9
+Step #6 - "Construir-Imagen-Produccion": npm warn node_modules/lovable-tagger
+Step #6 - "Construir-Imagen-Produccion": npm warn   dev lovable-tagger@"^1.1.9" from the root project
+Step #6 - "Construir-Imagen-Produccion": [0m[91mnpm warn EBADENGINE Unsupported engine {
+Step #6 - "Construir-Imagen-Produccion": npm warn EBADENGINE   package: '@vitejs/plugin-react-swc@4.0.1',
+Step #6 - "Construir-Imagen-Produccion": npm warn EBADENGINE   required: { node: '^20.19.0 || >=22.12.0' },
+Step #6 - "Construir-Imagen-Produccion": npm warn EBADENGINE   current: { node: 'v18.20.8', npm: '10.8.2' }
+Step #6 - "Construir-Imagen-Produccion": npm warn EBADENGINE }
+Step #6 - "Construir-Imagen-Produccion": [0m[91mnpm warn EBADENGINE Unsupported engine {
+Step #6 - "Construir-Imagen-Produccion": npm warn EBADENGINE   package: 'vite@7.1.3',
+Step #6 - "Construir-Imagen-Produccion": npm warn EBADENGINE   required: { node: '^20.19.0 || >=22.12.0' },
+Step #6 - "Construir-Imagen-Produccion": npm warn EBADENGINE   current: { node: 'v18.20.8', npm: '10.8.2' }
+Step #6 - "Construir-Imagen-Produccion": npm warn EBADENGINE }
+Step #6 - "Construir-Imagen-Produccion": [0m[91mnpm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+Step #6 - "Construir-Imagen-Produccion": [0m[91mnpm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+Step #6 - "Construir-Imagen-Produccion": [0m[91mnpm warn deprecated react-beautiful-dnd@13.1.1: react-beautiful-dnd is now deprecated. Context and options: https://github.com/atlassian/react-beautiful-dnd/issues/2672
+Step #6 - "Construir-Imagen-Produccion": [0m
+Step #6 - "Construir-Imagen-Produccion": added 989 packages, and audited 990 packages in 30s
+Step #6 - "Construir-Imagen-Produccion": 
+Step #6 - "Construir-Imagen-Produccion": 149 packages are looking for funding
+Step #6 - "Construir-Imagen-Produccion":   run `npm fund` for details
+Step #6 - "Construir-Imagen-Produccion": 
+Step #6 - "Construir-Imagen-Produccion": found 0 vulnerabilities
+Step #6 - "Construir-Imagen-Produccion": [91mnpm notice
+Step #6 - "Construir-Imagen-Produccion": npm notice New major version of npm available! 10.8.2 -> 11.5.2
+Step #6 - "Construir-Imagen-Produccion": npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.5.2
+Step #6 - "Construir-Imagen-Produccion": npm notice To update run: npm install -g npm@11.5.2
+Step #6 - "Construir-Imagen-Produccion": npm notice
+Step #6 - "Construir-Imagen-Produccion": [0mRemoving intermediate container ee1bd645f636
+Step #6 - "Construir-Imagen-Produccion":  ---> ae46aac3d284
+Step #6 - "Construir-Imagen-Produccion": Step 5/12 : COPY . .
+Step #6 - "Construir-Imagen-Produccion":  ---> 6951a6221c99
+Step #6 - "Construir-Imagen-Produccion": Step 6/12 : FROM base AS build
+Step #6 - "Construir-Imagen-Produccion":  ---> 6951a6221c99
+Step #6 - "Construir-Imagen-Produccion": Step 7/12 : WORKDIR /app/packages/web-app
+Step #6 - "Construir-Imagen-Produccion":  ---> Running in 68501da908eb
+Step #6 - "Construir-Imagen-Produccion": Removing intermediate container 68501da908eb
+Step #6 - "Construir-Imagen-Produccion":  ---> bdea4c250973
+Step #6 - "Construir-Imagen-Produccion": Step 8/12 : RUN npm run build
+Step #6 - "Construir-Imagen-Produccion":  ---> Running in ec9e813a557b
+Step #6 - "Construir-Imagen-Produccion": 
+Step #6 - "Construir-Imagen-Produccion": > web-app@0.0.0 build
+Step #6 - "Construir-Imagen-Produccion": > vite build
+Step #6 - "Construir-Imagen-Produccion": 
+Step #6 - "Construir-Imagen-Produccion": [91mYou are using Node.js 18.20.8. Vite requires Node.js version 20.19+ or 22.12+. Please upgrade your Node.js version.
+Step #6 - "Construir-Imagen-Produccion": [0mvite v7.1.3 building for production...
+Step #6 - "Construir-Imagen-Produccion": transforming...
+Step #6 - "Construir-Imagen-Produccion": ✓ 2302 modules transformed.
+Step #6 - "Construir-Imagen-Produccion": rendering chunks...
+Step #6 - "Construir-Imagen-Produccion": computing gzip size...
+Step #6 - "Construir-Imagen-Produccion": dist/index.html                                 1.22 kB │ gzip:   0.49 kB
+Step #6 - "Construir-Imagen-Produccion": dist/assets/index-B36o91T1.css                  2.81 kB │ gzip:   0.86 kB
+Step #6 - "Construir-Imagen-Produccion": dist/assets/filter-Dcwk5kPX.js                  0.33 kB │ gzip:   0.26 kB
+Step #6 - "Construir-Imagen-Produccion": dist/assets/clock-BybKKBf5.js                   0.35 kB │ gzip:   0.27 kB
+Step #6 - "Construir-Imagen-Produccion": dist/assets/circle-plus-PHM6IQeo.js             0.37 kB │ gzip:   0.28 kB
+Step #6 - "Construir-Imagen-Produccion": dist/assets/trending-up-oRHF4fi7.js             0.37 kB │ gzip:   0.29 kB
+Step #6 - "Construir-Imagen-Produccion": dist/assets/activity-BGXi59lC.js                0.40 kB │ gzip:   0.30 kB
+Step #6 - "Construir-Imagen-Produccion": dist/assets/circle-alert-CnIuCxAi.js            0.42 kB │ gzip:   0.29 kB
+Step #6 - "Construir-Imagen-Produccion": dist/assets/chart-column-DIW2wYc2.js            0.42 kB │ gzip:   0.30 kB
+Step #6 - "Construir-Imagen-Produccion": dist/assets/users-D9outbCs.js                   0.47 kB │ gzip:   0.33 kB
+Step #6 - "Construir-Imagen-Produccion": dist/assets/AIPredictiveInsights-BQcDG7kI.js    2.09 kB │ gzip:   0.96 kB
+Step #6 - "Construir-Imagen-Produccion": dist/assets/PhaseProgress-D4SdlZUY.js           2.40 kB │ gzip:   1.03 kB
+Step #6 - "Construir-Imagen-Produccion": dist/assets/StatCard-CzqhEcvT.js                5.94 kB │ gzip:   1.87 kB
+Step #6 - "Construir-Imagen-Produccion": dist/assets/Insights-CltGNk2u.js                6.63 kB │ gzip:   1.55 kB
+Step #6 - "Construir-Imagen-Produccion": dist/assets/Development-Df6akrUE.js             7.27 kB │ gzip:   2.29 kB
+Step #6 - "Construir-Imagen-Produccion": dist/assets/SdlcDashboard-CJPNrWu4.js           7.68 kB │ gzip:   2.64 kB
+Step #6 - "Construir-Imagen-Produccion": dist/assets/Settings-DYtcm-fc.js                7.73 kB │ gzip:   2.11 kB
+Step #6 - "Construir-Imagen-Produccion": dist/assets/Overview-Bsy4XSN1.js                9.14 kB │ gzip:   2.70 kB
+Step #6 - "Construir-Imagen-Produccion": dist/assets/Implementation-By_5jwTH.js          9.62 kB │ gzip:   2.92 kB
+Step #6 - "Construir-Imagen-Produccion": dist/assets/Deployment-DpiPvEbW.js             10.46 kB │ gzip:   2.27 kB
+Step #6 - "Construir-Imagen-Produccion": dist/assets/index-kCYlRZP-.js                 361.57 kB │ gzip: 116.65 kB
+Step #6 - "Construir-Imagen-Produccion": dist/assets/Planning-DZ7114ro.js              432.90 kB │ gzip: 116.79 kB
+Step #6 - "Construir-Imagen-Produccion": ✓ built in 6.06s
+Step #6 - "Construir-Imagen-Produccion": Removing intermediate container ec9e813a557b
+Step #6 - "Construir-Imagen-Produccion":  ---> f5b968e2f4e3
+Step #6 - "Construir-Imagen-Produccion": Step 9/12 : FROM nginx:stable-alpine AS production
+Step #6 - "Construir-Imagen-Produccion": stable-alpine: Pulling from library/nginx
+Step #6 - "Construir-Imagen-Produccion": 0368fd46e3c6: Pulling fs layer
+Step #6 - "Construir-Imagen-Produccion": 669998b1fdf4: Pulling fs layer
+Step #6 - "Construir-Imagen-Produccion": 95be0f4718a4: Pulling fs layer
+Step #6 - "Construir-Imagen-Produccion": 62c31b33012d: Pulling fs layer
+Step #6 - "Construir-Imagen-Produccion": 85a0985bea3a: Pulling fs layer
+Step #6 - "Construir-Imagen-Produccion": 8485f215491f: Pulling fs layer
+Step #6 - "Construir-Imagen-Produccion": f2d0d37ae31d: Pulling fs layer
+Step #6 - "Construir-Imagen-Produccion": e585282f4286: Pulling fs layer
+Step #6 - "Construir-Imagen-Produccion": 62c31b33012d: Waiting
+Step #6 - "Construir-Imagen-Produccion": 85a0985bea3a: Waiting
+Step #6 - "Construir-Imagen-Produccion": 8485f215491f: Waiting
+Step #6 - "Construir-Imagen-Produccion": f2d0d37ae31d: Waiting
+Step #6 - "Construir-Imagen-Produccion": e585282f4286: Waiting
+Step #6 - "Construir-Imagen-Produccion": 95be0f4718a4: Verifying Checksum
+Step #6 - "Construir-Imagen-Produccion": 95be0f4718a4: Download complete
+Step #6 - "Construir-Imagen-Produccion": 669998b1fdf4: Verifying Checksum
+Step #6 - "Construir-Imagen-Produccion": 669998b1fdf4: Download complete
+Step #6 - "Construir-Imagen-Produccion": 0368fd46e3c6: Verifying Checksum
+Step #6 - "Construir-Imagen-Produccion": 0368fd46e3c6: Download complete
+Step #6 - "Construir-Imagen-Produccion": 0368fd46e3c6: Pull complete
+Step #6 - "Construir-Imagen-Produccion": 62c31b33012d: Download complete
+Step #6 - "Construir-Imagen-Produccion": 669998b1fdf4: Pull complete
+Step #6 - "Construir-Imagen-Produccion": 85a0985bea3a: Download complete
+Step #6 - "Construir-Imagen-Produccion": 8485f215491f: Verifying Checksum
+Step #6 - "Construir-Imagen-Produccion": 8485f215491f: Download complete
+Step #6 - "Construir-Imagen-Produccion": 95be0f4718a4: Pull complete
+Step #6 - "Construir-Imagen-Produccion": 62c31b33012d: Pull complete
+Step #6 - "Construir-Imagen-Produccion": 85a0985bea3a: Pull complete
+Step #6 - "Construir-Imagen-Produccion": 8485f215491f: Pull complete
+Step #6 - "Construir-Imagen-Produccion": f2d0d37ae31d: Verifying Checksum
+Step #6 - "Construir-Imagen-Produccion": f2d0d37ae31d: Download complete
+Step #6 - "Construir-Imagen-Produccion": f2d0d37ae31d: Pull complete
+Step #6 - "Construir-Imagen-Produccion": e585282f4286: Download complete
+Step #6 - "Construir-Imagen-Produccion": e585282f4286: Pull complete
+Step #6 - "Construir-Imagen-Produccion": Digest: sha256:8f2bcf97c473dfe311e79a510ee540ee02e28ce1e6a64e1ef89bfad32574ef10
+Step #6 - "Construir-Imagen-Produccion": Status: Downloaded newer image for nginx:stable-alpine
+Step #6 - "Construir-Imagen-Produccion":  ---> a97d82f709e2
+Step #6 - "Construir-Imagen-Produccion": Step 10/12 : COPY --from=build /app/packages/web-app/dist /usr/share/nginx/html
+Step #6 - "Construir-Imagen-Produccion":  ---> 423a53906123
+Step #6 - "Construir-Imagen-Produccion": Step 11/12 : EXPOSE 80
+Step #6 - "Construir-Imagen-Produccion":  ---> Running in e04eccc67cdd
+Step #6 - "Construir-Imagen-Produccion": Removing intermediate container e04eccc67cdd
+Step #6 - "Construir-Imagen-Produccion":  ---> 66ae3d0129df
+Step #6 - "Construir-Imagen-Produccion": Step 12/12 : CMD ["nginx", "-g", "daemon off;"]
+Step #6 - "Construir-Imagen-Produccion":  ---> Running in d34cb7869366
+Step #6 - "Construir-Imagen-Produccion": Removing intermediate container d34cb7869366
+Step #6 - "Construir-Imagen-Produccion":  ---> 99fb16d51842
+Step #6 - "Construir-Imagen-Produccion": Successfully built 99fb16d51842
+Step #6 - "Construir-Imagen-Produccion": Successfully tagged us-central1-docker.pkg.dev/meta-ad-studio/meta-ad-studio-repo/frontend-app:latest
+Finished Step #6 - "Construir-Imagen-Produccion"
+Starting Step #7 - "Escanear-Imagen-Vulnerabilidades"
+Step #7 - "Escanear-Imagen-Vulnerabilidades": Already have image (with digest): aquasec/trivy:latest
+Step #7 - "Escanear-Imagen-Vulnerabilidades": 2025-08-24T22:33:03Z	INFO	[vulndb] Need to update DB
+Step #7 - "Escanear-Imagen-Vulnerabilidades": 2025-08-24T22:33:03Z	INFO	[vulndb] Downloading vulnerability DB...
+Step #7 - "Escanear-Imagen-Vulnerabilidades": 2025-08-24T22:33:03Z	INFO	[vulndb] Downloading artifact...	repo="mirror.gcr.io/aquasec/trivy-db:2"
+Step #7 - "Escanear-Imagen-Vulnerabilidades": 47.81 MiB / 68.92 MiB [------------------------------------------>__________________] 69.38% ? p/s ?68.92 MiB / 68.92 MiB [----------------------------------------------------------->] 100.00% ? p/s ?68.92 MiB / 68.92 MiB [----------------------------------------------------------->] 100.00% ? p/s ?68.92 MiB / 68.92 MiB [---------------------------------------------->] 100.00% 35.18 MiB p/s ETA 0s68.92 MiB / 68.92 MiB [---------------------------------------------->] 100.00% 35.18 MiB p/s ETA 0s68.92 MiB / 68.92 MiB [---------------------------------------------->] 100.00% 35.18 MiB p/s ETA 0s68.92 MiB / 68.92 MiB [---------------------------------------------->] 100.00% 32.91 MiB p/s ETA 0s68.92 MiB / 68.92 MiB [---------------------------------------------->] 100.00% 32.91 MiB p/s ETA 0s68.92 MiB / 68.92 MiB [---------------------------------------------->] 100.00% 32.91 MiB p/s ETA 0s68.92 MiB / 68.92 MiB [---------------------------------------------->] 100.00% 30.79 MiB p/s ETA 0s68.92 MiB / 68.92 MiB [---------------------------------------------->] 100.00% 30.79 MiB p/s ETA 0s68.92 MiB / 68.92 MiB [---------------------------------------------->] 100.00% 30.79 MiB p/s ETA 0s68.92 MiB / 68.92 MiB [---------------------------------------------->] 100.00% 28.80 MiB p/s ETA 0s68.92 MiB / 68.92 MiB [-------------------------------------------------] 100.00% 28.10 MiB p/s 2.7s2025-08-24T22:33:07Z	INFO	[vulndb] Artifact successfully downloaded	repo="mirror.gcr.io/aquasec/trivy-db:2"
+Step #7 - "Escanear-Imagen-Vulnerabilidades": 2025-08-24T22:33:07Z	INFO	[vuln] Vulnerability scanning is enabled
+Step #7 - "Escanear-Imagen-Vulnerabilidades": 2025-08-24T22:33:07Z	INFO	[secret] Secret scanning is enabled
+Step #7 - "Escanear-Imagen-Vulnerabilidades": 2025-08-24T22:33:07Z	INFO	[secret] If your scanning is slow, please try '--scanners vuln' to disable secret scanning
+Step #7 - "Escanear-Imagen-Vulnerabilidades": 2025-08-24T22:33:07Z	INFO	[secret] Please see also https://trivy.dev/v0.65/docs/scanner/secret#recommendation for faster secret detection
+Step #7 - "Escanear-Imagen-Vulnerabilidades": 2025-08-24T22:33:08Z	INFO	Detected OS	family="alpine" version="3.21.4"
+Step #7 - "Escanear-Imagen-Vulnerabilidades": 2025-08-24T22:33:08Z	INFO	[alpine] Detecting vulnerabilities...	os_version="3.21" repository="3.21" pkg_num=68
+Step #7 - "Escanear-Imagen-Vulnerabilidades": 2025-08-24T22:33:08Z	INFO	Number of language-specific files	num=0
+Step #7 - "Escanear-Imagen-Vulnerabilidades": 
+Step #7 - "Escanear-Imagen-Vulnerabilidades": Report Summary
+Step #7 - "Escanear-Imagen-Vulnerabilidades": 
+Step #7 - "Escanear-Imagen-Vulnerabilidades": ┌──────────────────────────────────────────────────────────────────────────────────┬────────┬─────────────────┬─────────┐
+Step #7 - "Escanear-Imagen-Vulnerabilidades": │                                      Target                                      │  Type  │ Vulnerabilities │ Secrets │
+Step #7 - "Escanear-Imagen-Vulnerabilidades": ├──────────────────────────────────────────────────────────────────────────────────┼────────┼─────────────────┼─────────┤
+Step #7 - "Escanear-Imagen-Vulnerabilidades": │ us-central1-docker.pkg.dev/meta-ad-studio/meta-ad-studio-repo/frontend-app:late- │ alpine │        0        │    -    │
+Step #7 - "Escanear-Imagen-Vulnerabilidades": │ st (alpine 3.21.4)                                                               │        │                 │         │
+Step #7 - "Escanear-Imagen-Vulnerabilidades": └──────────────────────────────────────────────────────────────────────────────────┴────────┴─────────────────┴─────────┘
+Step #7 - "Escanear-Imagen-Vulnerabilidades": Legend:
+Step #7 - "Escanear-Imagen-Vulnerabilidades": - '-': Not scanned
+Step #7 - "Escanear-Imagen-Vulnerabilidades": - '0': Clean (no security findings detected)
+Step #7 - "Escanear-Imagen-Vulnerabilidades": 
+Finished Step #7 - "Escanear-Imagen-Vulnerabilidades"
+Starting Step #9 - "Desplegar-En-Cloud-Run"
+Step #9 - "Desplegar-En-Cloud-Run": Pulling image: gcr.io/google.com/cloudsdktool/cloud-sdk
+Step #9 - "Desplegar-En-Cloud-Run": Using default tag: latest
+Step #9 - "Desplegar-En-Cloud-Run": latest: Pulling from google.com/cloudsdktool/cloud-sdk
+Step #9 - "Desplegar-En-Cloud-Run": 0873b8cf69e3: Pulling fs layer
+Step #9 - "Desplegar-En-Cloud-Run": 5a3242eb09a0: Pulling fs layer
+Step #9 - "Desplegar-En-Cloud-Run": 13acb6ab8419: Pulling fs layer
+Step #9 - "Desplegar-En-Cloud-Run": 91454589e6e0: Pulling fs layer
+Step #9 - "Desplegar-En-Cloud-Run": 87d48db9206b: Pulling fs layer
+Step #9 - "Desplegar-En-Cloud-Run": 90693da86ba3: Pulling fs layer
+Step #9 - "Desplegar-En-Cloud-Run": 87d48db9206b: Waiting
+Step #9 - "Desplegar-En-Cloud-Run": 90693da86ba3: Waiting
+Step #9 - "Desplegar-En-Cloud-Run": 91454589e6e0: Waiting
+Step #9 - "Desplegar-En-Cloud-Run": 5a3242eb09a0: Verifying Checksum
+Step #9 - "Desplegar-En-Cloud-Run": 5a3242eb09a0: Download complete
+Step #9 - "Desplegar-En-Cloud-Run": 0873b8cf69e3: Verifying Checksum
+Step #9 - "Desplegar-En-Cloud-Run": 0873b8cf69e3: Download complete
+Step #9 - "Desplegar-En-Cloud-Run": 87d48db9206b: Verifying Checksum
+Step #9 - "Desplegar-En-Cloud-Run": 87d48db9206b: Download complete
+Step #9 - "Desplegar-En-Cloud-Run": 90693da86ba3: Verifying Checksum
+Step #9 - "Desplegar-En-Cloud-Run": 90693da86ba3: Download complete
+Step #9 - "Desplegar-En-Cloud-Run": 91454589e6e0: Verifying Checksum
+Step #9 - "Desplegar-En-Cloud-Run": 91454589e6e0: Download complete
+Step #9 - "Desplegar-En-Cloud-Run": 0873b8cf69e3: Pull complete
+Step #9 - "Desplegar-En-Cloud-Run": 5a3242eb09a0: Pull complete
+Step #9 - "Desplegar-En-Cloud-Run": 13acb6ab8419: Verifying Checksum
+Step #9 - "Desplegar-En-Cloud-Run": 13acb6ab8419: Download complete
+Step #9 - "Desplegar-En-Cloud-Run": 13acb6ab8419: Pull complete
+Step #9 - "Desplegar-En-Cloud-Run": 91454589e6e0: Pull complete
+Step #9 - "Desplegar-En-Cloud-Run": 87d48db9206b: Pull complete
+Step #9 - "Desplegar-En-Cloud-Run": 90693da86ba3: Pull complete
+Step #9 - "Desplegar-En-Cloud-Run": Digest: sha256:ef27a54bc2b6c2f833b96c17ee5174bf999161b79aed3daae49f3f9c2ecc4974
+Step #9 - "Desplegar-En-Cloud-Run": Status: Downloaded newer image for gcr.io/google.com/cloudsdktool/cloud-sdk:latest
+Step #9 - "Desplegar-En-Cloud-Run": gcr.io/google.com/cloudsdktool/cloud-sdk:latest
+Step #9 - "Desplegar-En-Cloud-Run": Deploying container to Cloud Run service [frontend-app] in project [meta-ad-studio] region [us-central1]
+Step #9 - "Desplegar-En-Cloud-Run": Deploying...
+Step #9 - "Desplegar-En-Cloud-Run": Setting IAM Policy...........warning
+Step #9 - "Desplegar-En-Cloud-Run": Creating Revision.......failed
+Step #9 - "Desplegar-En-Cloud-Run": Deployment failed
+Step #9 - "Desplegar-En-Cloud-Run":   Setting IAM policy failed, try "gcloud beta run services add-iam-policy-binding --region=us-central1 --member=allUsers --role=roles/run.invoker frontend-app"
+Step #9 - "Desplegar-En-Cloud-Run": ERROR: (gcloud.run.deploy) Revision 'frontend-app-00002-7qv' is not ready and cannot serve traffic. Image 'us-central1-docker.pkg.dev/meta-ad-studio/meta-ad-studio-repo/frontend-app:latest' not found.
+Finished Step #9 - "Desplegar-En-Cloud-Run"
+ERROR
+ERROR: build step 9 "gcr.io/google.com/cloudsdktool/cloud-sdk" failed: step exited with non-zero status: 1
+-------------------------------------------------------------------------------------------------------------------------------------------------------------

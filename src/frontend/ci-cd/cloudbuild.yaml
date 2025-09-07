@@ -1,0 +1,131 @@
+# ci-cd/cloudbuild.yaml
+steps:
+  # 1. Instalar dependencias para todo el monorepo (con cache)
+  - name: 'node:22'
+    id: 'Install-Dependencies'
+    entrypoint: 'npm'
+    args: ['ci']
+
+  # 2. Pasos en Paralelo: Lint, Test (Frontend y Backend)
+  - name: 'node:22'
+    id: 'Lint-WebApp'
+    entrypoint: 'npm'
+    args: ['run', 'lint', '--workspace=packages/web-app']
+    waitFor: ['Install-Dependencies']
+
+  - name: 'node:22'
+    id: 'Test-WebApp'
+    entrypoint: 'npm'
+    args: ['run', 'test', '--workspace=packages/web-app', '--', '--verbose']
+    waitFor: ['Install-Dependencies']
+
+  - name: 'node:22'
+    id: 'Lint-ApiServer'
+    entrypoint: 'npm'
+    args: ['run', 'lint', '--workspace=packages/api-server/server']
+    waitFor: ['Install-Dependencies']
+
+  - name: 'node:22'
+    id: 'Test-ApiServer'
+    entrypoint: 'npm'
+    args: ['run', 'test', '--workspace=packages/api-server/server']
+    waitFor: ['Install-Dependencies']
+
+  # 3. Build de ambos artefactos en paralelo
+  - name: 'node:22'
+    id: 'Build-WebApp'
+    entrypoint: 'npm'
+    args: ['run', 'build', '--workspace=packages/web-app']
+    waitFor: ['Lint-WebApp', 'Test-WebApp']
+
+  - name: 'node:22'
+    id: 'Build-ApiServer'
+    entrypoint: 'npm'
+    args: ['run', 'build', '--workspace=packages/api-server/server']
+    waitFor: ['Lint-ApiServer', 'Test-ApiServer']
+
+  # 4. Construir y Pushear Imágenes Docker en paralelo
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'Build-Push-WebApp-Image'
+    args:
+      - 'build'
+      - '-t'
+      - 'us-central1-docker.pkg.dev/$PROJECT_ID/meta-ad-studio-repo/frontend-app:${_ENV}_${SHORT_SHA}'
+      - '.'
+      - '-f'
+      - 'packages/web-app/Dockerfile' # Asumiendo un Dockerfile por paquete
+    waitFor: ['Build-WebApp']
+
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'Build-Push-ApiServer-Image'
+    args:
+      - 'build'
+      - '-t'
+      - 'us-central1-docker.pkg.dev/$PROJECT_ID/meta-ad-studio-repo/api-server:${_ENV}_${SHORT_SHA}'
+      - '.'
+      - '-f'
+      - 'packages/api-server/server/Dockerfile'
+    waitFor: ['Build-ApiServer']
+
+  # 4.5 Escaneo de Vulnerabilidades con Trivy (Simulado)
+  - name: 'aquasec/trivy:latest'
+    id: 'Scan-WebApp-Image'
+    entrypoint: 'trivy'
+    args:
+      - 'image'
+      - '--exit-code'
+      - '1'
+      - '--severity'
+      - 'CRITICAL'
+      - 'us-central1-docker.pkg.dev/$PROJECT_ID/meta-ad-studio-repo/frontend-app:${_ENV}_${SHORT_SHA}'
+    waitFor: ['Build-Push-WebApp-Image']
+
+  - name: 'aquasec/trivy:latest'
+    id: 'Scan-ApiServer-Image'
+    entrypoint: 'trivy'
+    args:
+      - 'image'
+      - '--exit-code'
+      - '1'
+      - '--severity'
+      - 'CRITICAL'
+      - 'us-central1-docker.pkg.dev/$PROJECT_ID/meta-ad-studio-repo/api-server:${_ENV}_${SHORT_SHA}'
+    waitFor: ['Build-Push-ApiServer-Image']
+
+  # 5. Desplegar en Cloud Run en paralelo
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: 'Deploy-WebApp'
+    entrypoint: 'gcloud'
+    args:
+      - 'run'
+      - 'deploy'
+      - 'frontend-app-${_ENV}'
+      - '--image=us-central1-docker.pkg.dev/$PROJECT_ID/meta-ad-studio-repo/frontend-app:${_ENV}_${SHORT_SHA}'
+      - '--region=us-central1'
+      - '--platform=managed'
+      - '--allow-unauthenticated'
+      - '--project=$PROJECT_ID'
+      # Usar Secret Manager para las variables de entorno
+      - '--set-secrets=from-secret-manager'
+    waitFor: ['Scan-WebApp-Image']
+
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    id: 'Deploy-ApiServer'
+    entrypoint: 'gcloud'
+    args:
+      - 'run'
+      - 'deploy'
+      - 'api-server-${_ENV}'
+      - '--image=us-central1-docker.pkg.dev/$PROJECT_ID/meta-ad-studio-repo/api-server:${_ENV}_${SHORT_SHA}'
+      - '--region=us-central1'
+      - '--platform=managed'
+      - '--project=$PROJECT_ID'
+    waitFor: ['Scan-ApiServer-Image']
+
+images:
+  - 'us-central1-docker.pkg.dev/$PROJECT_ID/meta-ad-studio-repo/frontend-app:${_ENV}_${SHORT_SHA}'
+  - 'us-central1-docker.pkg.dev/$PROJECT_ID/meta-ad-studio-repo/api-server:${_ENV}_${SHORT_SHA}'
+
+options:
+  machineType: 'E2_HIGHCPU_8'
+timeout: '1800s'

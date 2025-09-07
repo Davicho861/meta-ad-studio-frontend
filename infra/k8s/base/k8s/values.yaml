@@ -1,0 +1,15 @@
+prometheus:
+  prometheusSpec:
+    serviceMonitorSelectorNilUsesHelmValues: false
+    serviceMonitorSelector: {}
+    podMonitorSelectorNilUsesHelmValues: false
+    podMonitorSelector: {}
+    ruleSelectorNilUsesHelmValues: false
+    ruleSelector: {}
+
+grafana:
+  enabled: true
+  sidecar:
+    dashboards:
+      enabled: true
+      searchNamespace: ALL

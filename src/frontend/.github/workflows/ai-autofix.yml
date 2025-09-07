@@ -1,0 +1,70 @@
+name: AI Guardian - Auto Fix
+
+on:
+  push:
+    branches:
+      - 'feature/*' # Se ejecuta en todas las ramas de features
+
+jobs:
+  autofix:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: |
+          cd packages/meta-verse-visualizer-main
+          npm install
+
+      - name: Initial Build Attempt & Error Capture
+        id: build_attempt
+        continue-on-error: true
+        run: |
+          cd packages/meta-verse-visualizer-main
+          npm run build > build_log.txt 2>&1
+
+      - name: AI Intervention if Build Failed
+        if: steps.build_attempt.outcome == 'failure'
+        run: |
+          echo "🚨 Build failed. Invoking AI Surgeon..."
+          ERROR_LOG=$(cat packages/meta-verse-visualizer-main/build_log.txt)
+          # Asumimos que hay un script que encuentra el archivo que falló
+          FAILED_FILE_PATH="packages/meta-verse-visualizer-main/src/App.tsx"
+          FILE_CONTENT=$(cat $FAILED_FILE_PATH)
+
+          # Llamada a la API de la IA (esto es pseudocódigo - requeriría configuración real)
+          # FIXED_CODE=$(curl -X POST https://api.google.com/gemini/fix-code \
+          #   -H "Authorization: Bearer ${{ secrets.AI_API_KEY }}" \
+          #   -d '{
+          #     "error_log": "'"$ERROR_LOG"'",
+          #     "file_content": "'"$FILE_CONTENT"'"
+          #   }')
+
+          echo "💉 AI ha propuesto una solución. Aplicando el parche..."
+          # echo "$FIXED_CODE" > $FAILED_FILE_PATH
+
+          # Para implementación real, necesitarías:
+          # 1. Una API de IA configurada (Gemini, GPT, etc.)
+          # 2. Un script que analice el error y aplique correcciones
+          # 3. Manejo seguro de tokens de API
+
+      - name: Retry Build After AI Fix
+        if: steps.build_attempt.outcome == 'failure'
+        run: |
+          cd packages/meta-verse-visualizer-main
+          npm run build
+
+      - name: Commit AI Fix if Successful
+        if: steps.build_attempt.outcome == 'failure'
+        run: |
+          git config --global user.name 'AI Guardian Bot'
+          git config --global user.email 'bot@example.com'
+          git add .
+          git commit -m "fix(ai): Corrección autónoma de error de construcción"
+          git push

@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Name=Meta Studio Ad Studio
+Comment=Launch the Meta Studio Ad Studio Application
+Exec=/home/davicho/Documentos/Meta Studio Ad Studio App SPA/meta-studio-start.sh
+Icon=system-software-install
+Terminal=false
+Type=Application
+Categories=Development;IDE;
+StartupNotify=true
+Keywords=meta;studio;ad;

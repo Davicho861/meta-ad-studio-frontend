@@ -1,0 +1,35 @@
+# Mock configuration for multi-cloud monitoring endpoints
+# This file simulates access to AWS CloudWatch and Azure Monitor for a unified view.
+
+aws:
+  cloudwatch:
+    region: "us-east-1"
+    metrics:
+      - name: "CPUUtilization"
+        namespace: "AWS/EC2"
+        dimensions:
+          - name: "AutoScalingGroupName"
+            value: "ad-studio-prod-asg"
+      - name: "RequestCount"
+        namespace: "AWS/ApplicationELB"
+        dimensions:
+          - name: "LoadBalancer"
+            value: "ad-studio-prod-lb"
+      - name: "Latency"
+        namespace: "AWS/ApplicationELB"
+        statistic: "Average"
+        unit: "Seconds"
+
+azure:
+  monitor:
+    resource_group: "ad-studio-prod-rg"
+    metrics:
+      - name: "Percentage CPU"
+        namespace: "Microsoft.Compute/virtualMachineScaleSets"
+        resource: "ad-studio-vmss"
+      - name: "Http5xx"
+        namespace: "Microsoft.Network/applicationGateways"
+        resource: "ad-studio-ag"
+      - name: "ApplicationRequestTotal"
+        namespace: "Microsoft.Insights/components"
+        resource: "ad-studio-appinsights"

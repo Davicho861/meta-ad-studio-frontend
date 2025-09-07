@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-server
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: api-server
+  template:
+    metadata:
+      labels:
+        app: api-server
+    spec:
+      containers:
+      - name: api-server
+        image: ${{ secrets.DOCKER_USERNAME }}/meta-ad-studio-api:latest
+        ports:
+        - containerPort: 3001
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: meta-verse-visualizer-main
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: meta-verse-visualizer-main
+  template:
+    metadata:
+      labels:
+        app: meta-verse-visualizer-main
+    spec:
+      containers:
+      - name: meta-verse-visualizer-main
+        image: ${{ secrets.DOCKER_USERNAME }}/meta-ad-studio-frontend:latest
+        ports:
+        - containerPort: 8080

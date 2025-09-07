@@ -1,0 +1,148 @@
+/*
+ * Metaverse Theme: Fusing Midjourney's cosmic aesthetics with Kling AI's futuristic dark UI.
+ * Inspired by immersive metaverse ad experiences.
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap');
+
+:root {
+  /* Typography */
+  --font-primary: 'Orbitron', sans-serif;
+  --font-secondary: 'Roboto', sans-serif;
+
+  /* Colors - Cosmic Gradients & Dark Theme */
+  --color-bg: #0f0c29;
+  --color-primary: #302b63;
+  --color-secondary: #24243e;
+  --color-accent: #533483;
+  --color-text: #ffffff;
+  --color-text-muted: #a0a0a0;
+  --color-glow: rgba(83, 52, 131, 0.8);
+
+  /* Gradients */
+  --gradient-cosmic: linear-gradient(135deg, var(--color-bg), var(--color-primary));
+  --gradient-interactive: linear-gradient(to right, var(--color-accent), var(--color-primary));
+
+  /* Effects */
+  --box-shadow-glow: 0 0 15px 5px var(--color-glow);
+  --transition-smooth: all 0.3s ease-in-out;
+}
+
+body {
+  background-color: var(--color-bg);
+  background-image: var(--gradient-cosmic);
+  color: var(--color-text);
+  font-family: var(--font-secondary);
+  margin: 0;
+  line-height: 1.6;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-primary);
+  color: var(--color-text);
+}
+
+/* Base component styles */
+.panel {
+  background-color: rgba(15, 12, 41, 0.8);
+  border: 1px solid var(--color-secondary);
+  border-radius: 8px;
+  backdrop-filter: blur(10px);
+  padding: 1.5rem;
+}
+
+.button-primary {
+  background: var(--gradient-interactive);
+  color: var(--color-text);
+  border: none;
+  padding: 12px 24px;
+  font-family: var(--font-primary);
+  cursor: pointer;
+  border-radius: 4px;
+  transition: var(--transition-smooth);
+  box-shadow: 0 0 5px rgba(0,0,0,0.2);
+}
+
+.button-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--box-shadow-glow);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.8s ease-in-out forwards;
+}
+
+@keyframes glow {
+  0%, 100% {
+    box-shadow: 0 0 10px var(--color-glow);
+  }
+  50% {
+    box-shadow: 0 0 20px 5px var(--color-glow);
+  }
+}
+
+.interactive-glow:hover {
+  animation: glow 1.5s infinite;
+}
+
+/* Minimalist Icons */
+.icon {
+  width: 24px;
+  height: 24px;
+  stroke: var(--color-text-muted);
+  fill: none;
+  transition: var(--transition-smooth);
+}
+
+.icon:hover {
+  stroke: var(--color-text);
+}
+
+/* Sliders */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 5px;
+  background: var(--color-secondary);
+  border-radius: 5px;
+  outline: none;
+  opacity: 0.7;
+  transition: opacity .2s;
+}
+
+input[type="range"]:hover {
+  opacity: 1;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  background: var(--color-accent);
+  cursor: pointer;
+  border-radius: 50%;
+  box-shadow: 0 0 5px var(--color-glow);
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  background: var(--color-accent);
+  cursor: pointer;
+  border-radius: 50%;
+  box-shadow: 0 0 5px var(--color-glow);
+}

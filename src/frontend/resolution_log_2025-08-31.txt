@@ -1,0 +1,178 @@
+
+          /\      |‾‾|  /‾‾/  /‾/   
+     /\  /  \     |  |_/  /  / /    
+    /  \/    \    |      |  /  ‾‾\  
+   /          \   |  |‾\  \ | (_) | 
+  / __________ \  |__|  \__\ \___/ .io
+
+ Init   [--------------------------------------] runner
+ Init   [--------------------------------------] options
+ Init   [--------------------------------------] execution scheduler
+Init   [--------------------------------------] Init engine
+Init   [--------------------------------------] Init metric outputs
+Init   [--------------------------------------] Init API server
+  execution: local
+     script: load-test.js
+     output: -
+
+  scenarios: (100.00%) 4 executors, 100000 max VUs, 20m30s max duration (incl. graceful stop):
+           * apac_scenario: Up to 10000 looping VUs for 20m0s over 3 stages (gracefulRampDown: 30s, gracefulStop: 30s)
+           * eu_scenario: Up to 15000 looping VUs for 20m0s over 3 stages (gracefulRampDown: 30s, gracefulStop: 30s)
+           * metaverse_scenario: Up to 50000 looping VUs for 20m0s over 3 stages (gracefulRampDown: 30s, gracefulStop: 30s)
+           * us_scenario: Up to 25000 looping VUs for 20m0s over 3 stages (gracefulRampDown: 30s, gracefulStop: 30s)
+
+Init   [--------------------------------------] Init VUs
+
+Init                 [   1% ] 000791/100000 VUs initialized
+apac_scenario        [   0% ]
+eu_scenario          [   0% ]
+metaverse_scenario   [   0% ]
+us_scenario          [   0% ]
+
+
+Init                 [   2% ] 001510/100000 VUs initialized
+apac_scenario        [   0% ]
+eu_scenario          [   0% ]
+metaverse_scenario   [   0% ]
+us_scenario          [   0% ]
+
+
+Init                 [   2% ] 002341/100000 VUs initialized
+apac_scenario        [   0% ]
+eu_scenario          [   0% ]
+metaverse_scenario   [   0% ]
+us_scenario          [   0% ]
+
+
+Init                 [   3% ] 003279/100000 VUs initialized
+apac_scenario        [   0% ]
+eu_scenario          [   0% ]
+metaverse_scenario   [   0% ]
+us_scenario          [   0% ]
+
+
+Init                 [   4% ] 003886/100000 VUs initialized
+apac_scenario        [   0% ]
+eu_scenario          [   0% ]
+metaverse_scenario   [   0% ]
+us_scenario          [   0% ]
+
+
+Init                 [   5% ] 005026/100000 VUs initialized
+apac_scenario        [   0% ]
+eu_scenario          [   0% ]
+metaverse_scenario   [   0% ]
+us_scenario          [   0% ]
+
+
+Init                 [   6% ] 005624/100000 VUs initialized
+apac_scenario        [   0% ]
+eu_scenario          [   0% ]
+metaverse_scenario   [   0% ]
+us_scenario          [   0% ]
+
+
+Init                 [   6% ] 006446/100000 VUs initialized
+apac_scenario        [   0% ]
+eu_scenario          [   0% ]
+metaverse_scenario   [   0% ]
+us_scenario          [   0% ]
+
+
+Init                 [   8% ] 007678/100000 VUs initialized
+apac_scenario        [   0% ]
+eu_scenario          [   0% ]
+metaverse_scenario   [   0% ]
+us_scenario          [   0% ]
+
+
+Init                 [   8% ] 008247/100000 VUs initialized
+apac_scenario        [   0% ]
+eu_scenario          [   0% ]
+metaverse_scenario   [   0% ]
+us_scenario          [   0% ]
+
+
+Init                 [   9% ] 008720/100000 VUs initialized
+apac_scenario        [   0% ]
+eu_scenario          [   0% ]
+metaverse_scenario   [   0% ]
+us_scenario          [   0% ]
+
+
+Init                 [   9% ] 008918/100000 VUs initialized
+apac_scenario        [   0% ]
+eu_scenario          [   0% ]
+metaverse_scenario   [   0% ]
+us_scenario          [   0% ]
+
+
+Init                 [  10% ] 010172/100000 VUs initialized
+apac_scenario        [   0% ]
+eu_scenario          [   0% ]
+metaverse_scenario   [   0% ]
+us_scenario          [   0% ]
+
+
+Init                 [  10% ] 010252/100000 VUs initialized
+apac_scenario        [   0% ]
+eu_scenario          [   0% ]
+metaverse_scenario   [   0% ]
+us_scenario          [   0% ]
+
+
+Init                 [  10% ] 010255/100000 VUs initialized
+apac_scenario        [   0% ]
+eu_scenario          [   0% ]
+metaverse_scenario   [   0% ]
+us_scenario          [   0% ]
+
+
+Init                 [  10% ] 010285/100000 VUs initialized
+apac_scenario        [   0% ]
+eu_scenario          [   0% ]
+metaverse_scenario   [   0% ]
+us_scenario          [   0% ]
+
+
+Init                 [  10% ] 010285/100000 VUs initialized
+apac_scenario        [   0% ]
+eu_scenario          [   0% ]
+metaverse_scenario   [   0% ]
+us_scenario          [   0% ]
+
+
+Init                 [  10% ] 010285/100000 VUs initialized
+apac_scenario        [   0% ]
+eu_scenario          [   0% ]
+metaverse_scenario   [   0% ]
+us_scenario          [   0% ]
+
+
+Init                 [  10% ] 010285/100000 VUs initialized
+apac_scenario        [   0% ]
+eu_scenario          [   0% ]
+metaverse_scenario   [   0% ]
+us_scenario          [   0% ]
+
+
+Init                 [  10% ] 010285/100000 VUs initialized
+apac_scenario        [   0% ]
+eu_scenario          [   0% ]
+metaverse_scenario   [   0% ]
+us_scenario          [   0% ]
+
+
+Init                 [  10% ] 010285/100000 VUs initialized
+apac_scenario        [   0% ]
+eu_scenario          [   0% ]
+metaverse_scenario   [   0% ]
+us_scenario          [   0% ]
+
+
+Init                 [  10% ] 010285/100000 VUs initialized
+apac_scenario        [   0% ]
+eu_scenario          [   0% ]
+metaverse_scenario   [   0% ]
+us_scenario          [   0% ]
+

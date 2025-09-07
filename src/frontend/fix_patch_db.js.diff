@@ -1,0 +1,28 @@
+--- a/packages/api-server/server/src/lib/prisma.ts
++++ b/packages/api-server/server/src/lib/prisma.ts
+@@ -1,8 +1,11 @@
+ import { PrismaClient } from '@prisma/client';
+
+-const prisma = new PrismaClient({
+-  datasources: {
+-    db: {
+-      url: process.env.DATABASE_URL + '?connection_limit=10',
++let prisma: PrismaClient;
+
++if (process.env.NODE_ENV === 'production') {
++  prisma = new PrismaClient({
++    datasources: {
++      db: {
++        url: process.env.DATABASE_URL + '?connection_limit=50&pool_timeout=5',
++      },
++    },
++  });
++} else {
++  if (!global.prisma) {
++    global.prisma = new PrismaClient();
+   }
+-});
++  prisma = global.prisma;
++}
+
+ export default prisma;

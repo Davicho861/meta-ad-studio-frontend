@@ -1,0 +1,53 @@
+export const getSdlcData = () => ({
+  projectName: "Meta Ad Studio SDLC Nexus",
+  user: "Davicho",
+  lastUpdated: "21 de agosto, 2025, 14:45",
+  completedTasks: 65,
+  completedTasksChange: "+18%",
+  estimatedTime: "2.5 semanas",
+  aiAgentUsage: "95%",
+  aiAgentUsageChange: "+10%",
+  teamMembers: 18,
+  generalProgress: 75,
+  remainingTime: "1 semana y 2 días",
+  progressByPhase: [
+    { name: "Planeación", progress: 98 },
+    { name: "Desarrollo", progress: 85 },
+    { name: "Implementación", progress: 60 },
+    { name: "Despliegue", progress: 25 },
+  ],
+  alerts: [
+    {
+      id: 1,
+      title: "Requisito bloqueante: Pendiente REQ-312 - Integración Meta API",
+      impact: "Alto",
+      description: "Retrasa lanzamiento ads",
+    },
+    {
+      id: 2,
+      title: "Prueba fallida: Build #512 - Optimización IA ads",
+      impact: "Medio",
+      description: "Revisar en sprint",
+    },
+    { id: 3, title: "Nuevo PR pendiente de revisión", impact: "Bajo", description: "PR #123" },
+    { id: 4, title: "Servidor de pruebas caído", impact: "Crítico", description: "Servidor staging no responde" },
+  ],
+  aiAgents: [
+    { name: "Optimizar Campañas", status: "Activo", task: "Análisis audiencia ads", progress: 80 },
+    { name: "Desarrollo Backend", status: "Activo", task: "API para targeting", progress: 60 },
+    { name: "Pruebas Automatizadas", status: "Inactivo", task: "Esperando", progress: 0 },
+    { name: "DevOps Integración", status: "Pausado", task: "Progreso", progress: 35 },
+  ],
+  predictiveInsights: [
+    { confidence: 92, text: "Reasignar 4 devs a backend reduce tiempo en 2 días" },
+    { confidence: 85, text: "Probabilidad de completar implementación antes del 10 de septiembre" },
+    { confidence: null, text: "Alerta: Módulo targeting 30% más errores, priorizar" },
+    { confidence: null, text: "Mejora: +25% cobertura pruebas reduce errores 30%" },
+  ],
+  aiImpactMetrics: {
+    estimatedDate: "5 de septiembre",
+    confidence: 96,
+    recommendation: "Reasignar IA de Planeación a Desarrollo reduce 2.5 días",
+    analysis: "10% menos errores que 50 proyectos similares",
+  },
+});

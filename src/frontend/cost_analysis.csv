@@ -1,0 +1,4 @@
+resource_id,issue,suggestion,estimated_savings_usd
+i-0abcd1234efgh5678,Instancia EC2 infrautilizada,"Redimensionar la instancia a un tipo más pequeño (e.g., de t3.large a t3.medium).",48.2
+i-0efgh5678ijkl9012,Instancia EC2 infrautilizada,"Redimensionar la instancia a un tipo más pequeño (e.g., de t3.large a t3.medium).",24.1
+vol-0cdef3456ghij7890,Volumen EBS no adjunto,Crear un snapshot del volumen como backup y eliminarlo para evitar costos.,25.0

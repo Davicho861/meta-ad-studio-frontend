@@ -1,0 +1,63 @@
+-------------------------------------------------------------------- REMOTE BUILD OUTPUT --------------------------------------------------------------------
+starting build "8c0fd79d-6378-4bbd-ac3b-4e3e0025aa51"
+
+FETCHSOURCE
+Fetching storage object: gs://meta-ad-studio_cloudbuild/source/1756083435.640783-9f7b7361b55c4261b1372408b1f9dec5.tgz#1756083443172485
+Copying gs://meta-ad-studio_cloudbuild/source/1756083435.640783-9f7b7361b55c4261b1372408b1f9dec5.tgz#1756083443172485...
+/ [0 files][    0.0 B/  3.0 MiB]                                                / [1 files][  3.0 MiB/  3.0 MiB]                                                
+Operation completed over 1 objects/3.0 MiB.                                      
+BUILD
+Starting Step #0 - "Verificar-Version-Node"
+Step #0 - "Verificar-Version-Node": Pulling image: node:22
+Step #0 - "Verificar-Version-Node": 22: Pulling from library/node
+Step #0 - "Verificar-Version-Node": f014853ae203: Already exists
+Step #0 - "Verificar-Version-Node": 6d6401b7636b: Already exists
+Step #0 - "Verificar-Version-Node": cffef7dc6f99: Already exists
+Step #0 - "Verificar-Version-Node": 1e6ffe3614ab: Already exists
+Step #0 - "Verificar-Version-Node": 100dcf33d29c: Pulling fs layer
+Step #0 - "Verificar-Version-Node": 4c490963eb14: Pulling fs layer
+Step #0 - "Verificar-Version-Node": 9ca84c9f270e: Pulling fs layer
+Step #0 - "Verificar-Version-Node": 6b6ae8c5c9b1: Pulling fs layer
+Step #0 - "Verificar-Version-Node": 100dcf33d29c: Verifying Checksum
+Step #0 - "Verificar-Version-Node": 100dcf33d29c: Download complete
+Step #0 - "Verificar-Version-Node": 9ca84c9f270e: Verifying Checksum
+Step #0 - "Verificar-Version-Node": 9ca84c9f270e: Download complete
+Step #0 - "Verificar-Version-Node": 100dcf33d29c: Pull complete
+Step #0 - "Verificar-Version-Node": 6b6ae8c5c9b1: Download complete
+Step #0 - "Verificar-Version-Node": 4c490963eb14: Verifying Checksum
+Step #0 - "Verificar-Version-Node": 4c490963eb14: Download complete
+Step #0 - "Verificar-Version-Node": 4c490963eb14: Pull complete
+Step #0 - "Verificar-Version-Node": 9ca84c9f270e: Pull complete
+Step #0 - "Verificar-Version-Node": 6b6ae8c5c9b1: Pull complete
+Step #0 - "Verificar-Version-Node": Digest: sha256:3266bc9e8bee1acc8a77386eefaf574987d2729b8c5ec35b0dbd6ddbc40b0ce2
+Step #0 - "Verificar-Version-Node": Status: Downloaded newer image for node:22
+Step #0 - "Verificar-Version-Node": docker.io/library/node:22
+Step #0 - "Verificar-Version-Node": v22.18.0
+Finished Step #0 - "Verificar-Version-Node"
+Starting Step #1 - "Instalar-Dependencias"
+Step #1 - "Instalar-Dependencias": Already have image (with digest): node:22
+Step #1 - "Instalar-Dependencias": npm error code ERESOLVE
+Step #1 - "Instalar-Dependencias": npm error ERESOLVE unable to resolve dependency tree
+Step #1 - "Instalar-Dependencias": npm error
+Step #1 - "Instalar-Dependencias": npm error While resolving: vite_react_shadcn_ts@0.0.0
+Step #1 - "Instalar-Dependencias": npm error Found: vite@7.1.3
+Step #1 - "Instalar-Dependencias": npm error node_modules/vite
+Step #1 - "Instalar-Dependencias": npm error   dev vite@"^7.1.2" from the root project
+Step #1 - "Instalar-Dependencias": npm error
+Step #1 - "Instalar-Dependencias": npm error Could not resolve dependency:
+Step #1 - "Instalar-Dependencias": npm error peer vite@"^5.0.0" from lovable-tagger@1.1.9
+Step #1 - "Instalar-Dependencias": npm error node_modules/lovable-tagger
+Step #1 - "Instalar-Dependencias": npm error   dev lovable-tagger@"^1.1.9" from the root project
+Step #1 - "Instalar-Dependencias": npm error
+Step #1 - "Instalar-Dependencias": npm error Fix the upstream dependency conflict, or retry
+Step #1 - "Instalar-Dependencias": npm error this command with --force or --legacy-peer-deps
+Step #1 - "Instalar-Dependencias": npm error to accept an incorrect (and potentially broken) dependency resolution.
+Step #1 - "Instalar-Dependencias": npm error
+Step #1 - "Instalar-Dependencias": npm error
+Step #1 - "Instalar-Dependencias": npm error For a full report see:
+Step #1 - "Instalar-Dependencias": npm error /builder/home/.npm/_logs/2025-08-25T00_58_23_894Z-eresolve-report.txt
+Step #1 - "Instalar-Dependencias": npm error A complete log of this run can be found in: /builder/home/.npm/_logs/2025-08-25T00_58_23_894Z-debug-0.log
+Finished Step #1 - "Instalar-Dependencias"
+ERROR
+ERROR: build step 1 "node:22" failed: step exited with non-zero status: 1
+-------------------------------------------------------------------------------------------------------------------------------------------------------------

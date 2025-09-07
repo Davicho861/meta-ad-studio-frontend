@@ -1,0 +1,114 @@
+/* Metaverse Theme Styles */
+
+:root {
+  --executive-blue: #1e40af;
+  --silver: #c0c0c0;
+  --gold: #ffd700;
+  --surface: #1a1a1a;
+  --surface-elevated: #2a2a2a;
+  --border: #404040;
+  --background: #0a0a0a;
+  --foreground: #ffffff;
+  --muted-foreground: #a0a0a0;
+}
+
+.cosmic-gradient-background {
+  background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+}
+
+.bg-surface {
+  background-color: var(--surface);
+}
+
+.bg-surface-elevated {
+  background-color: var(--surface-elevated);
+}
+
+.text-silver {
+  color: var(--silver);
+}
+
+.text-gold {
+  color: var(--gold);
+}
+
+.border-border {
+  border-color: var(--border);
+}
+
+.text-executive-blue {
+  color: var(--executive-blue);
+}
+
+.bg-executive-blue {
+  background-color: var(--executive-blue);
+}
+
+.focus\:border-executive-blue:focus {
+  border-color: var(--executive-blue);
+}
+
+.focus\:ring-executive-blue\/20:focus {
+  box-shadow: 0 0 0 2px rgba(30, 64, 175, 0.2);
+}
+
+.glow-on-hover:hover {
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+}
+
+.bg-gradient-gold {
+  background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+}
+
+.bg-gold\/20 {
+  background-color: rgba(255, 215, 0, 0.2);
+}
+
+.text-background {
+  color: var(--background);
+}
+
+.text-background\/80 {
+  color: rgba(10, 10, 10, 0.8);
+}
+
+.bg-background {
+  background-color: var(--background);
+}
+
+.text-foreground {
+  color: var(--foreground);
+}
+
+.bg-background\/90:hover {
+  background-color: rgba(10, 10, 10, 0.9);
+}
+
+.text-muted-foreground {
+  color: var(--muted-foreground);
+}
+
+.bg-muted\/50 {
+  background-color: rgba(64, 64, 64, 0.5);
+}
+
+.border-border\/50 {
+  border-color: rgba(64, 64, 64, 0.5);
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.dark-mode-toggle {
+  /* Placeholder for dark mode toggle */
+}

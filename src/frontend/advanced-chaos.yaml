@@ -1,0 +1,63 @@
+# Advanced Chaos Engineering for VR/AR Module
+# This configuration uses Chaos Mesh to inject faults into the VR/AR infrastructure.
+
+apiVersion: chaos-mesh.org/v1alpha1
+kind: NetworkChaos
+metadata:
+  name: vr-network-latency
+spec:
+  selector:
+    labelSelectors:
+      app: meta-studio-vr-ar
+  mode: all
+  action: delay # Corrected action from 'latency' to 'delay'
+  delay:
+    latency: "100ms"
+---
+apiVersion: chaos-mesh.org/v1alpha1
+kind: PodChaos
+metadata:
+  name: vr-pod-failure
+spec:
+  selector:
+    labelSelectors:
+      app: meta-studio-vr-ar
+  mode: one
+  action: pod-kill
+  gracePeriod: 0
+---
+# VR Disruption Mocks
+apiVersion: chaos-mesh.org/v1alpha1
+kind: StressChaos
+metadata:
+  name: vr-gpu-stress
+spec:
+  selector:
+    labelSelectors:
+      app: meta-studio-vr-ar
+  mode: one
+  stressors:
+    cpu:
+      workers: 1
+      load: 90
+    memory:
+      workers: 1
+      size: "1GB"
+  # In a real scenario, you would use a tool that can stress the GPU.
+---
+# Load test scenarios (example - adapt to your load testing tool)
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: load-test-scenarios
+data:
+  locustfile.py: |
+    from locust import HttpUser, task, between
+
+    class QuickstartUser(HttpUser):
+        wait_time = between(1, 2)
+
+        @task
+        def hello_world(self):
+            self.client.get("/multiverse/photos")
+  # This is a conceptual representation.

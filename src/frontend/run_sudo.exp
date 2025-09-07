@@ -1,0 +1,11 @@
+#!/usr/bin/expect -f
+set password "L@urencita3107"
+set command [lindex $argv 0]
+spawn sh -c "$command"
+expect {
+  "password for" {
+    send "$password\r"
+    exp_continue
+  }
+  eof
+}

@@ -1,0 +1,107 @@
+# Kubernetes Manifest for Kubeflow Pipelines and Applications
+# Defines a sample ML pipeline and a Jupyter Notebook server for interactive development.
+
+# ==============================================================================
+# 1. Kubeflow Pipeline Definition
+# ==============================================================================
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: planetary-scale-ml-pipeline
+  namespace: kubeflow
+spec:
+  entrypoint: ml-pipeline
+  templates:
+  - name: ml-pipeline
+    steps:
+    - - name: data-preprocessing
+        template: data-preprocessing-container
+    - - name: model-training
+        template: model-training-container
+    - - name: model-evaluation
+        template: model-evaluation-container
+    - - name: model-deployment
+        template: model-deployment-container
+
+  - name: data-preprocessing-container
+    container:
+      image: "huggingface/transformers:latest"
+      command: ["python", "-c"]
+      args:
+        - |
+          print("Step 1: Preprocessing data for planetary-scale analysis...")
+          # Add actual preprocessing logic here
+          # Example: Downloading data from S3, cleaning, and feature engineering
+
+  - name: model-training-container
+    container:
+      image: "tensorflow/tensorflow:2.9.1-gpu"
+      command: ["python", "-c"]
+      args:
+        - |
+          print("Step 2: Training a distributed model with federated data...")
+          # Add actual training logic here, potentially using Horovod or TensorFlow's ParameterServerStrategy
+          # This container would be scheduled on nodes with GPUs
+
+  - name: model-evaluation-container
+    container:
+      image: "huggingface/evaluate:latest"
+      command: ["python", "-c"]
+      args:
+        - |
+          print("Step 3: Evaluating model performance and checking for drift...")
+          # Add evaluation logic here, comparing against a baseline
+
+  - name: model-deployment-container
+    container:
+      image: "bentoml/bentoml:latest"
+      command: ["python", "-c"]
+      args:
+        - |
+          print("Step 4: Deploying model to edge and serverless endpoints...")
+          # Add deployment logic here, pushing the model to KServe/Seldon on edge clusters
+          # and Knative for serverless inference.
+
+# ==============================================================================
+# 2. Jupyter Notebook Server for Interactive ML Development
+# ==============================================================================
+apiVersion: kubeflow.org/v1
+kind: Notebook
+metadata:
+  name: planetary-architect-notebook
+  namespace: kubeflow-user-example-com # Example user namespace
+spec:
+  template:
+    spec:
+      containers:
+        - name: notebook
+          image: "jupyter/tensorflow-notebook:latest"
+          resources:
+            requests:
+              cpu: "1"
+              memory: "2Gi"
+            limits:
+              cpu: "2"
+              memory: "4Gi"
+          volumeMounts:
+            - name: data-volume
+              mountPath: /home/jovyan/work
+      volumes:
+        - name: data-volume
+          persistentVolumeClaim:
+            claimName: notebook-pvc
+
+# ==============================================================================
+# 3. Persistent Volume Claim for the Notebook
+# ==============================================================================
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: notebook-pvc
+  namespace: kubeflow-user-example-com
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi

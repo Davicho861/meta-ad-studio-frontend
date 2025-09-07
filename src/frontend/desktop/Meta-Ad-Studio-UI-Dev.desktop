@@ -1,0 +1,13 @@
+[Desktop Entry]
+Name=Meta-Ad Studio (Dev Env)
+Comment=Lanza el entorno de desarrollo (UI + backend + bd) para Meta-Ad-Studio-
+[Desktop Entry]
+[Desktop Entry]
+Name=Meta-Ad Studio (Dev Env)
+Comment=Lanza el entorno de desarrollo (UI + backend + bd) para Meta-Ad-Studio-
+Exec=gnome-terminal -- /bin/bash -c "'$HOME/Davicho861/Meta-Ad-Studio-/guardian-script.sh'; exec bash"
+Icon=applications-development
+Terminal=true
+Type=Application
+Categories=Development;IDE;
+StartupNotify=true

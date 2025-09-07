@@ -1,0 +1,34 @@
+{
+  "name": "MetaStudio-WebApp-WAF-Policy",
+  "description": "Reglas de WAF para proteger la aplicaci\u00f3n contra amenazas comunes.",
+  "rules": [
+    {
+      "id": "SQLi-Block-Rule-01",
+      "priority": 1,
+      "action": "BLOCK",
+      "description": "Bloquear patrones comunes de inyecci\u00f3n SQL en el cuerpo y los par\u00e1metros de la petici\u00f3n.",
+      "match": {
+        "type": "RegexMatch",
+        "pattern": "(?i)(\\b(union|select|insert|delete|from|where)\\b.*\\b(select|from|where)\\b)"
+      }
+    },
+    {
+      "id": "XSS-Block-Rule-01",
+      "priority": 2,
+      "action": "BLOCK",
+      "description": "Bloquear scripts maliciosos y ataques de Cross-Site Scripting (XSS).",
+      "match": {
+        "type": "RegexMatch",
+        "pattern": "<script>.*</script>|javascript:"
+      }
+    },
+    {
+      "id": "Rate-Limit-Rule-01",
+      "priority": 10,
+      "action": "RATE_LIMIT",
+      "description": "Limitar peticiones a 100 por minuto por IP para mitigar ataques de DoS.",
+      "limit": 100,
+      "window_seconds": 60
+    }
+  ]
+}

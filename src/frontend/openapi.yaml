@@ -1,0 +1,265 @@
+openapi: 3.0.0
+info:
+  title: Meta Studio Flow API
+  version: 1.0.0
+  description: API para gestionar proyectos, issues y otros recursos de Meta Studio.
+servers:
+  - url: http://localhost:3000/api
+    description: Servidor de desarrollo local
+tags:
+  - name: Auth
+    description: Operaciones de autenticación
+  - name: Projects
+    description: Gestión de proyectos
+  - name: Issues
+    description: Gestión de issues
+  - name: Multiverse
+    description: Endpoints relacionados con el Multiverse
+
+paths:
+  /auth/login:
+    post:
+      tags:
+        - Auth
+      summary: Iniciar sesión de usuario
+      description: Autentica a un usuario y devuelve un token de acceso.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Login exitoso. Devuelve un token JWT.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginSuccessResponse'
+        '401':
+          description: Credenciales inválidas.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /ads/generate-visual:
+    post:
+      tags:
+        - Multiverse
+      summary: Generar visual para anuncio con IA
+      description: Genera una imagen para un anuncio utilizando un prompt y referencia de estilo.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                prompt:
+                  type: string
+                  example: 'A futuristic cityscape with flying cars'
+                style_reference:
+                  type: string
+                  example: 'brand-style-001'
+              required:
+                - prompt
+                - style_reference
+      responses:
+  /projects:
+    get:
+      tags:
+        - Projects
+      summary: Obtener todos los proyectos
+      description: Devuelve una lista de todos los proyectos.
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Operación exitosa.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Project'
+        '401':
+          description: No autorizado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    post:
+      tags:
+        - Projects
+      summary: Crear un nuevo proyecto
+      description: Crea un nuevo proyecto con el nombre y descripción proporcionados.
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewProjectRequest'
+      responses:
+        '201':
+          description: Proyecto creado exitosamente.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+        '400':
+          description: Datos de entrada inválidos.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /issues:
+    get:
+      tags:
+        - Issues
+      summary: Obtener todos los issues
+      description: Devuelve una lista de todos los issues.
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Operación exitosa.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Issue'
+        '401':
+          description: No autorizado.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /multiverse/photos:
+    get:
+      tags:
+        - Multiverse
+      summary: Obtener datos de fotos del Multiverse
+      description: Devuelve una lista de fotos del Multiverse.
+      responses:
+        '200':
+          description: Operación exitosa.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MultiversePhoto'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    LoginRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          example: 'user@example.com'
+        password:
+          type: string
+          format: password
+          example: 'password123'
+      required:
+        - email
+        - password
+
+    LoginSuccessResponse:
+      type: object
+      properties:
+        token:
+          type: string
+          example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+
+    NewProjectRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          example: 'Nuevo Proyecto de IA'
+        description:
+          type: string
+          example: 'Descripción detallada del proyecto.'
+      required:
+        - name
+
+    Project:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 'd290f1ee-6c54-4b01-90e6-d701748f0851'
+        name:
+          type: string
+          example: 'Proyecto de IA'
+        description:
+          type: string
+          example: 'Descripción del proyecto.'
+      required:
+        - id
+        - name
+
+    Issue:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 'd290f1ee-6c54-4b01-90e6-d701748f0851'
+        title:
+          type: string
+          example: 'Corregir bug en login'
+        description:
+          type: string
+          example: 'El botón de login no funciona en Safari.'
+        status:
+          type: string
+          enum: [open, in_progress, closed]
+          example: 'open'
+      required:
+        - id
+        - title
+        - status
+
+    MultiversePhoto:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 'd290f1ee-6c54-4b01-90e6-d701748f0851'
+        url:
+          type: string
+          format: uri
+          example: 'https://example.com/photo.jpg'
+        caption:
+          type: string
+          example: 'Una hermosa foto del Multiverse.'
+      required:
+        - id
+        - url
+
+    ErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: 'Error en la solicitud'
+      required:
+        - message

@@ -1,0 +1,30 @@
+{
+  "displayName": "Cloud Run Predicted High Latency",
+  "combiner": "OR",
+  "conditions": [
+    {
+      "displayName": "Forecasted high latency on Cloud Run",
+      "conditionThreshold": {
+        "filter": "metric.type=\"run.googleapis.com/request_latencies\" resource.type=\"cloud_run_revision\" metric.label.\"service_name\"=\"example-service\"",
+        "comparison": "COMPARISON_GT",
+        "thresholdValue": 500,
+        "duration": "0s",
+        "trigger": {
+          "count": 1
+        },
+        "aggregations": [
+          {
+            "alignmentPeriod": "60s",
+            "perSeriesAligner": "ALIGN_PERCENTILE_99"
+          }
+        ],
+        "forecastOptions": {
+          "forecastHorizon": "3600s"
+        }
+      }
+    }
+  ],
+  "notificationChannels": [
+    "projects/meta-ad-studio/notificationChannels/167131796983025952"
+  ]
+}

@@ -1,0 +1,92 @@
+name: Publish Storybook to Chromatic
+
+on:
+  push:
+    branches:
+      - 'feat/**'
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+concurrency:
+  group: chromatic-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  chromatic:
+    name: Chromatic
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Restore frontend node_modules cache
+        uses: actions/cache@v4
+        with:
+          path: frontend/node_modules
+          key: ${{ runner.os }}-frontend-node-${{ hashFiles('frontend/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-frontend-node-
+
+      - name: Install dependencies (frontend)
+        working-directory: frontend
+        run: |
+          npm ci
+
+      - name: Lint (frontend)
+        working-directory: frontend
+        run: |
+          npm run lint
+
+      - name: Build (frontend)
+        working-directory: frontend
+        run: |
+          npm run build
+
+      - name: Build Storybook
+        working-directory: frontend
+        run: |
+          if npm run | grep -q "build-storybook"; then
+            npm run build-storybook
+          else
+            npx storybook build --quiet
+          fi
+
+      - name: Upload Storybook artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: storybook-static
+          path: frontend/storybook-static
+
+      - name: Run tests (vitest)
+        working-directory: frontend
+        run: |
+          npm test
+
+      - name: Upload test results (if any)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-test-logs
+          path: frontend/test-results || frontend/coverage || frontend/.vitest
+
+      - name: Publish Storybook to Chromatic
+        if: ${{ secrets.CHROMATIC_TOKEN != '' }}
+        env:
+          CHROMATIC_TOKEN: ${{ secrets.CHROMATIC_TOKEN }}
+        working-directory: frontend
+        run: |
+          npx chromatic --project-token=$CHROMATIC_TOKEN --exit-zero-on-changes
+
+      - name: Warn missing CHROMATIC_TOKEN
+        if: ${{ secrets.CHROMATIC_TOKEN == '' }}
+        run: |
+          echo "CHROMATIC_TOKEN is not set — skipping Chromatic publish. Add CHROMATIC_TOKEN to repository secrets to enable visual regression uploads."

@@ -1,0 +1,38 @@
+# Kubernetes Configuration for Phased Beta Rollout (Blue-Green & Canary)
+# This configuration uses Argo Rollouts to manage the gradual release of the beta version.
+
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: ad-studio-beta-rollout
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: ad-studio-beta
+  template:
+    metadata:
+      labels:
+        app: ad-studio-beta
+    spec:
+      containers:
+      - name: ad-studio-app
+        image: gcr.io/meta-studio-project/app-beta:$SHORT_SHA
+        ports:
+        - containerPort: 8080
+  strategy:
+    canary:
+      steps:
+      # 1. Canary release to 10% of users
+      - setWeight: 10
+      - pause: { duration: 1h } # Monitor for 1 hour
+      # 2. A/B testing with a specific user cohort (e.g., users in a specific region)
+      - setHeader: "X-User-Cohort"
+        value: "emea-beta-testers"
+      - setWeight: 25
+      - pause: { duration: 24h } # Monitor for 24 hours
+      # 3. Gradual rollout to all users
+      - setWeight: 50
+      - pause: { duration: 12h }
+      - setWeight: 75
+      - pause: { duration: 12h }

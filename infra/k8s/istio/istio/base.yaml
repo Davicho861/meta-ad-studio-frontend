@@ -1,0 +1,12 @@
+apiVersion: install.istio.io/v1alpha1
+kind: IstioOperator
+spec:
+  profile: minimal
+  values:
+    global:
+      resources:
+        requests:
+          cpu: 200m
+  components:
+    base:
+      enabled: true

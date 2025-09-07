@@ -1,0 +1,74 @@
+version: '3.8'
+
+services:
+  # SERVICIO DE LA BASE DE DATOS
+  postgres:
+    image: postgres:15-alpine
+    container_name: meta_ad_studio_db
+    environment:
+      POSTGRES_USER: "${POSTGRES_USER:-devuser}"
+      # POSTGRES_PASSWORD must be provided via environment or .env; never commit secrets to repo
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+      POSTGRES_DB: "${POSTGRES_DB:-meta_ad_studio}"
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    networks:
+      - monitoring_net
+
+  # SERVICIO DE LA COLA DE TRABAJOS (REDIS)
+  redis:
+    image: redis:7-alpine
+    container_name: meta_ad_studio_redis
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+    networks:
+      - monitoring_net
+
+  api-server:
+    image: meta_ad_studio_api:dev
+    container_name: meta_ad_studio_api
+    build:
+      context: ./packages/api-server/server
+      dockerfile: Dockerfile
+    ports:
+      - '3002:3001'
+    env_file:
+      - .env
+    networks:
+      - monitoring_net
+    environment:
+      # Default development DB and Redis pointing to local compose services
+      # DATABASE_URL should be constructed from env vars; avoid embedding credentials in repo
+      DATABASE_URL: "${DATABASE_URL}"
+      REDIS_URL: "${REDIS_URL:-redis://redis:6379}"
+    depends_on:
+      - postgres
+      - redis
+
+  meta-verse-visualizer-main:
+    image: meta_ad_studio_visualizer:dev
+    container_name: meta_ad_studio_visualizer
+    build:
+      context: ./packages/meta-verse-visualizer-main
+      dockerfile: Dockerfile
+    ports:
+      - '8082:8080'
+    depends_on:
+      - api-server
+    networks:
+      - monitoring_net
+    volumes:
+      - ./packages/meta-verse-visualizer-main/src:/usr/src/app/src
+
+networks:
+  monitoring_net:
+    driver: bridge
+
+volumes:
+  postgres_data:
+
+  # (defined for postgres service)
