@@ -48,6 +48,7 @@ export const MainContent = ({
   const [prompt, setPrompt] = useState('')
   const [isGenerating, setIsGenerating] = useState(false)
   const [results, setResults] = useState<GenerationResult[]>([])
+  const [selectedResultId, setSelectedResultId] = useState<number | null>(null)
   // viewState controla si estamos en el Creation Hub o en la vista Visualization
   const [viewState, setViewState] = useState<{
     view: 'creation' | 'visualization'
@@ -153,13 +154,57 @@ export const MainContent = ({
           </div>
         )}
         {activeTab === 'generaciones' && (
-          <GenerationGrid
-            results={results}
-            isGenerating={isGenerating}
-            onVisualize={(payload: { sceneId?: string; imageUrl?: string }) => {
-              setViewState({ view: 'visualization', payload })
-            }}
-          />
+          <div>
+            {/* Barra de acciones rápidas sobre el resultado seleccionado */}
+            <div className='flex items-center gap-3 mb-4'>
+              <div className='text-sm text-secondary-text mr-4'>
+                {selectedResultId ? `Seleccionado: ${selectedResultId}` : 'Ningún resultado seleccionado'}
+              </div>
+
+              <button
+                className={`px-3 py-1 rounded ${selectedResultId ? 'bg-accent-purple/90 text-white' : 'bg-surface-dark text-secondary-text cursor-not-allowed'}`}
+                onClick={() => {
+                  if (!selectedResultId) return
+                  console.log('Upscale', selectedResultId)
+                }}
+                disabled={!selectedResultId}
+              >
+                U
+              </button>
+
+              <button
+                className={`px-3 py-1 rounded ${selectedResultId ? 'bg-accent-green/90 text-white' : 'bg-surface-dark text-secondary-text cursor-not-allowed'}`}
+                onClick={() => {
+                  if (!selectedResultId) return
+                  console.log('Variation', selectedResultId)
+                }}
+                disabled={!selectedResultId}
+              >
+                V
+              </button>
+
+              <button
+                className={`px-3 py-1 rounded ${selectedResultId ? 'bg-accent-blue/90 text-white' : 'bg-surface-dark text-secondary-text cursor-not-allowed'}`}
+                onClick={() => {
+                  if (!selectedResultId) return
+                  console.log('Re-roll', selectedResultId)
+                }}
+                disabled={!selectedResultId}
+              >
+                Re-roll
+              </button>
+            </div>
+
+            <GenerationGrid
+              results={results}
+              isGenerating={isGenerating}
+              onVisualize={(payload: { sceneId?: string; imageUrl?: string }) => {
+                setViewState({ view: 'visualization', payload })
+              }}
+              selectedResultId={selectedResultId}
+              onSelect={(id: number | string) => setSelectedResultId(Number(id))}
+            />
+          </div>
         )}
       </div>
 
@@ -175,7 +220,6 @@ export const MainContent = ({
             return (
               <VisualizationStage
                 sceneId={p?.sceneId}
-                imageUrl={p?.imageUrl}
                 onClose={() =>
                   setViewState({ view: 'creation', payload: null })
                 }
