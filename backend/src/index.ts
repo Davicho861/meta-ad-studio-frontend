@@ -1,8 +1,8 @@
 import express from 'express'
 import dotenv from 'dotenv'
-import prisma from './prisma'
-import authRoutes from './routes/auth'
-import generateRoutes from './routes/generate'
+import prisma from './prisma.js'
+import authRoutes from './routes/auth.js'
+import generateRoutes from './routes/generate.js'
 
 dotenv.config()
 

@@ -1,3 +1,25 @@
+# Meta-Ad Studio
+
+## 🚀 Cómo Empezar (Instalación del Entorno Local)
+
+Este repositorio contiene un entorno de desarrollo completo y automatizado. Para empezar a trabajar, solo necesitas seguir dos pasos:
+
+### 1. Clona el Repositorio
+Clona este repositorio y todos sus submódulos necesarios con un solo comando:
+```bash
+git clone --recurse-submodules https://github.com/Davicho861/Meta-Ad-Studio-.git
+cd Meta-Ad-Studio-
+```
+
+### 2. Instala el Lanzador de Escritorio
+Ejecuta el siguiente comando para instalar el icono de la aplicación en tu menú de Debian/GNOME. Este es el único comando de instalación que necesitarás.
+
+```bash
+./install-shortcut.sh
+```
+
+¡Y ya está! Ahora encontrarás un icono llamado "Meta-Ad Studio (Dev Env)" en tu menú de aplicaciones. Haz clic en él cada vez que quieras empezar a trabajar.
+
 # Meta Ad Studio
 
 ## Empaquetar e instalar la aplicación (generar .deb)

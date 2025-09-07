@@ -67,15 +67,15 @@ git_update() {
     git pull --ff-only || true
     git submodule update --init --recursive || true
   else
-    echo "No es un repositorio git o git no disponible; omitiendo actualización." 
+    echo "No es un repositorio git o git no disponible; omitiendo actualizaci\u00f3n." 
   fi
 }
 
 start_flow() {
-  echo "[meta-studio] Inicio de flujo: actualización y arranque de servicios"
+  echo "[meta-studio] Inicio de flujo: actualizaci\u00f3n y arranque de servicios"
   git_update
   if [ -z "$COMPOSE_FILE" ]; then
-    fail "No se encontró docker-compose.* en el proyecto. Añade docker-compose.yml o docker-compose.dev.yml"
+    fail "No se encontr\u00f3 docker-compose.* en el proyecto. A\u00f1ade docker-compose.yml o docker-compose.dev.yml"
   fi
   echo "Usando compose file: $COMPOSE_FILE (project: $COMPOSE_PROJECT_NAME)"
   echo "Levantando servicios: $DOCKER_COMPOSE_CMD -p $COMPOSE_PROJECT_NAME -f $COMPOSE_FILE up -d --build --remove-orphans"
@@ -86,7 +86,7 @@ start_flow() {
 
 interactive_menu() {
   echo
-  echo "El entorno '$COMPOSE_PROJECT_NAME' está en ejecución. ¿Qué deseas hacer?"
+  echo "El entorno '$COMPOSE_PROJECT_NAME' est\u00e1 en ejecuci\u00f3n. \u00bfQu\u00e9 deseas hacer?"
   echo "(1) Ver el estado y los logs en tiempo real"
   echo "(2) Reiniciar los servicios"
   echo "(3) Detener los servicios por completo"
@@ -95,7 +95,7 @@ interactive_menu() {
     choice=1
     echo "Auto-selection active: choosing option $choice"
   else
-    read -r -p "Selecciona una opción: " choice
+    read -r -p "Selecciona una opci\u00f3n: " choice
   fi
 
   case "$choice" in
@@ -129,7 +129,7 @@ interactive_menu() {
       ;;
     q|Q)
       echo "Saliendo sin cambios." ;;
-    *) echo "Opción no reconocida. Saliendo." ;;
+    *) echo "Opci\u00f3n no reconocida. Saliendo." ;;
   esac
 }
 
@@ -157,13 +157,13 @@ main() {
   # Basic checks
   require_cmd bash "Bash es requerido"
   if ! command -v docker >/dev/null 2>&1; then
-    fail "Docker no está instalado o no se puede ejecutar. Inicia Docker y vuelve a intentarlo."
+    fail "Docker no est\u00e1 instalado o no se puede ejecutar. Inicia Docker y vuelve a intentarlo."
   fi
 
   # Decide flow
   running=$(running_containers)
   if [ -z "${running// /}" ]; then
-    echo "No hay contenedores en ejecución para proyecto '$COMPOSE_PROJECT_NAME'. Ejecutando arranque en frío."
+    echo "No hay contenedores en ejecuci\u00f3n para proyecto '$COMPOSE_PROJECT_NAME'. Ejecutando arranque en fr\u00edo."
     start_flow
     verify_ui || true
     if $CI_MODE; then
@@ -175,9 +175,16 @@ main() {
       fi
     fi
   else
-    echo "Contenedores detectados para '$COMPOSE_PROJECT_NAME':" && docker ps --filter "name=${COMPOSE_PROJECT_NAME}" --format 'table {{.Names}}	{{.Status}}'
+    echo "Contenedores detectados para '$COMPOSE_PROJECT_NAME':" && docker ps --filter "name=${COMPOSE_PROJECT_NAME}" --format 'table {{.Names}}\t{{.Status}}'
     interactive_menu
   fi
 }
 
 main
+
+# If script was launched without an interactive TTY (e.g., some launchers), pause briefly so the user can read messages
+if [ ! -t 0 ]; then
+  echo
+  echo "Nota: el orquestador terminó su ejecución. Si este script se lanzó desde un lanzador gráfico, la terminal puede cerrarse a menos que el lanzador permanezca abierta."
+  sleep 1
+fi

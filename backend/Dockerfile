@@ -23,6 +23,9 @@ RUN npm run build
 FROM node:18-slim
 WORKDIR /app
 
+# Ensure system OpenSSL is available for Prisma native engines
+RUN apt-get update && apt-get install -y openssl libssl-dev && rm -rf /var/lib/apt/lists/*
+
 # Install only production deps
 COPY package.json ./
 RUN if [ -f package-lock.json ]; then npm ci --omit=dev; else npm install --omit=dev --legacy-peer-deps; fi

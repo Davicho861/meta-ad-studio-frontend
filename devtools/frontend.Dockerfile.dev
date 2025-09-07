@@ -4,23 +4,36 @@ WORKDIR /app
 
 # Copy package manifests and install all deps including devDeps
 COPY frontend/package.json frontend/package-lock.json frontend/tsconfig.json ./
-# Temporal: usar npm install con legacy-peer-deps para evitar fallos de npm ci en entornos de desarrollo
-RUN npm install --legacy-peer-deps --silent
+
+# Configure npm for CI-friendly, reproducible installs. Use npm ci with legacy-peer-deps
+# and prefer-offline to reduce remote fetches. Expose npm cache dir to leverage BuildKit caching.
+ENV npm_config_legacy_peer_deps=true
+ENV NPM_CONFIG_LEGACY_PEER_DEPS=true
+ENV NPM_CONFIG_CACHE=/root/.npm
+ENV HUSKY=0
+
+# Install using npm ci for reproducible installs; prefer offline and set retries for transient network issues.
+# Do not silence failures so build fails fast on genuine issues.
+RUN npm set progress=false
+RUN --mount=type=cache,target=/root/.npm \
+	npm ci --ignore-scripts --prefer-offline --fetch-retries=5 --fetch-retry-factor=2 --fetch-retry-mintimeout=1000 --fetch-retry-maxtimeout=600000
 
 # Copy sources
 COPY frontend .
 
-# Build step (optional for some assets) — keep to ensure dist when needed
-RUN npm run build || true
+# Build step (optional for some assets) — run build but fail if it errors
+RUN npm run build
 
 # Development image
 FROM node:20-slim AS dev
 WORKDIR /app
 
-# Copy node_modules and app from builder
+# Copy npm cache to speed up repeated builds (when using BuildKit) and node_modules
+COPY --from=builder /root/.npm /root/.npm
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app .
 
 ENV NODE_ENV=development
 EXPOSE 5173
-CMD ["sh", "-c", "npm install --silent || true && npm run dev -- --host"]
+# Start dev server. If dependencies are missing (rare), fallback to a single install attempt and start.
+CMD ["sh", "-c", "(npm run dev -- --host) || (npm ci --prefer-offline && npm run dev -- --host)"]

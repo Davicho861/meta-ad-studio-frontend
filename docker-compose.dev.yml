@@ -76,7 +76,7 @@ services:
       - ./.env.development
     command: sh -c "npm install --silent || true && npm run dev -- --host"
     ports:
-      - "5174:5173"
+        - "5174:3000"
     environment:
       NODE_ENV: development
     stdin_open: true
