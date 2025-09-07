@@ -1,0 +1,1 @@
+cd sr./src/frontend/meta-verse-visualizer-main && npx lint-staged
