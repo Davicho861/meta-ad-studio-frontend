@@ -11,7 +11,7 @@
   "main": "main.js",
   "workspaces": [
     "src/backend/server",
-    "sr./src/frontend/meta-verse-visualizer-main"
+    "src/src/frontend/meta-verse-visualizer-main"
   ],
   "engines": {
     "node": "^20.9.0"
