@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+. "$(dirname "$0")/_/husky.sh"
+
+# Ejecutar tests antes de push
+echo "Running tests before push..."
+npm test
