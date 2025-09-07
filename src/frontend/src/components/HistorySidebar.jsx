@@ -7,8 +7,10 @@ const HistorySidebar = () => {
   const loadGenerationById = useAdStore((s) => s.loadGenerationById)
 
   useEffect(() => {
-    loadHistory()
-  }, [])
+    // loadHistory is intentionally stable (comes from a ref/parent); allow missing-deps
+     
+    loadHistory();
+  }, []);
 
   if (!history || history.length === 0) {
     return (

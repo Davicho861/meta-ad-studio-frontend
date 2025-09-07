@@ -1,3 +1,4 @@
+ 
 import React, { useEffect } from 'react'
 import useAdStore from '../store/adStore'
 
@@ -6,9 +7,11 @@ const HistorySidebar = () => {
   const loadHistory = useAdStore((s) => s.loadHistory)
   const loadGenerationById = useAdStore((s) => s.loadGenerationById)
 
+  // loadHistory is intentionally stable (comes from a ref/parent); allow missing-deps
+   
   useEffect(() => {
-    loadHistory()
-  }, [])
+    loadHistory();
+  }, []);
 
   if (!history || history.length === 0) {
     return (

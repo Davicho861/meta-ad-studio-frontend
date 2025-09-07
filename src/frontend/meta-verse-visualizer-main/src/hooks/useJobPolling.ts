@@ -47,7 +47,7 @@ export default function useJobPolling(jobId?: string | null) {
           setState({ status: 'error', data: null, error: 'unknown_status' })
         }
       } catch (e: unknown) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- narrow cast to access message property
+         
         const msg =
           e &&
           typeof e === 'object' &&
