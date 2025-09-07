@@ -15,6 +15,9 @@ interface GenerationGridProps {
   onVisualize?: (payload: { sceneId?: string; imageUrl?: string }) => void
   selectedResultId?: number | string | null
   onSelect?: (id: number | string) => void
+  onUpscale?: (id: number | string) => void
+  onVariation?: (id: number | string) => void
+  onReroll?: (id: number | string) => void
 }
 
 export const GenerationGrid = ({
@@ -23,6 +26,9 @@ export const GenerationGrid = ({
   onVisualize,
   selectedResultId,
   onSelect,
+  onUpscale,
+  onVariation,
+  onReroll,
 }: GenerationGridProps) => {
   // Si está generando y no hay resultados previos, mostrar placeholders de carga
   const displayResults =
@@ -59,7 +65,7 @@ export const GenerationGrid = ({
                   className='text-white px-2 py-1 rounded bg-accent-purple/80'
                   onClick={() => {
                     onSelect?.(result.id)
-                    onVisualize?.({ imageUrl: result.imageUrl })
+                    onUpscale?.(result.id)
                   }}
                   title='Upscale (U)'
                 >
@@ -70,7 +76,7 @@ export const GenerationGrid = ({
                   className='text-white px-2 py-1 rounded bg-accent-green/80'
                   onClick={() => {
                     onSelect?.(result.id)
-                    console.log('Variation', result.id)
+                    onVariation?.(result.id)
                   }}
                   title='Variation (V)'
                 >
@@ -81,7 +87,7 @@ export const GenerationGrid = ({
                   className='text-white px-2 py-1 rounded bg-accent-blue/80'
                   onClick={() => {
                     onSelect?.(result.id)
-                    console.log('Re-roll', result.id)
+                    onReroll?.(result.id)
                   }}
                   title='Re-roll'
                 >

@@ -4,6 +4,7 @@ import { PromptBarV2 } from './PromptBarV2'
 import { InspirationCarousel } from './InspirationCarousel'
 import { SceneSelector } from './SceneSelector'
 import { GenerationGrid } from './GenerationGrid'
+import toast from 'react-hot-toast'
 
 interface GenerationResult {
   id: number
@@ -131,6 +132,66 @@ export const MainContent = ({
     return () => window.removeEventListener('keydown', onKey)
   }, [selectedResultId])
 
+  // Handlers que llaman a endpoints backend (stubs seguros)
+  const handleUpscale = async (id: number | string) => {
+    const result = results.find((r) => String(r.id) === String(id))
+    if (!result?.imageUrl) return toast.error('Imagen no disponible para upscale')
+    toast.loading('Solicitando upscale...')
+    try {
+      const resp = await fetch('/api/v1/upscale', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, imageUrl: result.imageUrl }),
+      })
+      if (!resp.ok) throw new Error('Upscale API error')
+      const data = await resp.json()
+      toast.success(data.message || 'Upscale solicitado')
+    } catch (e) {
+      console.error(e)
+      toast.error('Error al solicitar upscale')
+    }
+  }
+
+  const handleVariation = async (id: number | string) => {
+    const result = results.find((r) => String(r.id) === String(id))
+    if (!result?.imageUrl) return toast.error('Imagen no disponible para variation')
+    toast.loading('Solicitando variation...')
+    try {
+      const resp = await fetch('/api/v1/variation', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, imageUrl: result.imageUrl }),
+      })
+      if (!resp.ok) throw new Error('Variation API error')
+      const data = await resp.json()
+      toast.success(data.message || 'Variation solicitado')
+    } catch (e) {
+      console.error(e)
+      toast.error('Error al solicitar variation')
+    }
+  }
+
+  const handleReroll = async (id: number | string) => {
+    const result = results.find((r) => String(r.id) === String(id))
+    if (!result) return toast.error('Resultado no encontrado para re-roll')
+    toast.loading('Re-rolling...')
+    try {
+      const resp = await fetch('/api/v1/reroll', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, prompt: result.prompt }),
+      })
+      if (!resp.ok) throw new Error('Reroll API error')
+      const data = await resp.json()
+      toast.success(data.message || 'Re-roll solicitado')
+      // Optionally push a placeholder new result
+      // setResults(prev => [{ id: Date.now(), prompt: result.prompt, isLoading: true, progress: 0}, ...prev])
+    } catch (e) {
+      console.error(e)
+      toast.error('Error al solicitar re-roll')
+    }
+  }
+
   return (
     <div className='p-8'>
       <h2 className='text-3xl font-bold mb-2'>
@@ -227,6 +288,9 @@ export const MainContent = ({
               }}
               selectedResultId={selectedResultId}
               onSelect={(id: number | string) => setSelectedResultId(Number(id))}
+              onUpscale={handleUpscale}
+              onVariation={handleVariation}
+              onReroll={handleReroll}
             />
           </div>
         )}
