@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import VisualizationStage from './VisualizationStage'
 import { PromptBarV2 } from './PromptBarV2'
 import { InspirationCarousel } from './InspirationCarousel'
@@ -106,6 +106,30 @@ export const MainContent = ({
       setIsGenerating(false)
     }, 3000)
   }
+
+  // Atajos de teclado: U (Upscale), V (Variation), R (Re-roll)
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      // Ignorar si el usuario está escribiendo en un input o textarea
+      const target = e.target as HTMLElement
+      const tag = target?.tagName?.toLowerCase()
+      if (tag === 'input' || tag === 'textarea' || (target?.isContentEditable)) return
+
+      const key = e.key.toLowerCase()
+      if (!selectedResultId) return
+
+      if (key === 'u') {
+        console.log('Shortcut Upscale', selectedResultId)
+      } else if (key === 'v') {
+        console.log('Shortcut Variation', selectedResultId)
+      } else if (key === 'r') {
+        console.log('Shortcut Re-roll', selectedResultId)
+      }
+    }
+
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [selectedResultId])
 
   return (
     <div className='p-8'>
