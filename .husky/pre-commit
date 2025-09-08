@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 
-# Ejecutar lint en la raíz (eslint) usando script definido en package.json
-echo "Running lint (pre-commit)..."
-npm run lint --silent
+# Ensure lint with auto-fix before committing
+echo "Running lint (pre-commit) with --fix..."
+npm run lint -- --fix || {
+	echo "Linting failed. Fix errors and try again." >&2
+	exit 1
+}
+
+echo "Staging auto-fixed files..."
+git add -A

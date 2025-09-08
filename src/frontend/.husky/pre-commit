@@ -1,1 +1,10 @@
-cd sr./src/frontend/meta-verse-visualizer-main && npx lint-staged
+#!/usr/bin/env bash
+
+echo "Running frontend pre-commit: lint --fix"
+cd ./src/frontend || true
+npm run lint -- --fix || {
+	echo "Frontend lint failed." >&2
+	exit 1
+}
+
+git add -A

@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
-# Ejecutar tests antes de push
-echo "Running tests before push..."
-npm test
+# Run test suite before pushing
+echo "Running tests (pre-push)..."
+npm test || {
+	echo "Tests failed. Push aborted." >&2
+	exit 1
+}

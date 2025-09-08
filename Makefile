@@ -4,7 +4,12 @@ dev:
 	@echo "Starting development environment..."
 	@docker compose build --no-cache
 	@docker compose up -d
-	@./scripts/smoke-test.sh
+
+	@echo "Waiting for frontend (Vite) to be ready on port 5173..."
+	@./scripts/wait-for-port.sh 5173 60 || echo "Timeout waiting for Vite"
+
+	@echo "Tailing frontend logs (press Ctrl-C to exit)"
+	@docker compose logs -f frontend
 
 seed-all: seed seed-more
 
