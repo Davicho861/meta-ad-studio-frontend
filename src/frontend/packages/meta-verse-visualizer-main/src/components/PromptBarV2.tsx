@@ -1,5 +1,6 @@
 import React from 'react'
 import { Crop, Image, Settings } from 'lucide-react'
+import VisuallyHidden from './ui/VisuallyHidden.tsx'
 
 interface ControlButtonProps {
   icon: React.ComponentType<React.SVGProps<SVGSVGElement>> | React.ElementType
@@ -29,7 +30,10 @@ export const PromptBarV2 = ({
   return (
     <div className='w-full max-w-5xl mx-auto p-4 bg-surface-dark rounded-xl shadow-2xl border border-gray-800'>
       <div className='relative'>
+        <label htmlFor='promptv2'><VisuallyHidden>Prompt de generación</VisuallyHidden></label>
         <textarea
+          id='promptv2'
+          aria-label='Prompt de generación'
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
           className='w-full p-4 pr-32 text-lg bg-transparent rounded-lg focus:outline-none resize-none'
@@ -39,9 +43,10 @@ export const PromptBarV2 = ({
         <button
           onClick={onGenerate}
           disabled={isGenerating}
-          className='absolute right-4 top-1/2 -translate-y-1/2 px-6 py-3 bg-accent-blue text-white font-bold rounded-lg hover:bg-opacity-80 transition-all duration-300 disabled:bg-gray-600 disabled:cursor-not-allowed flex items-center gap-2'
+          aria-pressed={isGenerating}
+          className='absolute right-4 top-1/2 -translate-y-1/2 px-6 py-3 bg-accent-blue text-white font-bold rounded-lg hover:bg-opacity-80 transition-all duration-300 disabled:bg-gray-600 disabled:cursor-not-allowed flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-accent-blue/50'
         >
-          {isGenerating ? 'Generando...' : 'Generar'}
+          <span className='motion-reduce:animate-none'>{isGenerating ? 'Generando...' : 'Generar'}</span>
         </button>
       </div>
       <div className='border-t border-gray-700 mt-4 pt-3 flex items-center gap-4'>

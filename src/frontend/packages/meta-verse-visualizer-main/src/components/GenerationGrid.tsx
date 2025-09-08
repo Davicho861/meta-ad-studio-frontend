@@ -18,6 +18,7 @@ interface GenerationGridProps {
 export const GenerationGrid = ({
   results,
   isGenerating = false,
+  onVisualize,
 }: GenerationGridProps) => {
   // Si está generando y no hay resultados previos, mostrar placeholders de carga
   const displayResults =
@@ -40,7 +41,9 @@ export const GenerationGrid = ({
             className='animate-fade-in-up'
             style={{ animationDelay: `${index * 0.05}s` }}
           >
-            <ResultCardV2 result={result} onVisualize={onVisualize} />
+            <div tabIndex={0} aria-live={result.isLoading ? 'polite' : undefined}>
+              <ResultCardV2 result={result} onVisualize={onVisualize} />
+            </div>
           </div>
         ))}
       </div>
