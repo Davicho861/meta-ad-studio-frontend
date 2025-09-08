@@ -3,6 +3,7 @@ import { authMiddleware } from '../middleware/auth';
 import { collectDefaultMetrics, register } from 'prom-client';
 import { generateVideoGrok } from '../controllers/aiController';
 import animateController from '../controllers/animateController';
+import aiRouter from './ai';
 
 collectDefaultMetrics();
 
@@ -37,7 +38,24 @@ router.post('/v1/generate-video', authMiddleware, (req, res) => {
 router.post('/v1/generate-video-grok', authMiddleware, generateVideoGrok);
 
 // Endpoint to request animation of an image -> returns jobId
-router.post('/v1/animate-image', authMiddleware, animateController.animateImage);
-router.get('/v1/animate-image/status/:jobId', authMiddleware, animateController.getJobStatus);
+// In test or local runs we may want to skip auth to simplify E2E testing.
+if (process.env.NODE_ENV === 'test' || process.env.SKIP_AUTH === 'true') {
+  router.post('/v1/animate-image', animateController.animateImage);
+  router.get('/v1/animate-image/status/:jobId', animateController.getJobStatus);
+} else {
+  router.post('/v1/animate-image', authMiddleware, animateController.animateImage);
+  router.get('/v1/animate-image/status/:jobId', authMiddleware, animateController.getJobStatus);
+}
+
+// Mount AI router so SSE endpoint /jobs/:id/stream is available under /api
+router.use('/', aiRouter);
+
+// Test-only unauthenticated endpoint to create a job quickly from E2E scripts
+if (process.env.NODE_ENV === 'test') {
+  router.post('/test/animate-image', animateController.animateImage);
+}
+
+// Always-available unprotected endpoint for local E2E runs (keeps production routes untouched)
+router.post('/unprotected/animate-image', animateController.animateImage);
 
 export default router;

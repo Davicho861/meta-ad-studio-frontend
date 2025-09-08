@@ -1,0 +1,111 @@
+name: E2E (mock)
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  e2e-mock:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js 18
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      - name: Cache node modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            tests/e2e/node_modules
+            ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/tests/e2e/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+      - name: Install dependencies for tests/e2e
+        run: |
+          cd tests/e2e
+          npm ci
+      - name: Start mock server (background, logs)
+        run: |
+          cd tests/e2e
+          npm run mock:background
+      - name: Wait for mock to be ready
+        run: |
+          cd tests/e2e
+          npx wait-on http://localhost:3101 --timeout 10000
+      - name: Run E2E test
+        run: |
+          cd tests/e2e
+          npm test > test.log 2>&1 || (echo "E2E failed; collecting logs" && cat test.log && exit 1)
+      - name: Upload logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-logs
+          path: |
+            tests/e2e/mock.log
+            tests/e2e/test.log
+
+  e2e-staging:
+    if: ${{ github.event_name == 'workflow_dispatch' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js 18
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      - name: Install deps
+        run: |
+          cd tests/e2e
+          npm ci
+      - name: Run E2E against staging
+        run: |
+          cd tests/e2e
+          staging_url="$(echo '${{ secrets.STAGING_URL }}')"
+          staging_auth="$(echo '${{ secrets.STAGING_AUTH }}')"
+          node run-e2e.cjs --base-url="$staging_url" --auth-token="$staging_auth"
+
+  e2e-scenarios:
+    runs-on: ubuntu-latest
+    needs: e2e-mock
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js 18
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      - name: Install deps for tests/e2e
+        run: |
+          cd tests/e2e
+          npm ci
+      - name: Start mock server (background)
+        run: |
+          cd tests/e2e
+          npm run mock:background
+      - name: Wait for mock
+        run: |
+          cd tests/e2e
+          npx wait-on http://localhost:3101 --timeout 10000
+      - name: Run scenario suite
+        run: |
+          cd tests/e2e
+          npm run test:scenarios > runner.log 2>&1 || true
+      - name: Validate test artifacts
+        run: |
+          cd tests/e2e
+          npm run validate:testjson > validate.log 2>&1
+      - name: Upload scenario artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-scenarios-artifacts
+          path: |
+            tests/e2e/scenarios-report.json
+            tests/e2e/test.json
+            tests/e2e/mock.log
+            tests/e2e/runner.log

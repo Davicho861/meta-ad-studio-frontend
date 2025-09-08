@@ -47,14 +47,8 @@ export default function useJobPolling(jobId?: string | null) {
           setState({ status: 'error', data: null, error: 'unknown_status' })
         }
       } catch (e: unknown) {
-         
-        const msg =
-          e &&
-          typeof e === 'object' &&
-          'message' in e &&
-          typeof (e as any).message === 'string'
-            ? (e as any).message
-            : 'network_error'
+        // Avoid using `any` here; prefer narrowing via instanceof Error
+        const msg = e instanceof Error && typeof e.message === 'string' ? e.message : 'network_error'
         setState({ status: 'error', data: null, error: msg })
       }
     }

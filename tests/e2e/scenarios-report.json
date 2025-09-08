@@ -1,0 +1,29 @@
+{
+  "runAt": 1757358623509,
+  "results": [
+    {
+      "scenario": "progress",
+      "exitCode": 10,
+      "data": {
+        "error": "no test.json",
+        "exitCode": 10
+      }
+    },
+    {
+      "scenario": "fail",
+      "exitCode": 10,
+      "data": {
+        "error": "no test.json",
+        "exitCode": 10
+      }
+    },
+    {
+      "scenario": "slow",
+      "exitCode": 10,
+      "data": {
+        "error": "no test.json",
+        "exitCode": 10
+      }
+    }
+  ]
+}

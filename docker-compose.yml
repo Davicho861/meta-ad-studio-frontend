@@ -37,6 +37,23 @@ services:
     networks:
       - meta_net
 
+  worker:
+    build:
+      context: ./src/backend/server
+      dockerfile: Dockerfile
+    image: meta_ad_studio_worker:local
+    env_file:
+      - .env
+    command: npm run worker
+    depends_on:
+      - redis
+      - postgres
+    environment:
+      DATABASE_URL: "${DATABASE_URL:-postgresql://devuser:${POSTGRES_PASSWORD}@postgres:5432/meta_ad_studio}"
+      REDIS_URL: "${REDIS_URL:-redis://redis:6379}"
+    networks:
+      - meta_net
+
   meta-verse-visualizer-main:
     build:
       context: ./src/frontend/meta-verse-visualizer-main

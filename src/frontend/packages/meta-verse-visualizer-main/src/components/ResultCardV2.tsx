@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { Download, RotateCcw, Wand2 } from 'lucide-react'
 import ActionIcon from './ui/ActionIcon'
 import toast from 'react-hot-toast'
-import useJobPolling from '../hooks/useJobPolling'
+import useJobStream from '../hooks/useJobStream'
 
 interface ResultCardProps {
   result: {
@@ -18,7 +18,7 @@ interface ResultCardProps {
 export const ResultCardV2: React.FC<ResultCardProps> = ({ result, onVisualize }) => {
   const [animating, setAnimating] = useState(false)
   const [jobId, setJobId] = useState<string | null>(null)
-  const jobState = useJobPolling(jobId)
+  const jobState = useJobStream(jobId)
   const prevStatusRef = useRef<string | null>(null)
 
   useEffect(() => {

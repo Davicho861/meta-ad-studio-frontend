@@ -1,53 +1,97 @@
-import { Queue, Worker } from 'bullmq'
-import IORedis from 'ioredis'
+import { Worker, Job } from 'bullmq'
+import { redisClient, videoQueueName, videoDLQName } from '../lib/queue'
 import { prisma } from '../lib/prisma'
 
-// Redis connection (env-driven)
-const connection = new IORedis(process.env.REDIS_URL || 'redis://localhost:6379')
+// Worker processor consolidated: Prisma state updates + Redis pub/sub + simulated provider call
+const processor = async (job: Job) => {
+  const jobId = String(job.id)
+  const payload = job.data as { prompt?: string; imageUrl?: string; userId?: string; provider?: string }
 
-export const videoQueueName = 'video-generation-queue'
+  // 1) Mark as processing in DB (upsert style)
+  try {
+    await prisma.videoGenerationJob.upsert({
+      where: { id: jobId },
+      update: { status: 'processing' },
+      create: {
+        id: jobId,
+        status: 'processing',
+        prompt: payload.prompt || '',
+        imageUrl: payload.imageUrl || null,
+        provider: payload.provider || null,
+      },
+    })
+  } catch (err) {
+    // If DB fails, rethrow to trigger retry/backoff
+    throw new Error(`prisma_upsert_failed: ${(err as Error).message}`)
+  }
 
-export const videoQueue = new Queue(videoQueueName, { connection })
+  // 2) Publish processing state to Redis pub/sub
+  try {
+    await redisClient.set(`job:${jobId}`, JSON.stringify({ status: 'processing', progress: 0 }))
+    await redisClient.publish(`job:${jobId}`, JSON.stringify({ status: 'processing', progress: 0 }))
+  } catch (err) {
+    // Non-fatal for processing but log (BullMQ will handle retries if thrown)
+  }
 
-// Basic worker skeleton - implement provider integration here
-export const videoWorker = new Worker(
-  videoQueueName,
-  async (job) => {
-    // job.data should contain { id, prompt, imageUrl, provider }
-    /* CODemod: console.log('Processing video job', job.id, job.data)
+  // 3) Simulate provider processing with incremental progress
+  try {
+    for (let p = 10; p <= 90; p += 20) {
+      await new Promise((r) => setTimeout(r, 500))
+      await redisClient.set(`job:${jobId}`, JSON.stringify({ status: 'processing', progress: p }))
+      await redisClient.publish(`job:${jobId}`, JSON.stringify({ status: 'processing', progress: p }))
+    }
 
-     */// TODO: integrate with real video provider (e.g., AI provider)
+    // Simulated final result
+    const videoUrl = `https://cdn.meta-ad-studio.local/videos/${jobId}.mp4`
 
-    // Simulate processing
-    await new Promise((r) => setTimeout(r, 1000))
+    // 4) Persist final state in DB
+    await prisma.videoGenerationJob.update({
+      where: { id: jobId },
+      data: { status: 'completed', videoUrl, completedAt: new Date() },
+    })
 
-    const result = { status: 'completed', videoUrl: 'https://example.com/video.mp4' }
+    // 5) Publish completed state
+    const completed = { status: 'completed', progress: 100, videoUrl }
+    await redisClient.set(`job:${jobId}`, JSON.stringify(completed))
+    await redisClient.publish(`job:${jobId}`, JSON.stringify(completed))
 
-    // Persist the simulated result to the database using typed Prisma client
+    return completed
+  } catch (err) {
+    // On failure, persist failed state and rethrow to allow BullMQ retry/DLQ handling
     try {
-      await prisma.videoGenerationJob.create({
-        data: {
-          id: String(job.id),
-          status: result.status,
-          prompt: job.data.prompt || '',
-          imageUrl: job.data.imageUrl || null,
-          videoUrl: result.videoUrl,
-          provider: job.data.provider || null,
-        },
+      await prisma.videoGenerationJob.update({
+        where: { id: jobId },
+        data: { status: 'failed', error: (err as Error).message },
       })
-    } catch (err) {
-      /* CODemod: console.error('Failed to persist VideoGenerationJob', err)
-     */}
+      const failed = { status: 'failed', error: (err as Error).message }
+      await redisClient.set(`job:${jobId}`, JSON.stringify(failed))
+      await redisClient.publish(`job:${jobId}`, JSON.stringify(failed))
+    } catch (innerErr) {
+      // swallow
+    }
+    throw err
+  }
+}
 
-    return result
-  },
-  { connection }
-)
+// Instantiate worker with connection coming from redisClient
+export const videoWorker = new Worker(videoQueueName, processor, { connection: redisClient })
 
 videoWorker.on('completed', (job) => {
-  /* CODemod: console.log(`Job ${job.id} completed`)
- */})
+  console.log(`videoWorker: job ${job.id} completed`)
+})
 
-videoWorker.on('failed', (job, err) => {
-  /* CODemod: console.error(`Job ${job?.id} failed`, err)
- */})
+videoWorker.on('failed', async (job, err) => {
+  console.error(`videoWorker: job ${job?.id} failed:`, err?.message)
+  // If job exhausted all attempts, move to DLQ queue for manual inspection
+  if (job && job.attemptsMade >= (job.opts.attempts || 0)) {
+    try {
+      // push minimal payload to DLQ (id + data + error)
+      const dlq = await import('../lib/queue')
+      await dlq.videoDLQ.add('dlq', { id: job.id, data: job.data, error: err?.message || 'unknown' })
+    } catch (e) {
+      console.error('videoWorker: failed to enqueue to DLQ', (e as Error).message)
+    }
+  }
+})
+
+export default videoWorker

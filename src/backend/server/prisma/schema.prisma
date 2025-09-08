@@ -116,6 +116,7 @@ model VideoGenerationJob {
   prompt      String
   imageUrl    String?   @db.Text
   videoUrl    String?   @db.Text
+  error       String?   @db.Text
   provider    String?   @db.Text
   createdAt   DateTime  @default(now())
   completedAt DateTime?

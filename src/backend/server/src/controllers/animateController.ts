@@ -6,6 +6,7 @@ const jobs = new Map<string, { status: 'queued' | 'processing' | 'completed'; cr
 
 export const animateImage = async (req: Request, res: Response) => {
   try {
+  console.log('animateImage controller invoked; headers=', req.headers && Object.keys(req.headers).join(','));
     const { imageUrl, prompt, id } = req.body
     if (!imageUrl) return res.status(400).json({ error: 'imageUrl is required' })
 

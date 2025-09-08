@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { Redis } from 'ioredis';
 import { generateVideo } from '../controllers/gemini';
+import { jobStream } from '../controllers/jobStream';
 
 const router = Router();
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
@@ -44,5 +45,6 @@ router.post('/generate', async (req, res) => {
 });
 
 router.post('/generate-video', generateVideo);
+router.get('/jobs/:id/stream', jobStream);
 
 export default router;
