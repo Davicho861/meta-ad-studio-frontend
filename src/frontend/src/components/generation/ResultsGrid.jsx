@@ -1,6 +1,6 @@
 import React from 'react'
 import useAdStore from '../store/adStore'
-import AdCard from './AdCard'
+import ResultCard from './ResultCard'
 import { motion } from 'framer-motion'
 
 const container = {
@@ -19,9 +19,9 @@ const ResultsGrid = () => {
 
   if (isLoading) {
     return (
-      <div className="grid grid-cols-3 gap-4">
+      <div className="columns-3 gap-4">
         {Array.from({ length: 6 }).map((_, i) => (
-          <div key={i} className="p-4 bg-gray-100 rounded-md animate-pulse h-48" />
+          <div key={i} className="mb-4 rounded-md animate-pulse h-48 bg-gradient-to-br from-midnight-900 to-midnight-800" />
         ))}
       </div>
     )
@@ -48,13 +48,15 @@ const ResultsGrid = () => {
 
   return (
     <motion.div
-      className="grid grid-cols-3 gap-4"
+      className="columns-3 gap-4"
       variants={container}
       initial="hidden"
       animate="show"
     >
       {generatedAds.map((ad) => (
-        <AdCard key={ad.id} ad={ad} />
+        <div key={ad.id} className="break-inside-avoid mb-4">
+          <ResultCard image={ad.imageUrl || ad.image} onReRoll={() => {}} onUpvote={() => {}} onDownvote={() => {}} />
+        </div>
       ))}
     </motion.div>
   )
