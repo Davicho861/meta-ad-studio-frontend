@@ -5,11 +5,13 @@ module.exports = {
   ],
   theme: {
     extend: {
-      colors: {
-        background: '#1a1a1a',
-        primary: '#3b82f6',
-        secondary: '#fbbf24',
-      },
+        colors: {
+          'midnight-900': '#0b1020',
+          'midnight-800': '#0f1724',
+          'accent-500': '#7c5cff',
+          'muted-400': '#9aa4bf',
+          background: '#0f1724',
+        },
       spacing: {
         '128': '32rem',
         '144': '36rem',
@@ -18,6 +20,10 @@ module.exports = {
         '4xl': '2rem',
       },
     },
+      fontFamily: {
+        sans: ['Inter', 'ui-sans-serif', 'system-ui'],
+      }
   },
+    darkMode: 'class',
   plugins: [],
 }
