@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react-swc'
 import path from 'path'
+import fs from 'fs'
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
   server: {
@@ -23,13 +24,24 @@ export default defineConfig(({ mode }) => ({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
-      // Force single React instance when running in a monorepo/workspace
-      react: path.resolve(__dirname, '../node_modules/react'),
-      'react-dom': path.resolve(__dirname, '../node_modules/react-dom'),
+      // Prefer local React instance when present (e.g. inside the container's app folder).
+      // Fall back to workspace-level node_modules for monorepo development.
+      react: fs.existsSync(path.resolve(__dirname, './node_modules/react'))
+        ? path.resolve(__dirname, './node_modules/react')
+        : path.resolve(__dirname, '../../../node_modules/react'),
+      'react-dom': fs.existsSync(path.resolve(__dirname, './node_modules/react-dom'))
+        ? path.resolve(__dirname, './node_modules/react-dom')
+        : path.resolve(__dirname, '../../../node_modules/react-dom'),
+      'react/jsx-runtime': fs.existsSync(path.resolve(__dirname, './node_modules/react/jsx-runtime'))
+        ? path.resolve(__dirname, './node_modules/react/jsx-runtime')
+        : path.resolve(__dirname, '../../../node_modules/react/jsx-runtime'),
+      'react/jsx-dev-runtime': fs.existsSync(path.resolve(__dirname, './node_modules/react/jsx-dev-runtime'))
+        ? path.resolve(__dirname, './node_modules/react/jsx-dev-runtime')
+        : path.resolve(__dirname, '../../../node_modules/react/jsx-dev-runtime'),
     },
   },
   optimizeDeps: {
-    include: ['react', 'react-dom'],
+    include: ['react', 'react-dom', 'react/jsx-runtime', 'react/jsx-dev-runtime'],
   },
   ssr: {
     noExternal: ['react', 'react-dom'],

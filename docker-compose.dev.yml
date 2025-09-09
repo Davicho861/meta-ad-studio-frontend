@@ -34,7 +34,6 @@ services:
     image: meta-ad-studio/api-server:dev
     volumes:
       - ./src/backend/server:/app:cached
-      - /app/node_modules
     environment:
       DATABASE_URL: "postgresql://postgres:postgres@db:5432/postgres"
       REDIS_URL: "redis://redis:6379"
@@ -49,11 +48,10 @@ services:
     build:
       context: ./src/backend
       dockerfile: Dockerfile
-    image: meta-ad-studi./src/backend:dev
+    image: meta_ad_studio_backend:dev
     volumes:
-      - ./src/backend:/ap./src/backend:cached
-      - /ap./src/backend/node_modules
-    working_dir: /ap./src/backend
+      - ./src/backend:/app:cached
+    working_dir: /app
     env_file:
       - ./.env.development
     command: sh -c "npm install --silent || true && npx prisma generate || true && npm run build || true && npm run start"
@@ -64,19 +62,13 @@ services:
       - redis
 
   frontend:
-    build:
-      context: ./src/frontend/meta-verse-visualizer-main
-      dockerfile: Dockerfile
-    image: meta-ad-studio-frontend-dev:local
+    image: node:20-alpine
     volumes:
       - ./src/frontend/meta-verse-visualizer-main:/app:cached
-      - /app/node_modules
     working_dir: /app
-    env_file:
-      - ./src/frontend/meta-verse-visualizer-main/.env.development
     command: sh -c "npm install --silent || true && npm run dev -- --host 0.0.0.0"
     ports:
-      - "5173:5173"
+      - "${FRONTEND_PORT:-5173}:${FRONTEND_PORT:-5173}"
     environment:
       NODE_ENV: development
     stdin_open: true

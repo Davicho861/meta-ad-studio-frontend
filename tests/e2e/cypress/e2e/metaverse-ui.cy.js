@@ -32,4 +32,11 @@ describe('Metaverse UI E2E Tests', () => {
       // Add assertions for VR-specific layout changes
     });
   });
+
+  context('Accessibility', () => {
+    it('has no serious or critical accessibility violations on home', () => {
+      cy.visit('/')
+      cy.checkA11yFailOnHigh()
+    })
+  })
 });

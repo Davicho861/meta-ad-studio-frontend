@@ -35,6 +35,9 @@ const TabButton = ({
   onClick: () => void
 }) => (
   <button
+    type="button"
+    role="tab"
+    aria-selected={active}
     onClick={onClick}
     className={`px-4 py-2 font-semibold rounded-md transition-colors ${active ? 'bg-surface-dark text-primary-text' : 'text-secondary-text hover:bg-surface-dark/50'}`}
   >
@@ -253,6 +256,9 @@ export const MainContent = ({
                   console.log('Upscale', selectedResultId)
                 }}
                 disabled={!selectedResultId}
+                title={selectedResultId ? 'Upscale (U)' : 'Upscale (disabled)'}
+                aria-label={selectedResultId ? 'Upscale selected image' : 'Upscale disabled'}
+                type="button"
               >
                 U
               </button>
@@ -264,6 +270,9 @@ export const MainContent = ({
                   console.log('Variation', selectedResultId)
                 }}
                 disabled={!selectedResultId}
+                title={selectedResultId ? 'Create Variation (V)' : 'Create Variation (disabled)'}
+                aria-label={selectedResultId ? 'Create variation for selected image' : 'Create variation disabled'}
+                type="button"
               >
                 V
               </button>
@@ -275,6 +284,9 @@ export const MainContent = ({
                   console.log('Re-roll', selectedResultId)
                 }}
                 disabled={!selectedResultId}
+                title={selectedResultId ? 'Re-roll (R)' : 'Re-roll (disabled)'}
+                aria-label={selectedResultId ? 'Re-roll selected image' : 'Re-roll disabled'}
+                type="button"
               >
                 Re-roll
               </button>

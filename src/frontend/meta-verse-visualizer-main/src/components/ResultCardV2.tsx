@@ -124,6 +124,7 @@ export const ResultCardV2 = ({ result, onVisualize, selected = false, onSelect }
         <div className='flex gap-2 justify-center'>
           <button
             className='flex items-center gap-2 px-3 py-1 bg-accent-purple/90 hover:bg-accent-purple text-white rounded-md transition-colors'
+            type="button"
             aria-label='Upscale (U)'
             title='Upscale (U)'
           >
@@ -131,6 +132,7 @@ export const ResultCardV2 = ({ result, onVisualize, selected = false, onSelect }
           </button>
 
           <button
+            type="button"
             className='flex items-center gap-2 px-3 py-1 bg-accent-green/90 hover:bg-accent-green text-white rounded-md transition-colors'
             aria-label='Variation (V)'
             title='Variation (V)'
@@ -150,7 +152,7 @@ export const ResultCardV2 = ({ result, onVisualize, selected = false, onSelect }
             Re-roll
           </button>
 
-          <button className='p-2 bg-secondary-text/80 hover:bg-secondary-text text-white rounded-lg transition-colors'>
+          <button type="button" aria-label="Download image" title="Download image" className='p-2 bg-secondary-text/80 hover:bg-secondary-text text-white rounded-lg transition-colors'>
             <Download className='w-4 h-4' />
           </button>
 

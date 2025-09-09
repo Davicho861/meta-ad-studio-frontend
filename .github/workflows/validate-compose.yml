@@ -1,0 +1,20 @@
+name: Validate docker-compose
+
+on:
+  push:
+    branches: [ main, chore/*, feat/*, fix/* ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  validate-compose:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Give scripts execute
+        run: chmod +x scripts/ci/validate_compose.sh
+
+      - name: Run compose validator
+        run: scripts/ci/validate_compose.sh

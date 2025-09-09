@@ -2,14 +2,15 @@
 
 dev:
 	@echo "Starting development environment..."
-	@docker compose build --no-cache
-	@docker compose up -d
+	@docker compose -f docker-compose.dev.yml build --no-cache
+	@docker compose -f docker-compose.dev.yml up -d
 
-	@echo "Waiting for frontend (Vite) to be ready on port 5173..."
-	@./scripts/wait-for-port.sh 5173 60 || echo "Timeout waiting for Vite"
+	@echo "Using FRONTEND_PORT=$${FRONTEND_PORT:-5173}"
+	@echo "Waiting for frontend (Vite) to be ready on port $${FRONTEND_PORT:-5173}..."
+	@./scripts/wait-for-port.sh $${FRONTEND_PORT:-5173} 60 || echo "Timeout waiting for Vite"
 
 	@echo "Tailing frontend logs (press Ctrl-C to exit)"
-	@docker compose logs -f frontend
+	@docker compose -f docker-compose.dev.yml logs -f frontend
 
 seed-all: seed seed-more
 
@@ -18,12 +19,15 @@ seed-more:
 
 build:
 	@docker compose build
+	@docker compose -f docker-compose.dev.yml build
 
 down:
 	@docker compose down -v
+	@docker compose -f docker-compose.dev.yml down -v
 
 logs:
 	@docker compose logs -f
+	@docker compose -f docker-compose.dev.yml logs -f
 
 seed:
 	@./scripts/seed-db.sh

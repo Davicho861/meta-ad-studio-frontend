@@ -1,0 +1,198 @@
+name: Quality Gate
+
+on:
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+    inputs:
+      FRONTEND_PORT:
+        description: 'Frontend port (optional)'
+        required: false
+        default: '5173'
+
+jobs:
+  lint-and-test:
+    name: Lint and Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js 18
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      - name: Cache npm
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+      - name: Install dependencies
+        run: npm ci
+      - name: Run linter
+        run: |
+          if npm run -s lint --silent; then echo 'lint ok'; else echo 'lint failed' && exit 1; fi
+      - name: Run unit tests
+        run: |
+          if npm test --silent; then echo 'tests ok'; else echo 'tests failed' && exit 1; fi
+
+  accessibility-audit:
+    runs-on: ubuntu-latest
+    needs: lint-and-test
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js 18
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      - name: Cache npm
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+      - name: Install dependencies
+        run: |
+          npm ci
+      - name: Start frontend with Docker Compose (mock server)
+        run: |
+          docker-compose -f docker-compose.dev.yml up -d
+          # allow services to warm up
+          sleep 12
+      - name: Wait for frontend
+        run: |
+          PORT=${{ github.event.inputs.FRONTEND_PORT }}
+          PORT=${PORT:-5173}
+          npx wait-on http://localhost:${PORT} --timeout 45000
+      - name: Run axe accessibility scan
+        run: |
+          PORT=${{ github.event.inputs.FRONTEND_PORT }}
+          PORT=${PORT:-5173}
+          npx --yes @axe-core/cli http://localhost:${PORT} --save ./axe-report.json --json
+      - name: Fail on critical/serious violations
+        run: |
+          node <<'EOF'
+          const fs = require('fs');
+          const report = JSON.parse(fs.readFileSync('./axe-report.json', 'utf8'));
+          const violations = report.violations.filter(v => ['critical','serious'].includes(v.impact));
+          if (violations.length > 0) {
+            console.error('Accesibilidad: Se detectaron violaciones CRITICAL/SERIOUS');
+            violations.forEach(v => console.error(v.id, v.impact, v.description));
+            process.exit(1);
+          } else {
+            console.log('Accesibilidad OK');
+          }
+          EOF
+      - name: Upload axe report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: axe-accessibility-report
+          path: ./axe-report.json
+      - name: Generate axe HTML report
+        if: always()
+        run: |
+          node scripts/axe-report-html.js ./axe-report.json ./axe-report.html || true
+      - name: Upload axe HTML
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: axe-accessibility-html
+          path: ./axe-report.html
+
+  e2e-scenarios:
+    runs-on: ubuntu-latest
+    needs: accessibility-audit
+    env:
+      FRONTEND_PORT: 5173
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js 18
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      - name: Cache e2e npm
+        uses: actions/cache@v4
+        with:
+          path: tests/e2e/node_modules
+          key: ${{ runner.os }}-e2e-node-${{ hashFiles('tests/e2e/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-e2e-node-
+      - name: Install dependencies for tests/e2e
+        run: |
+          cd tests/e2e
+          npm ci
+      - name: Start mock server (background)
+        run: |
+          cd tests/e2e
+          npm run mock:background
+      - name: Wait for mock
+        run: |
+          cd tests/e2e
+          npx wait-on http://localhost:3101 --timeout 10000
+      - name: Run scenario suite
+        run: |
+          cd tests/e2e
+          npm run test:scenarios > runner.log 2>&1
+      - name: Run Cypress headless (accessibility + UI checks)
+        run: |
+          cd tests/e2e
+          npx cypress run --config baseUrl=http://localhost:${{ env.FRONTEND_PORT }}
+      - name: Upload Cypress artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-artifacts
+          path: |
+            tests/e2e/cypress/videos
+            tests/e2e/cypress/screenshots
+      - name: Collect Cypress axe reports and generate HTML
+        if: always()
+        run: |
+          set -e
+          mkdir -p tests/e2e/cypress/results || true
+          for f in tests/e2e/cypress/results/*.json; do
+            [ -f "$f" ] || continue
+            bn=$(basename "$f" .json)
+            node scripts/axe-report-html.js "$f" "tests/e2e/cypress/results/${bn}.html" || true
+          done
+      - name: Upload Cypress axe HTML reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-axe-html
+          path: tests/e2e/cypress/results
+      - name: Upload scenario artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-scenarios-artifacts
+          path: |
+            tests/e2e/scenarios-report.json
+            tests/e2e/runner.log
+      - name: Fail if any scenario failed
+        run: |
+          cd tests/e2e
+          node -e "const r=require('./scenarios-report.json');if(r.stats.failures>0){console.error('E2E: Fallos detectados');process.exit(1)}else{console.log('E2E OK')}"
+
+  build-verification:
+    runs-on: ubuntu-latest
+    needs: e2e-scenarios
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js 18
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      - name: Cache npm
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+      - name: Install dependencies
+        run: npm ci
+      - name: Build production
+        run: npm run build

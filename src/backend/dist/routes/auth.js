@@ -17,8 +17,8 @@ router.post('/register', async (req, res) => {
         res.json({ token });
     }
     catch (err) {
-        console.error(err);
-        res.status(500).json({ error: 'server error' });
+        /* CODemod: console.error(err)
+         */ res.status(500).json({ error: 'server error' });
     }
 });
 router.post('/login', async (req, res) => {
@@ -36,8 +36,8 @@ router.post('/login', async (req, res) => {
         res.json({ token });
     }
     catch (err) {
-        console.error(err);
-        res.status(500).json({ error: 'server error' });
+        /* CODemod: console.error(err)
+         */ res.status(500).json({ error: 'server error' });
     }
 });
 export default router;

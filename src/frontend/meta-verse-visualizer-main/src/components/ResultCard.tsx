@@ -39,13 +39,13 @@ export const ResultCard = ({ imageUrl, prompt, isLoading = false }: ResultCardPr
         </div>
 
         <div className="flex gap-2 justify-center">
-          <button className="p-2 bg-accent-purple/80 hover:bg-accent-purple text-white rounded-lg transition-colors">
+          <button type="button" aria-label="Apply magic" title="Apply magic" className="p-2 bg-accent-purple/80 hover:bg-accent-purple text-white rounded-lg transition-colors">
             <Wand2 className="w-4 h-4" />
           </button>
-          <button className="p-2 bg-accent-blue/80 hover:bg-accent-blue text-white rounded-lg transition-colors">
+          <button type="button" aria-label="Re-generate variation" title="Re-generate variation" className="p-2 bg-accent-blue/80 hover:bg-accent-blue text-white rounded-lg transition-colors">
             <RotateCcw className="w-4 h-4" />
           </button>
-          <button className="p-2 bg-secondary-text/80 hover:bg-secondary-text text-white rounded-lg transition-colors">
+          <button type="button" aria-label="Download image" title="Download image" className="p-2 bg-secondary-text/80 hover:bg-secondary-text text-white rounded-lg transition-colors">
             <Download className="w-4 h-4" />
           </button>
         </div>

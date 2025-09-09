@@ -1,0 +1,45 @@
+From c60f30d0da12bc5f1fb555056803c9b99a32919c Mon Sep 17 00:00:00 2001
+From: CI Bot <ci-bot@metastudio.dev>
+Date: Mon, 8 Sep 2025 18:51:38 -0500
+Subject: [PATCH] fix(test): force single react and add vitest aliases to avoid
+ duplicate react/import issues
+
+---
+ package.json                                             | 4 ++++
+ src/frontend/meta-verse-visualizer-main/vitest.config.ts | 5 +++++
+ 2 files changed, 9 insertions(+)
+
+diff --git a/package.json b/package.json
+index 697fd9c3..d175ccd5 100644
+--- a/package.json
++++ b/package.json
+@@ -13,6 +13,10 @@
+     "src/backend/server",
+     "src/frontend/meta-verse-visualizer-main"
+   ],
++  "overrides": {
++    "react": "18.2.0",
++    "react-dom": "18.2.0"
++  },
+   "engines": {
+     "node": "^20.9.0"
+   },
+diff --git a/src/frontend/meta-verse-visualizer-main/vitest.config.ts b/src/frontend/meta-verse-visualizer-main/vitest.config.ts
+index 5c938ae0..c317fcaf 100644
+--- a/src/frontend/meta-verse-visualizer-main/vitest.config.ts
++++ b/src/frontend/meta-verse-visualizer-main/vitest.config.ts
+@@ -13,6 +13,11 @@ export default defineConfig({
+   resolve: {
+     alias: {
+       '@': path.resolve(__dirname, './src'),
++  // Force all imports of react/react-dom used by tests to resolve to the workspace root
++  'react': path.resolve(__dirname, '../../node_modules/react'),
++  'react-dom': path.resolve(__dirname, '../../node_modules/react-dom'),
++  'react/jsx-runtime': path.resolve(__dirname, '../../node_modules/react/jsx-runtime'),
++  'react/jsx-dev-runtime': path.resolve(__dirname, '../../node_modules/react/jsx-dev-runtime'),
+     },
+   },
+ })
+-- 
+2.39.5
+

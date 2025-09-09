@@ -1,0 +1,48 @@
+{
+  "scenario": "default",
+  "start": 1757371717583,
+  "end": 1757371719393,
+  "durationMs": 1810,
+  "exitCode": 0,
+  "events": [
+    {
+      "ts": 1757371717594,
+      "type": "job-created",
+      "jobId": "a14fdc43-2d30-411d-a0b8-1caec399b099"
+    },
+    {
+      "ts": 1757371717595,
+      "type": "sse",
+      "payload": {
+        "status": "queued",
+        "scenario": "progress"
+      }
+    },
+    {
+      "ts": 1757371717893,
+      "type": "sse",
+      "payload": {
+        "status": "processing",
+        "step": 1
+      }
+    },
+    {
+      "ts": 1757371718493,
+      "type": "sse",
+      "payload": {
+        "status": "processing",
+        "step": 2
+      }
+    },
+    {
+      "ts": 1757371719393,
+      "type": "sse",
+      "payload": {
+        "status": "completed",
+        "jobId": "a14fdc43-2d30-411d-a0b8-1caec399b099",
+        "videoUrl": "https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4",
+        "thumbnailUrl": "https://picsum.photos/seed/animated/600/1067"
+      }
+    }
+  ]
+}

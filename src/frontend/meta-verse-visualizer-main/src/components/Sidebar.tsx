@@ -13,7 +13,9 @@ const NavItem = ({
   onClick: () => void
 }) => (
   <button
+    type="button"
     onClick={onClick}
+    aria-current={active ? 'page' : undefined}
     className={`w-full text-left flex items-center p-3 rounded-lg transition-colors duration-200 ${active ? 'bg-accent-blue text-white' : 'text-secondary-text hover:bg-surface-dark hover:text-primary-text'}`}
   >
     <Icon size={22} />

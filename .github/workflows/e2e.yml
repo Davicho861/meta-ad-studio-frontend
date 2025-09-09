@@ -41,6 +41,12 @@ jobs:
         run: |
           cd tests/e2e
           npm test > test.log 2>&1 || (echo "E2E failed; collecting logs" && cat test.log && exit 1)
+      - name: Run axe accessibility scan
+        run: |
+          cd tests/e2e
+          # Install axe CLI locally (uses npx so no changes to package.json required)
+          npx --yes @axe-core/cli --version || true
+          npx --yes @axe-core/cli http://localhost:3101 --save ./axe-report.json --json || true
       - name: Upload logs
         if: always()
         uses: actions/upload-artifact@v4
@@ -49,6 +55,7 @@ jobs:
           path: |
             tests/e2e/mock.log
             tests/e2e/test.log
+            tests/e2e/axe-report.json
 
   e2e-staging:
     if: ${{ github.event_name == 'workflow_dispatch' }}

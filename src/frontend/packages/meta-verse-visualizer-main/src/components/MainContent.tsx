@@ -25,15 +25,22 @@ interface MainContentProps {
 }
 
 const TabButton = ({
+  id,
   label,
   active,
   onClick,
 }: {
+  id: string
   label: string
   active: boolean
   onClick: () => void
 }) => (
   <button
+    id={id}
+    role="tab"
+    aria-selected={active}
+    aria-controls={id.replace('tab-', 'tabpanel-')}
+    tabIndex={active ? 0 : -1}
     onClick={onClick}
     className={`px-4 py-2 font-semibold rounded-md transition-colors ${active ? 'bg-surface-dark text-primary-text' : 'text-secondary-text hover:bg-surface-dark/50'}`}
   >
@@ -126,13 +133,15 @@ export const MainContent = ({
       </div>
 
       <div className='mt-12'>
-        <div className='flex gap-4 border-b border-surface-dark mb-6'>
+        <div className='flex gap-4 border-b border-surface-dark mb-6' role="tablist" aria-label="Pestañas de contenido principal">
           <TabButton
+            id='tab-inspiracion'
             label='Galería de Inspiración'
             active={activeTab === 'inspiracion'}
             onClick={() => setActiveTab('inspiracion')}
           />
           <TabButton
+            id='tab-generaciones'
             label='Mis Generaciones'
             active={activeTab === 'generaciones'}
             onClick={() => setActiveTab('generaciones')}
@@ -140,7 +149,7 @@ export const MainContent = ({
         </div>
 
         {activeTab === 'inspiracion' && (
-          <div>
+          <div role="tabpanel" id="tabpanel-inspiracion" aria-labelledby="tab-inspiracion" aria-hidden={activeTab !== 'inspiracion'}>
             {isLoading ? (
               <div>Cargando inspiración...</div>
             ) : (
@@ -153,13 +162,15 @@ export const MainContent = ({
           </div>
         )}
         {activeTab === 'generaciones' && (
-          <GenerationGrid
-            results={results}
-            isGenerating={isGenerating}
-            onVisualize={(payload: { sceneId?: string; imageUrl?: string }) => {
-              setViewState({ view: 'visualization', payload })
-            }}
-          />
+          <div role="tabpanel" id="tabpanel-generaciones" aria-labelledby="tab-generaciones" aria-hidden={activeTab !== 'generaciones'}>
+            <GenerationGrid
+              results={results}
+              isGenerating={isGenerating}
+              onVisualize={(payload: { sceneId?: string; imageUrl?: string }) => {
+                setViewState({ view: 'visualization', payload })
+              }}
+            />
+          </div>
         )}
       </div>
 
@@ -175,7 +186,6 @@ export const MainContent = ({
             return (
               <VisualizationStage
                 sceneId={p?.sceneId}
-                imageUrl={p?.imageUrl}
                 onClose={() =>
                   setViewState({ view: 'creation', payload: null })
                 }

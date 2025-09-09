@@ -32,8 +32,8 @@ router.post('/', requireAuth, async (req, res) => {
         res.json({ generation });
     }
     catch (err) {
-        console.error('generate error', err);
-        res.status(500).json({ error: 'generation failed' });
+        /* CODemod: console.error('generate error', err)
+         */ res.status(500).json({ error: 'generation failed' });
     }
 });
 export default router;

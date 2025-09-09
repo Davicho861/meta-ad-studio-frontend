@@ -14,8 +14,8 @@
     "src/frontend/meta-verse-visualizer-main"
   ],
   "overrides": {
-    "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
   },
   "engines": {
     "node": "^20.9.0"
@@ -99,10 +99,10 @@
     "lucide-react": "^0.462.0",
     "morgan": "^1.10.1",
     "next-themes": "^0.3.0",
-    "react": "18.2.0",
+  "react": "18.3.1",
     "react-beautiful-dnd": "^13.1.1",
     "react-day-picker": "^8.10.1",
-    "react-dom": "18.2.0",
+  "react-dom": "18.3.1",
     "react-hook-form": "^7.61.1",
     "react-hot-toast": "^2.6.0",
     "react-resizable-panels": "^2.1.9",

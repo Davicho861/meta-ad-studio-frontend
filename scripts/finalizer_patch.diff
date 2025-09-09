@@ -1,0 +1,22 @@
+--- FINALIZER PATCH SUMMARY ---
+
+Files modified (local changes applied by the Finalizer agent):
+- tailwind.config.ts (spacing, animations, timing tokens)
+- src/.../PromptBar.tsx (padding increased, button font-medium)
+- src/.../GenerationGrid.tsx (p-6, gap-6)
+- src/.../ResultCard.tsx (padding, durations, blur-up, lazy-loading)
+- src/.../styles/blur-up.css (added blur-up effect)
+
+This file documents the changes applied locally. To recreate a patch from your local git repository, run:
+
+  git add -A
+  git commit -m "chore(ui): final pixel polish (spacing, typography, animations, blur-up)"
+  git format-patch -1 HEAD --stdout > finalizer_ui_polish.patch
+
+You can then apply the patch on another clone with:
+
+  git am < finalizer_ui_polish.patch
+
+Or use the helper script:
+
+  ./scripts/finalizer_patch_and_push.sh finalizer_ui_polish.patch "chore(ui): final pixel polish"

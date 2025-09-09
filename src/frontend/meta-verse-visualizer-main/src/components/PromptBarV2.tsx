@@ -8,7 +8,7 @@ interface ControlButtonProps {
 }
 
 const ControlButton = ({ icon: Icon, label }: ControlButtonProps) => (
-  <button className='flex items-center gap-2 px-3 py-1.5 bg-surface-dark text-secondary-text hover:text-primary-text rounded-md text-sm transition-colors'>
+  <button type="button" aria-label={label} title={label} className='flex items-center gap-2 px-3 py-1.5 bg-surface-dark text-secondary-text hover:text-primary-text rounded-md text-sm transition-colors'>
     <Icon size={16} />
     {label}
   </button>
@@ -68,6 +68,7 @@ export const PromptBarV2 = ({
 
           <div className='flex flex-col gap-2 items-end'>
             <button
+              type="button"
               onClick={onGenerate}
               disabled={isGenerating}
               className='px-5 py-3 rounded-lg bg-gradient-to-r from-accent-purple to-accent-blue text-white font-semibold hover:opacity-95 disabled:opacity-50 shadow-md'
@@ -78,8 +79,11 @@ export const PromptBarV2 = ({
             </button>
 
             <button
+              type="button"
               onClick={() => setPrompt('')}
               className='text-sm text-secondary-text underline hover:text-primary-text'
+              aria-label='Limpiar prompt'
+              title='Limpiar prompt'
             >
               Limpiar
             </button>

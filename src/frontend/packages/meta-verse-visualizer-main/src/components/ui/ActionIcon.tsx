@@ -6,8 +6,9 @@ interface ActionIconProps extends React.ButtonHTMLAttributes<HTMLButtonElement> 
 }
 
 export const ActionIcon: React.FC<ActionIconProps> = ({ label, children, ...rest }) => {
+  const props = { type: 'button' as const, 'aria-label': label, title: label, ...rest }
   return (
-    <button aria-label={label} title={label} {...rest}>
+    <button {...props}>
       {children}
     </button>
   )
