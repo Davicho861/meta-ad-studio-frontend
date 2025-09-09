@@ -117,3 +117,13 @@ button:hover {
   opacity: 0;
   transition: opacity 0.3s ease;
 }
+
+/* Masonry columns for immersive canvas */
+.masonry-columns {
+  column-width: 320px;
+  column-gap: 16px;
+}
+.masonry-columns > div {
+  display: inline-block;
+  width: 100%;
+}
