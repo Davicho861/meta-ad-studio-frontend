@@ -37,10 +37,19 @@ const PromptBar = () => {
   }, [prompt])
 
   return (
-    <div className="flex items-center p-4 app-surface shadow-md rounded-xl">
+    <form
+      role="search"
+      onSubmit={(e) => {
+        e.preventDefault()
+        handleSubmit()
+      }}
+      className="flex items-center p-4 app-surface shadow-md rounded-xl"
+      aria-describedby="prompt-help"
+    >
       <input
         ref={inputRef}
         aria-label="ad-prompt"
+        id="ad-prompt"
         type="text"
         value={prompt}
         onChange={handleInputChange}
@@ -48,7 +57,9 @@ const PromptBar = () => {
         className="flex-grow p-3 bg-transparent border border-transparent focus:border-muted-400 rounded-lg mr-4 focus:outline-none focus:ring-2 focus:ring-accent-500 placeholder:muted"
         disabled={isLoading}
       />
+
       <motion.button
+        type="submit"
         onClick={handleSubmit}
         whileTap={{ scale: 0.98 }}
         animate={isLoading ? { scale: [1, 1.02, 1], transition: { duration: 0.8, repeat: Infinity } } : { scale: 1 }}
@@ -57,7 +68,11 @@ const PromptBar = () => {
       >
         {isLoading ? 'Generating...' : 'Generate'}
       </motion.button>
-    </div>
+
+      <div id="prompt-help" className="sr-only">
+        Escribe tu prompt y presiona Enter o Ctrl/Cmd+Enter para generar anuncios.
+      </div>
+    </form>
   )
 }
 
