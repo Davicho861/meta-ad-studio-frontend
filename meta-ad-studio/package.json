@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "serve": "vite preview",
-    "lint": "npx eslint --ext .js,.jsx src --fix"
+  "lint": "npx eslint --ext .js,.jsx src --fix",
+  "test": "npx vitest run"
   },
   "dependencies": {
     "framer-motion": "^4.1.17",
