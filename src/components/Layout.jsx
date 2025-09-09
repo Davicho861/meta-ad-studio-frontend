@@ -6,28 +6,20 @@ import HistorySidebar from './HistorySidebar'
 
 const Layout = () => {
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-7xl mx-auto">
-        <header className="mb-6">
-          <h1 className="text-2xl font-bold">Generative Ad Studio (Prototype)</h1>
+    <div className="min-h-screen bg-gray-900 text-white">
+      <div className="min-h-screen w-full h-full flex flex-col">
+        {/* PromptBar centered at top */}
+        <header className="w-full flex justify-center pt-6 px-4">
+          <div className="w-full max-w-4xl">
+            <PromptBar />
+          </div>
         </header>
 
-        <section className="mb-4">
-          <PromptBar />
-        </section>
-
-        <main className="grid grid-cols-12 gap-6">
-          <aside className="col-span-2 bg-white p-4 rounded-md shadow-sm">
-            <HistorySidebar />
-          </aside>
-
-          <section className="col-span-7 bg-white p-4 rounded-md shadow-sm">
+        {/* Main immersive area: generation grid fills remaining space */}
+        <main className="flex-1 overflow-auto p-6">
+          <div className="w-full max-w-7xl mx-auto">
             <ResultsGrid />
-          </section>
-
-          <aside className="col-span-3">
-            <SettingsPanel />
-          </aside>
+          </div>
         </main>
       </div>
     </div>

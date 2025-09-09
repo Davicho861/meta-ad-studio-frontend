@@ -1,6 +1,7 @@
 import React from 'react'
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
-import PromptBar from './components/prompting/PromptBar'
+// imports: corregida la ruta de PromptBar (está en components/PromptBar.jsx)
+import PromptBar from './components/PromptBar'
 import GenerationGrid from './components/GenerationGrid'
 import ResultCard from './components/ResultCard'
 import './styles/globals.css'

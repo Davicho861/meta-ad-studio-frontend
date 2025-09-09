@@ -21,7 +21,7 @@ const PromptBar = () => {
   }
 
   return (
-    <div className="flex items-center p-4 bg-white shadow-sm rounded-lg">
+    <div className="flex items-center p-3 bg-transparent rounded-lg">
       <input
         aria-label="ad-prompt"
         type="text"
@@ -29,7 +29,7 @@ const PromptBar = () => {
         onChange={handleInputChange}
         onKeyDown={handleKeyDown}
         placeholder="Describe the ad you want to generate..."
-        className="flex-grow p-2 border border-gray-300 rounded-md mr-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="flex-grow p-3 border border-gray-700 rounded-md mr-4 bg-gray-800/60 text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
         disabled={isLoading}
       />
       <motion.button
