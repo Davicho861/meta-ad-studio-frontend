@@ -11,6 +11,9 @@ const Layout = () => {
             <h1 className="text-2xl font-bold">Generative Ad Studio (Prototype)</h1>
           </div>
 
+          {/* Skip link for keyboard users */}
+          <a href="#results" className="sr-only focus:not-sr-only focus:inline-block mt-2 text-sm underline text-accent-500">Saltar a resultados</a>
+
           {/* Centralized prompt bar for the immersive canvas flow */}
           <div className="mt-4">
             <PromptBar />

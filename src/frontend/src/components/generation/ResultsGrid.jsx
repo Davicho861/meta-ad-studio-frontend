@@ -42,7 +42,7 @@ const ResultsGrid = () => {
 
   if (isLoading) {
     return (
-      <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-4" data-testid="results-grid">
+      <div id="results" className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-4" data-testid="results-grid" role="region" aria-live="polite" aria-label="Resultados en carga">
         {Array.from({ length: 6 }).map((_, i) => (
           <div key={i} className="mb-4 rounded-md animate-pulse h-48 bg-gradient-to-br from-midnight-900 to-midnight-800" />
         ))}
@@ -52,7 +52,7 @@ const ResultsGrid = () => {
 
   if (!localAds || localAds.length === 0) {
     return (
-      <div>
+      <div id="results" role="region" aria-live="polite" aria-label="Resultados">
         {generationProgress && generationProgress.logs && generationProgress.logs.length > 0 && (
           <div className="mb-4 p-3 bg-gray-50 border rounded text-sm">
             <div className="font-medium mb-1">Generation progress</div>
@@ -71,6 +71,7 @@ const ResultsGrid = () => {
 
   return (
     <motion.div
+      id="results"
       className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-4"
       variants={container}
       initial="hidden"

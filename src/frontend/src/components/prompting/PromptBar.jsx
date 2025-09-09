@@ -72,6 +72,10 @@ const PromptBar = () => {
       <div id="prompt-help" className="sr-only">
         Escribe tu prompt y presiona Enter o Ctrl/Cmd+Enter para generar anuncios.
       </div>
+
+      <div aria-live="polite" aria-atomic="true" className="sr-only">
+        {isLoading ? 'Generando anuncios...' : prompt ? 'Listo para generar' : 'Introduce un prompt'}
+      </div>
     </form>
   )
 }
