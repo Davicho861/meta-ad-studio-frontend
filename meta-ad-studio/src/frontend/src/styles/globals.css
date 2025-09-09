@@ -66,6 +66,21 @@ input:focus {
   box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5); /* Sombra al enfocar */
 }
 
+/* Mejorar visibilidad del foco para usuarios de teclado */
+:focus {
+  outline: none;
+}
+
+/* Solo mostrar outline cuando el foco viene del teclado */
+:focus-visible {
+  outline: 3px solid rgba(124, 92, 255, 0.9);
+  outline-offset: 2px;
+}
+
+button:focus-visible, a:focus-visible, [role="button"]:focus-visible {
+  box-shadow: 0 0 0 3px rgba(124, 92, 255, 0.12);
+}
+
 button {
   background-color: var(--button-bg-color);
   color: var(--text-color);
