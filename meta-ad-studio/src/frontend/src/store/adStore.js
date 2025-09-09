@@ -19,6 +19,7 @@ const useAdStore = create((set) => ({
       const data = await response.json()
       set({ ads: data.ads })
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('Error generating ads:', error)
     } finally {
       set({ isLoading: false })
